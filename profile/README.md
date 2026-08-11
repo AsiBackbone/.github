@@ -25,8 +25,8 @@ Key areas include:
 - Zero-trust execution boundaries
 - ASP.NET Core integration
 
-[Explore ASI Backbone Repository](https://github.com/AsiBackbone/AsiBackbone)
-[ASI Backbone Documentation](https://asibackbone.github.io/AsiBackbone/)
+- [**Explore ASI Backbone Repository**](https://github.com/AsiBackbone/AsiBackbone)
+- [**ASI Backbone Documentation**](https://asibackbone.github.io/AsiBackbone/)
 
 ### [.NET Core Application Template](https://github.com/AsiBackbone/NetCoreApplicationTemplate)
 
@@ -45,8 +45,8 @@ Key areas include:
 - Reverse proxy support
 - Problem Details and centralized error handling
 
-[Explore .NET Core Application Template Repository](https://github.com/AsiBackbone/NetCoreApplicationTemplate)
-[.NET Core Application Template Documentation](https://asibackbone.github.io/NetCoreApplicationTemplate)
+- [**Explore .NET Core Application Template Repository**](https://github.com/AsiBackbone/NetCoreApplicationTemplate)
+- [**.NET Core Application Template Documentation**](https://asibackbone.github.io/NetCoreApplicationTemplate)
 
 ## Design Philosophy
 
