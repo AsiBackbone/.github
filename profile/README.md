@@ -10,7 +10,7 @@ enterprise ASP.NET Core development.
 
 ## Projects
 
-### AsiBackbone
+### [ASI Backbone](https://github.com/AsiBackbone/AsiBackbone)
 
 A .NET governance and policy-control framework for building auditable,
 policy-governed decision pipelines.
@@ -25,9 +25,10 @@ Key areas include:
 - Zero-trust execution boundaries
 - ASP.NET Core integration
 
-[Explore AsiBackbone](https://github.com/AsiBackbone/AsiBackbone)
+[Explore ASI Backbone Repository](https://github.com/AsiBackbone/AsiBackbone)
+[ASI Backbone Documentation](https://asibackbone.github.io/AsiBackbone/)
 
-### NetCoreApplicationTemplate
+### [.NET Core Application Template](https://github.com/AsiBackbone/NetCoreApplicationTemplate)
 
 A secure-by-default ASP.NET Core enterprise application template for building
 maintainable, production-ready .NET applications.
@@ -44,7 +45,8 @@ Key areas include:
 - Reverse proxy support
 - Problem Details and centralized error handling
 
-[Explore NetCoreApplicationTemplate](https://github.com/AsiBackbone/NetCoreApplicationTemplate)
+[Explore .NET Core Application Template Repository](https://github.com/AsiBackbone/NetCoreApplicationTemplate)
+[.NET Core Application Template Documentation](https://asibackbone.github.io/NetCoreApplicationTemplate)
 
 ## Design Philosophy
 
