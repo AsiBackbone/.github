@@ -24,7 +24,6 @@ Key areas include:
 - Capability-based authorization
 - Zero-trust execution boundaries
 - ASP.NET Core integration
-
 <br /><br />
 - [**Explore ASI Backbone Repository**](https://github.com/AsiBackbone/AsiBackbone)
 - [**ASI Backbone Documentation**](https://asibackbone.github.io/AsiBackbone/)
@@ -46,7 +45,6 @@ Key areas include:
 - SQL Server and SQLite
 - Reverse proxy support
 - Problem Details and centralized error handling
-
 <br /><br />
 - [**Explore .NET Core Application Template Repository**](https://github.com/AsiBackbone/NetCoreApplicationTemplate)
 - [**.NET Core Application Template Documentation**](https://asibackbone.github.io/NetCoreApplicationTemplate)
