@@ -50,6 +50,30 @@ Key areas include:
 - [**.NET Core Application Template Documentation**](https://asibackbone.github.io/NetCoreApplicationTemplate)
 <br /><br />
 
+### [ASI Backbone Learning](https://github.com/AsiBackbone/Learning)
+
+A community-maintained living tutorial for practical .NET architecture,
+governed execution, secure application design, AI integration, and
+policy-driven systems.
+
+Learning connects architectural concepts to focused tutorials, hands-on labs,
+diagrams, comparisons, and working examples from the ASI Backbone organization.
+
+Key areas include:
+
+- Governed execution and decision-before-execution patterns
+- Policy context and explicit decision outcomes
+- Acknowledgment and audit-residue workflows
+- Capability-scoped and host-owned execution
+- Secure ASP.NET Core architecture
+- AI tool and agent governance patterns
+- Architecture comparisons and alternative approaches
+- Hands-on tutorials and labs
+<br /><br />
+- [**Explore ASI Backbone Learning Repository**](https://github.com/AsiBackbone/Learning)
+- [**ASI Backbone Learning Documentation**](https://asibackbone.github.io/Learning/)
+<br /><br />
+
 ## Design Philosophy
 
 We favor architectures where consequential operations are explicit,
