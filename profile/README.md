@@ -8,6 +8,13 @@ secure application development, AI governance, policy-as-code, auditable
 decision systems, capability-based authorization, zero-trust execution, and
 enterprise ASP.NET Core development.
 
+## Start Here
+
+- **Learn the architecture and patterns:** [ASI Backbone Learning](https://asibackbone.github.io/Learning/)
+- **Add governed decision and execution boundaries:** [ASI Backbone](https://github.com/AsiBackbone/AsiBackbone)
+- **Start with a secure ASP.NET Core reference architecture:** [.NET Core Application Template](https://github.com/AsiBackbone/NetCoreApplicationTemplate)
+
+
 ## Projects
 
 ### [ASI Backbone](https://github.com/AsiBackbone/AsiBackbone)
