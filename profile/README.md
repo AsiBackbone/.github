@@ -12,19 +12,19 @@ An open, community-oriented learning resource for practical .NET architecture. C
 
 Start here if you want to understand the reasoning before evaluating any implementation.
 
-[Documentation](https://asibackbone.github.io/Learning/) · [Repository](https://github.com/AsiBackbone/Learning)
+[Documentation](https://asibackbone.github.io/Learning/) · [Repository](https://github.com/AsiBackbone/Learning) · [Archive (DOI 10.5281/zenodo.21938556)](https://doi.org/10.5281/zenodo.21938556)
 
 ### [ASI Backbone](https://github.com/AsiBackbone/AsiBackbone) — add governed decision and execution boundaries
 
 A .NET governance and policy-control framework for building auditable, policy-governed decision pipelines: policy evaluation and policy-as-code, AI and application governance, auditable decision records, acknowledgment workflows, capability-based authorization, host-owned execution boundaries, and ASP.NET Core integration.
 
-[Documentation](https://asibackbone.github.io/AsiBackbone/) · [Repository](https://github.com/AsiBackbone/AsiBackbone)
+[Documentation](https://asibackbone.github.io/AsiBackbone/) · [Repository](https://github.com/AsiBackbone/AsiBackbone) · [Archive (DOI 10.5281/zenodo.20546032)](https://doi.org/10.5281/zenodo.20546032)
 
 ### [.NET Core Application Template](https://github.com/AsiBackbone/NetCoreApplicationTemplate) — start with a secure ASP.NET Core reference architecture
 
 A secure-by-default ASP.NET Core enterprise application template for building maintainable, production-ready .NET applications: authentication and authorization, Serilog structured logging, security headers, rate limiting, EF Core with SQL Server and SQLite, reverse proxy support, and Problem Details error handling.
 
-[Documentation](https://asibackbone.github.io/NetCoreApplicationTemplate/) · [Repository](https://github.com/AsiBackbone/NetCoreApplicationTemplate)
+[Documentation](https://asibackbone.github.io/NetCoreApplicationTemplate/) · [Repository](https://github.com/AsiBackbone/NetCoreApplicationTemplate) · [Archive (DOI 10.5281/zenodo.20373042)](https://doi.org/10.5281/zenodo.20373042)
 
 ## Design Philosophy
 
