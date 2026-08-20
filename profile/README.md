@@ -2,10 +2,7 @@
 
 **Most applications don't need a governance layer. When you do need one — when you have to explain why an operation was permitted, under which policy, with what evidence — these are the patterns and the working implementations.**
 
-AsiBackbone develops open-source .NET architecture and governance tools for
-secure application development, AI governance, policy-as-code, auditable
-decision systems, capability-based authorization, zero-trust execution, and
-enterprise ASP.NET Core development.
+The organization maintains three related projects covering policy-as-code, auditable decision systems, capability-based authorization, host-owned execution boundaries, AI governance, and secure ASP.NET Core application architecture.
 
 ## Start Here
 
