@@ -1,7 +1,6 @@
 # AsiBackbone
 
-**Enterprise .NET reference architectures for secure-by-default applications,
-policy governance, auditability, and compliance-oriented systems.**
+**Most applications don't need a governance layer. When you do need one — when you have to explain why an operation was permitted, under which policy, with what evidence — these are the patterns and the working implementations.**
 
 AsiBackbone develops open-source .NET architecture and governance tools for
 secure application development, AI governance, policy-as-code, auditable
@@ -60,7 +59,7 @@ Key areas include:
 
 ### [ASI Backbone Learning](https://github.com/AsiBackbone/Learning)
 
-A community-maintained living tutorial for practical .NET architecture,
+An open, community-oriented learning resource for practical .NET architecture,
 governed execution, secure application design, AI integration, and
 policy-driven systems.
 
