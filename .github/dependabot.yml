@@ -1,0 +1,22 @@
+version: 2
+
+updates:
+  # GitHub Actions are this repository's executable supply-chain dependencies.
+  # Keep SHA-pinned references current through grouped, reviewable pull requests.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "friday"
+      time: "15:30"
+      timezone: "America/Chicago"
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
