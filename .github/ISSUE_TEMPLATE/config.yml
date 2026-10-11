@@ -1,0 +1,15 @@
+blank_issues_enabled: true
+
+contact_links:
+  - name: Ask a cross-project question
+    url: https://github.com/orgs/AsiBackbone/discussions/categories/q-a
+    about: Use organization Q&A for questions that span repositories or concern AsiBackbone as a whole.
+  - name: Propose an organization-wide idea
+    url: https://github.com/orgs/AsiBackbone/discussions/categories/ideas
+    about: Discuss a broad proposal before opening a concrete work item.
+  - name: Discuss architecture and integration
+    url: https://github.com/orgs/AsiBackbone/discussions/categories/architecture-integration
+    about: Discuss cross-project design, tradeoffs, and integration boundaries.
+  - name: Report a security vulnerability privately
+    url: https://github.com/AsiBackbone/.github/security/advisories/new
+    about: Do not disclose secrets or exploit details publicly. Use this private route when no repository-specific route is available.
