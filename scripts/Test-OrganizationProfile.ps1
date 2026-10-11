@@ -72,6 +72,10 @@ $requiredFiles = @(
     'SECURITY.md'
     '.github/PULL_REQUEST_TEMPLATE.md'
     '.github/ISSUE_TEMPLATE/config.yml'
+    '.github/dependabot.yml'
+    '.github/workflows/dependency-review.yml'
+    '.github/workflows/workflow-security.yml'
+    '.github/workflows/openssf-scorecard.yml'
 )
 foreach ($relativePath in $requiredFiles) {
     if (-not (Test-Path -LiteralPath (Join-Path $RepositoryRoot $relativePath) -PathType Leaf)) {
@@ -121,6 +125,30 @@ $communityContracts = [ordered]@{
         'https://github.com/AsiBackbone/.github/security/advisories/new'
         'Do not disclose secrets or exploit details publicly.'
     )
+    '.github/dependabot.yml' = @(
+        'package-ecosystem: "github-actions"'
+        'interval: "weekly"'
+        'day: "friday"'
+        'timezone: "America/Chicago"'
+        'github-actions:'
+    )
+    '.github/workflows/dependency-review.yml' = @(
+        'name: Dependency Review'
+        'actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294'
+        'fail-on-severity: moderate'
+    )
+    '.github/workflows/workflow-security.yml' = @(
+        'name: GitHub Actions security analysis'
+        'zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482'
+        'advanced-security: true'
+        'docker://rhysd/actionlint@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667'
+    )
+    '.github/workflows/openssf-scorecard.yml' = @(
+        'name: OpenSSF Scorecard supply-chain security'
+        'ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc'
+        'publish_results: true'
+        'github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d'
+    )
 }
 
 foreach ($contract in $communityContracts.GetEnumerator()) {
@@ -133,6 +161,16 @@ foreach ($contract in $communityContracts.GetEnumerator()) {
     foreach ($requiredText in $contract.Value) {
         if (-not $communityContent.Contains($requiredText, [StringComparison]::Ordinal)) {
             $failures.Add("$($contract.Key) is missing required content: $requiredText")
+        }
+    }
+}
+
+foreach ($workflowFile in Get-ChildItem -LiteralPath (Join-Path $RepositoryRoot '.github/workflows') -File -Filter '*.yml') {
+    $workflowContent = Get-Content -LiteralPath $workflowFile.FullName -Raw
+    foreach ($use in [regex]::Matches($workflowContent, '(?m)^\s*uses:\s*(?<action>\S+)')) {
+        $action = $use.Groups['action'].Value
+        if ($action -notmatch '@(?:[0-9a-f]{40}|sha256:[0-9a-f]{64})$') {
+            $failures.Add("$($workflowFile.Name) contains an action that is not pinned to an immutable digest: $action")
         }
     }
 }
