@@ -22,6 +22,7 @@ $requiredContent = [ordered]@{
     'https://github.com/AsiBackbone/NetCoreApplicationTemplate' = 'NetCoreApplicationTemplate repository link'
     'https://asibackbone.github.io/NetCoreApplicationTemplate/' = 'NetCoreApplicationTemplate documentation link'
     '## License' = 'license section'
+    'https://github.com/AsiBackbone/.github/blob/main/LICENSES.md' = 'licensing boundary link'
 }
 
 $failures = [System.Collections.Generic.List[string]]::new()
@@ -33,6 +34,48 @@ foreach ($entry in $requiredContent.GetEnumerator()) {
 
 if ($profile -match '(?i)(password|token|secret)\s*[:=]\s*\S+') {
     $failures.Add('profile/README.md appears to contain credential-like content.')
+}
+
+$requiredFiles = @('LICENSE', 'LICENSE-CODE', 'LICENSES.md', '.editorconfig', '.gitattributes', '.gitignore')
+foreach ($relativePath in $requiredFiles) {
+    if (-not (Test-Path -LiteralPath (Join-Path $RepositoryRoot $relativePath) -PathType Leaf)) {
+        $failures.Add("Required repository file is missing: $relativePath")
+    }
+}
+
+$licensePath = Join-Path $RepositoryRoot 'LICENSE'
+if ((Test-Path -LiteralPath $licensePath) -and -not (Get-Content -LiteralPath $licensePath -Raw).StartsWith('Attribution 4.0 International', [StringComparison]::Ordinal)) {
+    $failures.Add('LICENSE must contain the complete CC BY 4.0 text.')
+}
+
+$codeLicensePath = Join-Path $RepositoryRoot 'LICENSE-CODE'
+if ((Test-Path -LiteralPath $codeLicensePath) -and -not (Get-Content -LiteralPath $codeLicensePath -Raw).StartsWith('MIT License', [StringComparison]::Ordinal)) {
+    $failures.Add('LICENSE-CODE must contain the complete MIT License text.')
+}
+
+$licenseScopePath = Join-Path $RepositoryRoot 'LICENSES.md'
+if (Test-Path -LiteralPath $licenseScopePath) {
+    $licenseScope = Get-Content -LiteralPath $licenseScopePath -Raw
+    foreach ($requiredText in @('CC BY 4.0 content', 'MIT-licensed source', 'Brand, assets, and third-party boundaries', 'Contributions')) {
+        if (-not $licenseScope.Contains($requiredText, [StringComparison]::Ordinal)) {
+            $failures.Add("LICENSES.md is missing its '$requiredText' boundary.")
+        }
+    }
+}
+
+$editorConfigPath = Join-Path $RepositoryRoot '.editorconfig'
+if ((Test-Path -LiteralPath $editorConfigPath) -and -not (Get-Content -LiteralPath $editorConfigPath -Raw).Contains('root = true', [StringComparison]::Ordinal)) {
+    $failures.Add('.editorconfig must declare itself as the top-level configuration.')
+}
+
+$gitAttributesPath = Join-Path $RepositoryRoot '.gitattributes'
+if ((Test-Path -LiteralPath $gitAttributesPath) -and -not (Get-Content -LiteralPath $gitAttributesPath -Raw).Contains('* text=auto eol=lf', [StringComparison]::Ordinal)) {
+    $failures.Add('.gitattributes must normalize text files to LF.')
+}
+
+$gitIgnorePath = Join-Path $RepositoryRoot '.gitignore'
+if ((Test-Path -LiteralPath $gitIgnorePath) -and -not (Get-Content -LiteralPath $gitIgnorePath -Raw).Contains('.vs/', [StringComparison]::Ordinal)) {
+    $failures.Add('.gitignore must exclude Visual Studio workspace state.')
 }
 
 if ($failures.Count -gt 0) {

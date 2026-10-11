@@ -40,4 +40,4 @@ Our projects focus on practical .NET engineering rather than claiming regulatory
 
 ## License
 
-Documentation and educational material are licensed under CC BY 4.0. Source code and executable samples are licensed under the MIT License. See each repository for component-specific terms.
+This organization-profile prose is licensed under CC BY 4.0. Repository automation and configuration are licensed under MIT. These copyright licenses do not grant trademark rights or permission to imply endorsement. See the repository's [licensing boundary](https://github.com/AsiBackbone/.github/blob/main/LICENSES.md), [CC BY 4.0 text](https://github.com/AsiBackbone/.github/blob/main/LICENSE), and [MIT text](https://github.com/AsiBackbone/.github/blob/main/LICENSE-CODE).

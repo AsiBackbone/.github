@@ -1,0 +1,16 @@
+# Operating systems
+.DS_Store
+Thumbs.db
+
+# Editors and IDEs
+.idea/
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+
+# Temporary and generated files
+*.log
+*.tmp
+artifacts/
