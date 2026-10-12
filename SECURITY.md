@@ -38,3 +38,29 @@ The maintainer will assess the report, clarify scope when needed, and coordinate
 Reports that are usage questions, general hardening suggestions, compliance requests, or defects without a security impact may be redirected to the appropriate public support or issue channel.
 
 These projects do not provide end-to-end production security, legal assurance, regulatory certification, or automatic compliance. Consuming applications remain responsible for their own authentication, authorization, deployment, infrastructure, data protection, monitoring, and incident-response controls.
+
+## Repository Control Posture
+
+This repository publishes organization-profile content, default community files,
+GitHub Actions workflows, and one deterministic PowerShell validation script. It
+does not ship a service, library, parser, or other runtime that accepts untrusted
+application input.
+
+- CodeQL analyzes every pull request and every push to `main` for vulnerabilities
+  in GitHub Actions workflows. Zizmor and actionlint provide complementary
+  workflow-specific analysis.
+- The active `Main branch security baseline` ruleset requires pull requests,
+  resolved review conversations, linear history, and the strict organization
+  profile validation check, while blocking deletion and force pushes to `main`.
+- Fuzzing is not used because the repository has no fuzzable runtime or untrusted
+  input-processing surface. Reconsider this decision if executable application,
+  parsing, or request-handling code is added.
+- An approving human review is not mandatory while the organization has one
+  active maintainer. A pull-request-only owner bypass preserves recovery from a
+  broken profile or required check without enabling direct pushes to `main`.
+  Reconsider required approvals and Code Owner review when an independent active
+  maintainer is available.
+
+These proportionate exceptions explain the OpenSSF Scorecard fuzzing,
+branch-protection, and code-review findings; they are reviewed controls rather
+than evidence that those protections were overlooked.
