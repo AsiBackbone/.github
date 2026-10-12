@@ -74,6 +74,7 @@ $requiredFiles = @(
     '.github/ISSUE_TEMPLATE/config.yml'
     '.github/dependabot.yml'
     '.github/workflows/dependency-review.yml'
+    '.github/workflows/codeql.yml'
     '.github/workflows/workflow-security.yml'
     '.github/workflows/openssf-scorecard.yml'
 )
@@ -110,6 +111,11 @@ $communityContracts = [ordered]@{
         'https://github.com/AsiBackbone/.github/security/advisories/new'
         'https://github.com/AsiBackbone/asibackbone.github.io/security/advisories/new'
         'Repository-specific `SECURITY.md` files remain authoritative'
+        '## Repository Control Posture'
+        'CodeQL analyzes every pull request and every push to `main`'
+        'active `Main branch security baseline` ruleset'
+        'Fuzzing is not used because the repository has no fuzzable'
+        'An approving human review is not mandatory while the organization has one'
     )
     '.github/PULL_REQUEST_TEMPLATE.md' = @(
         '## Summary'
@@ -136,6 +142,14 @@ $communityContracts = [ordered]@{
         'name: Dependency Review'
         'actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294'
         'fail-on-severity: moderate'
+    )
+    '.github/workflows/codeql.yml' = @(
+        'name: CodeQL Analysis'
+        'pull_request:'
+        'push:'
+        'languages: actions'
+        'github/codeql-action/init@24c54180a607b1449ed407dd24f251e4e9147c8d'
+        'github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d'
     )
     '.github/workflows/workflow-security.yml' = @(
         'name: GitHub Actions security analysis'
