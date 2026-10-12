@@ -7,9 +7,8 @@ The organization maintains three related projects covering policy-as-code, audit
 ## Learn, Ask, and Contribute
 
 - **Start learning:** [AsiBackbone Learning](https://asibackbone.github.io/Learning/) is the first stop for tutorials, labs, and architecture comparisons.
-- **Ask a cross-project question:** use organization [Q&A](https://github.com/orgs/AsiBackbone/discussions/categories/q-a) when a question spans repositories or concerns AsiBackbone as a whole.
-- **Propose or debate an idea:** use [Ideas](https://github.com/orgs/AsiBackbone/discussions/categories/ideas) for proposals or [Architecture & Integration](https://github.com/orgs/AsiBackbone/discussions/categories/architecture-integration) for cross-project design discussion.
-- **Get project-specific help:** use the affected repository's Discussions so support stays with its implementation: [Learning](https://github.com/AsiBackbone/Learning/discussions), [AsiBackbone](https://github.com/AsiBackbone/AsiBackbone/discussions), or [.NET Core Application Template](https://github.com/AsiBackbone/NetCoreApplicationTemplate/discussions).
+- **Ask a question:** use organization [Q&A](https://github.com/orgs/AsiBackbone/discussions/categories/q-a) for project-specific and cross-project help. Name the affected repository and version.
+- **Propose or debate an idea:** use [Ideas](https://github.com/orgs/AsiBackbone/discussions/categories/ideas) for proposals or [Architecture & Integration](https://github.com/orgs/AsiBackbone/discussions/categories/architecture-integration) for design and integration discussion.
 - **Contribute:** choose the repository affected and follow its guidance: [Learning](https://github.com/AsiBackbone/Learning/blob/main/CONTRIBUTING.md), [AsiBackbone](https://github.com/AsiBackbone/AsiBackbone/blob/main/CONTRIBUTING.md), or [.NET Core Application Template](https://github.com/AsiBackbone/NetCoreApplicationTemplate/blob/main/CONTRIBUTING.md).
 - **Report a sensitive security concern:** do not post vulnerability details publicly. Follow the affected repository's private reporting policy: [Learning](https://github.com/AsiBackbone/Learning/security/policy), [AsiBackbone](https://github.com/AsiBackbone/AsiBackbone/security/policy), or [.NET Core Application Template](https://github.com/AsiBackbone/NetCoreApplicationTemplate/security/policy).
 

@@ -1,10 +1,10 @@
 blank_issues_enabled: true
 
 contact_links:
-  - name: Ask a cross-project question
+  - name: Ask a question
     url: https://github.com/orgs/AsiBackbone/discussions/categories/q-a
-    about: Use organization Q&A for questions that span repositories or concern AsiBackbone as a whole.
-  - name: Propose an organization-wide idea
+    about: Use the shared organization Q&A for project-specific and cross-project questions.
+  - name: Propose an idea
     url: https://github.com/orgs/AsiBackbone/discussions/categories/ideas
     about: Discuss a broad proposal before opening a concrete work item.
   - name: Discuss architecture and integration

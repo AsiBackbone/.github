@@ -25,9 +25,6 @@ $requiredContent = [ordered]@{
     'https://github.com/orgs/AsiBackbone/discussions/categories/q-a' = 'organization Q&A route'
     'https://github.com/orgs/AsiBackbone/discussions/categories/ideas' = 'organization Ideas route'
     'https://github.com/orgs/AsiBackbone/discussions/categories/architecture-integration' = 'organization architecture route'
-    'https://github.com/AsiBackbone/Learning/discussions' = 'Learning Discussions route'
-    'https://github.com/AsiBackbone/AsiBackbone/discussions' = 'AsiBackbone Discussions route'
-    'https://github.com/AsiBackbone/NetCoreApplicationTemplate/discussions' = 'template Discussions route'
     'https://github.com/AsiBackbone/Learning/blob/main/CONTRIBUTING.md' = 'Learning contribution route'
     'https://github.com/AsiBackbone/AsiBackbone/blob/main/CONTRIBUTING.md' = 'AsiBackbone contribution route'
     'https://github.com/AsiBackbone/NetCoreApplicationTemplate/blob/main/CONTRIBUTING.md' = 'template contribution route'
@@ -98,9 +95,10 @@ $communityContracts = [ordered]@{
         'Do not open a public issue or discussion containing passwords, tokens, personal information, exploit details, or other sensitive material.'
     )
     'SUPPORT.md' = @(
-        'https://github.com/AsiBackbone/Learning/discussions'
-        'https://github.com/AsiBackbone/AsiBackbone/discussions'
-        'https://github.com/AsiBackbone/NetCoreApplicationTemplate/discussions'
+        'https://github.com/orgs/AsiBackbone/discussions'
+        'https://github.com/orgs/AsiBackbone/discussions/categories/q-a'
+        'https://github.com/orgs/AsiBackbone/discussions/categories/ideas'
+        'https://github.com/orgs/AsiBackbone/discussions/categories/architecture-integration'
         'Do not disclose passwords, tokens, personal data, exploit details, or other sensitive material'
     )
     'SECURITY.md' = @(

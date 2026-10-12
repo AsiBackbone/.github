@@ -15,9 +15,8 @@ The three primary projects have tailored guidance:
 ## Choose the Right Starting Point
 
 - Use the affected repository's issue tracker for a reproducible defect or clearly scoped change.
-- Use the affected repository's Discussions for project-specific questions and support.
-- Use [organization Q&A](https://github.com/orgs/AsiBackbone/discussions/categories/q-a) when a question spans repositories or concerns AsiBackbone as a whole.
-- Use [Ideas](https://github.com/orgs/AsiBackbone/discussions/categories/ideas) or [Architecture & Integration](https://github.com/orgs/AsiBackbone/discussions/categories/architecture-integration) before investing in a broad or cross-project proposal.
+- Use [organization Q&A](https://github.com/orgs/AsiBackbone/discussions/categories/q-a) for project-specific and cross-project questions or support. Name the affected repository and version.
+- Use [Ideas](https://github.com/orgs/AsiBackbone/discussions/categories/ideas) or [Architecture & Integration](https://github.com/orgs/AsiBackbone/discussions/categories/architecture-integration) before investing in an open-ended proposal.
 
 Do not open a public issue or discussion containing passwords, tokens, personal information, exploit details, or other sensitive material. Follow [the security reporting guidance](SECURITY.md) instead.
 
