@@ -42,6 +42,70 @@ foreach ($entry in $requiredContent.GetEnumerator()) {
     }
 }
 
+foreach ($requiredText in @(
+    'https://asibackbone.github.io/'
+    '### [AsiBackbone Learning](https://github.com/AsiBackbone/Learning) — learn the patterns'
+    '### [AsiBackbone](https://github.com/AsiBackbone/AsiBackbone) — add governed decisions'
+    '### [.NET Core Application Template](https://github.com/AsiBackbone/NetCoreApplicationTemplate) — start a secure application'
+    '## Design Philosophy'
+    'We favor architectures where consequential operations are explicit, constrained, reviewable, and auditable.'
+    'https://doi.org/10.5281/zenodo.21938556'
+    'https://doi.org/10.5281/zenodo.20546032'
+    'https://doi.org/10.5281/zenodo.20373042'
+)) {
+    if (-not $profile.Contains($requiredText, [StringComparison]::Ordinal)) {
+        $failures.Add("profile/README.md is missing landing-page standard content: $requiredText")
+    }
+}
+
+if ($profile -match 'ASI Backbone') {
+    $failures.Add('profile/README.md uses the legacy "ASI Backbone" spelling; use the canonical project names from LANDING-PAGE-STANDARD.md.')
+}
+
+$standardPath = Join-Path $RepositoryRoot 'LANDING-PAGE-STANDARD.md'
+if (Test-Path -LiteralPath $standardPath -PathType Leaf) {
+    $standard = Get-Content -LiteralPath $standardPath -Raw
+    if ($standard -notmatch '(?m)^\*\*Version:\*\* \d+\.\d+\.\d+\s*$') {
+        $failures.Add('LANDING-PAGE-STANDARD.md must declare a semantic **Version:** line.')
+    }
+
+    $standardContent = @(
+        'https://github.com/AsiBackbone'
+        'https://asibackbone.github.io/'
+        'https://asibackbone.github.io/Learning/'
+        'https://asibackbone.github.io/AsiBackbone/'
+        'https://asibackbone.github.io/NetCoreApplicationTemplate/'
+        '## Required and optional sections'
+        '## 1. Ecosystem navigation contract'
+        '## 2. Hero contract'
+        '## 3. Start Here contract'
+        '## 4. Product-fit contract'
+        '## 5. Related Projects contract'
+        '## 6. Design Philosophy contract'
+        '## 7. Visual tokens and components'
+        '## 8. Footer contract'
+        '## 9. Accessibility and quality requirements'
+        '## 10. Drift prevention'
+        '## Validation checklist'
+        '## Rollout'
+        'We favor architectures where consequential operations are explicit, constrained, reviewable, and auditable.'
+        'https://github.com/AsiBackbone/.github/issues/16'
+        'https://github.com/AsiBackbone/.github/issues/17'
+        'https://github.com/AsiBackbone/.github/issues/18'
+    )
+    foreach ($requiredText in $standardContent) {
+        if (-not $standard.Contains($requiredText, [StringComparison]::Ordinal)) {
+            $failures.Add("LANDING-PAGE-STANDARD.md is missing required content: $requiredText")
+        }
+    }
+
+    foreach ($label in @('Organization', 'Learning', 'Community', 'Framework', 'Template', 'GitHub')) {
+        if ($standard -notmatch "(?m)^\| $label \| ") {
+            $failures.Add("LANDING-PAGE-STANDARD.md is missing the '$label' ecosystem navigation destination.")
+        }
+    }
+}
+
 if ($profile -match '(?i)(password|token|secret)\s*[:=]\s*\S+') {
     $failures.Add('profile/README.md appears to contain credential-like content.')
 }
@@ -60,6 +124,7 @@ $requiredFiles = @(
     'LICENSE'
     'LICENSE-CODE'
     'LICENSES.md'
+    'LANDING-PAGE-STANDARD.md'
     '.editorconfig'
     '.gitattributes'
     '.gitignore'
@@ -200,7 +265,7 @@ if ((Test-Path -LiteralPath $codeLicensePath) -and -not (Get-Content -LiteralPat
 $licenseScopePath = Join-Path $RepositoryRoot 'LICENSES.md'
 if (Test-Path -LiteralPath $licenseScopePath) {
     $licenseScope = Get-Content -LiteralPath $licenseScopePath -Raw
-    foreach ($requiredText in @('CC BY 4.0 content', 'root community health Markdown files', 'MIT-licensed source', '.github/ISSUE_TEMPLATE/config.yml', 'Brand, assets, and third-party boundaries', 'Contributions')) {
+    foreach ($requiredText in @('CC BY 4.0 content', 'root community health Markdown files', 'LANDING-PAGE-STANDARD.md', 'MIT-licensed source', '.github/ISSUE_TEMPLATE/config.yml', 'Brand, assets, and third-party boundaries', 'Contributions')) {
         if (-not $licenseScope.Contains($requiredText, [StringComparison]::Ordinal)) {
             $failures.Add("LICENSES.md is missing its '$requiredText' boundary.")
         }

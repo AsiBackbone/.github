@@ -4,7 +4,7 @@ This repository follows the AsiBackbone documentation/source boundary: content i
 
 ## CC BY 4.0 content
 
-The [Creative Commons Attribution 4.0 International license](LICENSE) applies to the organization-profile prose and other original editorial content in `profile/README.md`, `README.md`, the root community health Markdown files, and `.github/PULL_REQUEST_TEMPLATE.md`.
+The [Creative Commons Attribution 4.0 International license](LICENSE) applies to the organization-profile prose and other original editorial content in `profile/README.md`, `README.md`, `LANDING-PAGE-STANDARD.md`, the root community health Markdown files, and `.github/PULL_REQUEST_TEMPLATE.md`.
 
 When attribution is required, identify the work as **AsiBackbone organization profile content**, credit the AsiBackbone contributors, link to this repository, and note whether changes were made.
 
