@@ -1,6 +1,6 @@
 # AsiBackbone Landing-Page Standard
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Status:** Active
 **Contract issue:** [AsiBackbone/.github#15](https://github.com/AsiBackbone/.github/issues/15)
 
@@ -17,6 +17,13 @@ The standard uses semantic versioning:
 - **Patch:** wording, examples, or references change without changing a requirement.
 
 Implementations should record which version they were last reviewed against, for example in the pull request that applies the standard.
+
+### Change history
+
+| Version | Issue | Change |
+| --- | --- | --- |
+| 1.0.0 | [AsiBackbone/.github#15](https://github.com/AsiBackbone/.github/issues/15) | Initial standard. |
+| 1.1.0 | [AsiBackbone/.github#21](https://github.com/AsiBackbone/.github/issues/21) | Adds document-language, page-metadata, published-output, full-width DocFX homepage, and template-rendered skip-link requirements, and the scheduled published-site check. |
 
 ## Public surfaces
 
@@ -56,6 +63,8 @@ Project-specific sections may appear between Product fit and Related Projects. E
 - Template: At a Glance, generated application reference, deployment and operations, release and compatibility.
 
 Optional sections must not displace the required sections from the first screenful of the page on desktop: the hero and the start of Start Here should be visible without scrolling at a 1280×800 viewport.
+
+DocFX homepages disable the table-of-contents sidebar and the affix (`_disableToc: true` and `_disableAffix: true` in the homepage front matter) so the hero and Start Here use the full content width. Article pages keep their sidebar.
 
 ## 1. Ecosystem navigation contract
 
@@ -127,7 +136,8 @@ The three-project ecosystem uses the same names, roles, and destinations everywh
 
 Requirements:
 
-- Use the canonical names in headings and cards. "ASI Backbone" (with a space) is a legacy spelling; site titles such as "ASI Backbone Documentation" may be updated by the owning repository but are not part of this contract.
+- Use the canonical names in headings and cards. "ASI Backbone" (with a space) is a legacy spelling.
+- Site names use the canonical names too: the browser title suffix (DocFX `_appTitle`), the navbar brand (DocFX `_appName`), and `og:site_name` must not use the legacy spelling.
 - Each project card contains, in order: role label, project name as a heading linked to its documentation, a one- or two-sentence description, and links labelled `Documentation`, `Repository`, and `Archive (DOI)`.
 - On a product site, the card for the current project is either omitted or marked as the current site; it is never presented as an external destination.
 - Cards are `article` elements (or Markdown subsections on the profile) with a heading, so they are discoverable by heading navigation.
@@ -241,7 +251,8 @@ The footer may also include the non-affiliation notice ("not affiliated with the
 ## 9. Accessibility and quality requirements
 
 - **Landmarks:** one `header`, one `main` with an `id` targeted by a skip link, labelled `nav` landmarks, and one `footer`.
-- **Skip link:** the first focusable element moves focus to main content and is visible when focused.
+- **Document language:** the root element declares the page language, `<html lang="en">`. On DocFX sites set `"_lang": "en"` in `globalMetadata`.
+- **Skip link:** the first focusable element moves focus to main content and is visible when focused. It is rendered in the page's template markup, before the `header`, and targets the `main` element's `id`, so it works when JavaScript does not run. A script may enhance it but must not be the only thing that creates it.
 - **Headings:** exactly one `h1`; required sections are `h2`; cards inside a section are `h3`. No heading levels are skipped.
 - **Keyboard:** every action, card, disclosure, and navigation item is reachable and operable by keyboard in a logical order.
 - **Focus:** focus is always visible, using at least a 2px outline or ring in the focus role with offset, in both themes.
@@ -252,6 +263,23 @@ The footer may also include the non-affiliation notice ("not affiliated with the
 - **No hidden content for symmetry:** required content is not hidden, truncated, or moved behind a disclosure to make cards or columns equal height. Unequal cards are acceptable.
 - **Decorative images:** decorative images use empty `alt`; meaningful images have descriptive alternatives.
 
+### Page metadata
+
+Every HTML and DocFX surface publishes the following. Values are owned by each project and set in its own configuration (on DocFX sites, `globalMetadata` in `docs/docfx.json` and the homepage front matter); they are not copied from another project.
+
+- **Homepage title:** `<page title> | <site name>`, where the page title is a short positioning phrase that does not repeat the site name, and the whole title is at most 80 characters. On DocFX sites, set `title` in the homepage front matter and the site name in `_appTitle`.
+- **Description:** a homepage meta description of at most 160 characters (DocFX: `description` in the homepage front matter). Every page has a meta description.
+- **Canonical URL:** an absolute `<link rel="canonical">` on every page. Index pages use the directory form, so the homepage canonical is the site root (for example `https://asibackbone.github.io/AsiBackbone/`).
+- **Social preview:** `og:url`, `og:title`, `og:description`, `og:image`, `og:image:alt`, and a `twitter:card`. The image is an absolute URL to an image published by the same site.
+- **Structured data:** one JSON-LD `@graph` containing a `WebSite` node whose `url` is the site root, a `WebPage` node whose `url` is the canonical URL, and an `Organization` publisher named `AsiBackbone` with `url` `https://github.com/AsiBackbone`.
+
+Learning's `docs/templates/` is the reference implementation. Framework and Template implement the same output with a layout override and shared `site-metadata.common.js` extension in their own `docs/templates/` folders, which also cover generated API reference pages.
+
+### Published output
+
+- Internal build artifacts are not deployed. DocFX writes `manifest.json` to the build output; remove it before uploading the GitHub Pages artifact unless a consumer is documented in this standard.
+- Layout overrides of the DocFX `modern` template name the DocFX version they are based on, and a repository check fails when the pinned DocFX version moves without re-aligning the override.
+
 ## 10. Drift prevention
 
 Drift is controlled by a small set of automated checks owned by each repository and a periodic visual review.
@@ -261,13 +289,17 @@ Drift is controlled by a small set of automated checks owned by each repository 
 | Check | Surface | Where it runs |
 | --- | --- | --- |
 | Profile contains all ecosystem destinations, community routes, canonical project names, Design Philosophy statement, and license links | Profile | `scripts/Test-OrganizationProfile.ps1` in this repository |
-| This standard names all five surfaces, all ten contracts, the rollout issues, and the validation checklist | Standard | `scripts/Test-OrganizationProfile.ps1` in this repository |
+| This standard names all five surfaces, all ten contracts, the rollout issues, the page-metadata and published-output requirements, and the validation checklist | Standard | `scripts/Test-OrganizationProfile.ps1` in this repository |
 | Landing page contains required community and project routes, structured data, and sitemap entries | Organization landing page | `scripts/Test-LandingSite.ps1` in `asibackbone.github.io` |
 | Homepage source contains the six navigation destinations, the required section headings, and the Design Philosophy statement | Learning, Framework, Template | A repository-owned script or test added by each rollout issue |
+| Homepage front matter, `docfx.json`, and the layout override declare the document language, page metadata, full-width homepage, and template-rendered skip link; the built homepage contains them | Framework, Template | `scripts/Validate-LandingPage.ps1` in each repository |
+| Published homepages declare `lang="en"`, a concise non-duplicated title, the canonical URL, a social image, and JSON-LD; render the skip link without JavaScript; omit the sidebar; and do not serve `manifest.json` | Learning, Framework, Template | `scripts/Test-PublishedSites.ps1` in this repository, weekly and on demand through `.github/workflows/published-sites-validation.yml` |
 | DocFX build succeeds with warnings treated as errors where the repository already does so | Learning, Framework, Template | Each repository's documentation workflow |
 | Internal and external links resolve | All HTML and DocFX surfaces | Each repository's link checker (for example lychee) |
 
-Automated checks assert the presence of destinations and headings. They do not assert visual appearance.
+Automated checks assert the presence of destinations, headings, metadata, and served markup. They do not assert visual appearance, contrast, or focus behavior.
+
+The published-site check reads the deployed sites, so it runs on a schedule rather than as a required pull-request check; its self-test runs with the organization profile validation. A finding names the repository that owns the fix.
 
 ### Periodic visual review
 
@@ -290,6 +322,8 @@ Use this checklist for each surface. Mark not applicable items explicitly.
 - [ ] **Keyboard focus:** tab from the top of the page; the skip link appears first, every interactive element receives visible focus, and the order follows the visual order.
 - [ ] **Reduced motion:** with reduced motion emulated, cards and links do not animate.
 - [ ] **Headings and landmarks:** one `h1`, required sections as `h2`, labelled navigation landmarks, one `main`.
+- [ ] **Document language and metadata:** the page declares `lang="en"`; the title, description, canonical URL, social preview, and structured data meet [Page metadata](#page-metadata).
+- [ ] **Without JavaScript:** with scripts disabled, the skip link is present, moves focus to main content, and the homepage content is readable at full width.
 - [ ] **Internal links:** every relative link in the homepage source resolves in the build output.
 - [ ] **External links:** all six ecosystem destinations and the three project documentation, repository, and archive links resolve.
 - [ ] **DocFX build output (DocFX sites):** `docfx build` completes without new warnings, and `_site/index.html` contains the hero, Start Here, Product fit, Related Projects, and Design Philosophy sections.
@@ -318,6 +352,7 @@ Rollout order:
 3. **AsiBackbone** — adopt the Learning component vocabulary on the framework homepage: [AsiBackbone/.github#17](https://github.com/AsiBackbone/.github/issues/17).
 4. **NetCoreApplicationTemplate** — adopt the same vocabulary on the template homepage: [AsiBackbone/.github#18](https://github.com/AsiBackbone/.github/issues/18).
 5. **Organization landing page** — apply the review findings below in `asibackbone.github.io`.
+6. **Cross-site metadata and accessibility drift** — close the remaining DocFX output drift in Framework and Template and add the published-site check: [AsiBackbone/.github#21](https://github.com/AsiBackbone/.github/issues/21).
 
 Learning goes first because it already implements most of the DocFX contract; its components then become the copy source for steps 3 and 4.
 

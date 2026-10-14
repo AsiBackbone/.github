@@ -25,3 +25,7 @@ jobs:
       - name: Validate profile content
         shell: pwsh
         run: ./scripts/Test-OrganizationProfile.ps1
+
+      - name: Test published-site validator
+        shell: pwsh
+        run: ./scripts/Test-PublishedSites.ps1 -SelfTest
