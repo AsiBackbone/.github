@@ -92,6 +92,16 @@ if (Test-Path -LiteralPath $standardPath -PathType Leaf) {
         'https://github.com/AsiBackbone/.github/issues/16'
         'https://github.com/AsiBackbone/.github/issues/17'
         'https://github.com/AsiBackbone/.github/issues/18'
+        'https://github.com/AsiBackbone/.github/issues/21'
+        '### Page metadata'
+        '### Published output'
+        '<html lang="en">'
+        '`"_lang": "en"`'
+        '`_disableToc: true`'
+        'It is rendered in the page''s template markup, before the `header`'
+        'remove it before uploading the GitHub Pages artifact'
+        'scripts/Test-PublishedSites.ps1'
+        '.github/workflows/published-sites-validation.yml'
     )
     foreach ($requiredText in $standardContent) {
         if (-not $standard.Contains($requiredText, [StringComparison]::Ordinal)) {
@@ -139,6 +149,9 @@ $requiredFiles = @(
     '.github/workflows/codeql.yml'
     '.github/workflows/workflow-security.yml'
     '.github/workflows/openssf-scorecard.yml'
+    '.github/workflows/profile-validation.yml'
+    '.github/workflows/published-sites-validation.yml'
+    'scripts/Test-PublishedSites.ps1'
 )
 foreach ($relativePath in $requiredFiles) {
     if (-not (Test-Path -LiteralPath (Join-Path $RepositoryRoot $relativePath) -PathType Leaf)) {
@@ -219,6 +232,28 @@ $communityContracts = [ordered]@{
         'zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482'
         'advanced-security: true'
         'docker://rhysd/actionlint@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667'
+    )
+    '.github/workflows/profile-validation.yml' = @(
+        'pull_request:'
+        './scripts/Test-OrganizationProfile.ps1'
+        './scripts/Test-PublishedSites.ps1 -SelfTest'
+    )
+    '.github/workflows/published-sites-validation.yml' = @(
+        'name: Published documentation sites validation'
+        'schedule:'
+        'workflow_dispatch:'
+        'contents: read'
+        'persist-credentials: false'
+        './scripts/Test-PublishedSites.ps1'
+    )
+    'scripts/Test-PublishedSites.ps1' = @(
+        'https://asibackbone.github.io/Learning/'
+        'https://asibackbone.github.io/AsiBackbone/'
+        'https://asibackbone.github.io/NetCoreApplicationTemplate/'
+        'manifest.json'
+        'application/ld\+json'
+        'skip-link'
+        'docfx:tocrel'
     )
     '.github/workflows/openssf-scorecard.yml' = @(
         'name: OpenSSF Scorecard supply-chain security'

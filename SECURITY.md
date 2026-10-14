@@ -42,9 +42,10 @@ These projects do not provide end-to-end production security, legal assurance, r
 ## Repository Control Posture
 
 This repository publishes organization-profile content, default community files,
-GitHub Actions workflows, and one deterministic PowerShell validation script. It
-does not ship a service, library, parser, or other runtime that accepts untrusted
-application input.
+GitHub Actions workflows, a deterministic PowerShell validation script, and a
+scheduled PowerShell check that reads the public AsiBackbone documentation sites
+with read-only repository permissions. It does not ship a service, library,
+parser, or other runtime that accepts untrusted application input.
 
 - CodeQL analyzes every pull request and every push to `main` for vulnerabilities
   in GitHub Actions workflows. Zizmor and actionlint provide complementary
