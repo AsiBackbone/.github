@@ -8,7 +8,7 @@ The [landing-page standard](LANDING-PAGE-STANDARD.md) defines the shared navigat
 
 Changes to `main` use a squash-only pull-request flow with the deterministic `Validate organization profile` check. The recovery bypass remains restricted to pull requests so emergency repairs retain an auditable branch and merge record. The shared supporting-repository posture is documented in [`AsiBackbone/asibackbone.github.io`](https://github.com/AsiBackbone/asibackbone.github.io/blob/main/REPOSITORY-GOVERNANCE.md).
 
-A scheduled `Validate published documentation sites` workflow checks the deployed Learning, AsiBackbone, and .NET Core Application Template sites for the standard's document-language, page-metadata, skip-link, homepage-layout, and published-output requirements. It reads the live sites, so it reports drift for the owning repository to fix rather than gating changes here.
+A scheduled `Validate published documentation sites` workflow checks the deployed Learning, AsiBackbone, and .NET Core Application Template sites for the standard's document-language, page-metadata, skip-link, homepage-layout, and published-output requirements. It reads the live sites, so it reports drift for the owning repository to fix rather than gating changes here. A scheduled `Validate strict DocFX builds` workflow likewise reads the three repositories' workflow files and reports any DocFX build that does not run with `--warningsAsErrors`.
 
 GitHub Actions dependencies are maintained by Dependabot and reviewed by dependency-review, CodeQL, zizmor, actionlint, and OpenSSF Scorecard workflows using immutable action pins.
 

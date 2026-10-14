@@ -1,0 +1,39 @@
+name: Strict DocFX builds validation
+
+# Checks that every DocFX build in the Learning, AsiBackbone, and .NET Core
+# Application Template workflows runs with --warningsAsErrors, and that each
+# repository's required pull-request, release, and publication workflows still
+# build DocFX. Each repository also guards its own workflows on every pull
+# request; this scheduled check catches drift across the organization. Fix
+# findings in the repository named in the job summary.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Mondays at 13:27 UTC (08:27 America/Chicago during daylight saving time).
+    - cron: '27 13 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docfx-strict-builds-validation
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate strict DocFX builds
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Validate strict DocFX builds
+        shell: pwsh
+        env:
+          # Read-only token used only to raise the GitHub API rate limit for public workflow files.
+          GITHUB_TOKEN: ${{ github.token }}
+        run: ./scripts/Test-DocFxStrictBuilds.ps1

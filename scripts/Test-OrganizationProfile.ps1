@@ -102,10 +102,33 @@ if (Test-Path -LiteralPath $standardPath -PathType Leaf) {
         'remove it before uploading the GitHub Pages artifact'
         'scripts/Test-PublishedSites.ps1'
         '.github/workflows/published-sites-validation.yml'
+        'https://github.com/AsiBackbone/.github/issues/20'
+        '### Strict DocFX builds'
+        'scripts/Validate-DocFxStrictBuild.ps1'
+        'scripts/Test-DocFxStrictBuilds.ps1'
+        '.github/workflows/docfx-strict-builds-validation.yml'
     )
     foreach ($requiredText in $standardContent) {
         if (-not $standard.Contains($requiredText, [StringComparison]::Ordinal)) {
             $failures.Add("LANDING-PAGE-STANDARD.md is missing required content: $requiredText")
+        }
+    }
+
+    # The strict-build table in the standard and the conformance script must name the same workflows.
+    $strictScriptPath = Join-Path $RepositoryRoot 'scripts/Test-DocFxStrictBuilds.ps1'
+    $strictScript = if (Test-Path -LiteralPath $strictScriptPath -PathType Leaf) { Get-Content -LiteralPath $strictScriptPath -Raw } else { '' }
+    foreach ($site in @('Learning', 'Framework', 'Template')) {
+        $row = [regex]::Match($standard, "(?m)^\| $site \| \[``AsiBackbone/[^``]+``\]\([^)]+\) \| (?<workflows>``[^|]+``) \|\s*$")
+        if (-not $row.Success) {
+            $failures.Add("LANDING-PAGE-STANDARD.md is missing the '$site' row of the strict DocFX builds table.")
+            continue
+        }
+
+        $workflows = @([regex]::Matches($row.Groups['workflows'].Value, '`(?<name>[^`]+)`') | ForEach-Object { "'$($_.Groups['name'].Value)'" })
+        $expected = "RequiredWorkflows = @($($workflows -join ', '))"
+        $definition = [regex]::Match($strictScript, "(?s)\b$site = \[pscustomobject\]@\{.*?RequiredWorkflows = @\([^)]*\)")
+        if (-not $definition.Success -or -not $definition.Value.EndsWith($expected, [StringComparison]::Ordinal)) {
+            $failures.Add("scripts/Test-DocFxStrictBuilds.ps1 must define $site with $expected to match LANDING-PAGE-STANDARD.md.")
         }
     }
 
@@ -151,7 +174,9 @@ $requiredFiles = @(
     '.github/workflows/openssf-scorecard.yml'
     '.github/workflows/profile-validation.yml'
     '.github/workflows/published-sites-validation.yml'
+    '.github/workflows/docfx-strict-builds-validation.yml'
     'scripts/Test-PublishedSites.ps1'
+    'scripts/Test-DocFxStrictBuilds.ps1'
 )
 foreach ($relativePath in $requiredFiles) {
     if (-not (Test-Path -LiteralPath (Join-Path $RepositoryRoot $relativePath) -PathType Leaf)) {
@@ -237,6 +262,22 @@ $communityContracts = [ordered]@{
         'pull_request:'
         './scripts/Test-OrganizationProfile.ps1'
         './scripts/Test-PublishedSites.ps1 -SelfTest'
+        './scripts/Test-DocFxStrictBuilds.ps1 -SelfTest'
+    )
+    '.github/workflows/docfx-strict-builds-validation.yml' = @(
+        'name: Strict DocFX builds validation'
+        'schedule:'
+        'workflow_dispatch:'
+        'contents: read'
+        'persist-credentials: false'
+        'GITHUB_TOKEN: ${{ github.token }}'
+        './scripts/Test-DocFxStrictBuilds.ps1'
+    )
+    'scripts/Test-DocFxStrictBuilds.ps1' = @(
+        "Repository = 'AsiBackbone/Learning'"
+        "Repository = 'AsiBackbone/AsiBackbone'"
+        "Repository = 'AsiBackbone/NetCoreApplicationTemplate'"
+        '--warningsAsErrors'
     )
     '.github/workflows/published-sites-validation.yml' = @(
         'name: Published documentation sites validation'

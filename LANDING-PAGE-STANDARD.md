@@ -1,6 +1,6 @@
 # AsiBackbone Landing-Page Standard
 
-**Version:** 1.1.0
+**Version:** 1.2.0
 **Status:** Active
 **Contract issue:** [AsiBackbone/.github#15](https://github.com/AsiBackbone/.github/issues/15)
 
@@ -24,6 +24,7 @@ Implementations should record which version they were last reviewed against, for
 | --- | --- | --- |
 | 1.0.0 | [AsiBackbone/.github#15](https://github.com/AsiBackbone/.github/issues/15) | Initial standard. |
 | 1.1.0 | [AsiBackbone/.github#21](https://github.com/AsiBackbone/.github/issues/21) | Adds document-language, page-metadata, published-output, full-width DocFX homepage, and template-rendered skip-link requirements, and the scheduled published-site check. |
+| 1.2.0 | [AsiBackbone/.github#20](https://github.com/AsiBackbone/.github/issues/20) | Requires every DocFX build in pull-request, release, and publication workflows to fail on warnings, and adds per-repository and scheduled strict-build checks. |
 
 ## Public surfaces
 
@@ -294,12 +295,28 @@ Drift is controlled by a small set of automated checks owned by each repository 
 | Homepage source contains the six navigation destinations, the required section headings, and the Design Philosophy statement | Learning, Framework, Template | A repository-owned script or test added by each rollout issue |
 | Homepage front matter, `docfx.json`, and the layout override declare the document language, page metadata, full-width homepage, and template-rendered skip link; the built homepage contains them | Framework, Template | `scripts/Validate-LandingPage.ps1` in each repository |
 | Published homepages declare `lang="en"`, a concise non-duplicated title, the canonical URL, a social image, and JSON-LD; render the skip link without JavaScript; omit the sidebar; and do not serve `manifest.json` | Learning, Framework, Template | `scripts/Test-PublishedSites.ps1` in this repository, weekly and on demand through `.github/workflows/published-sites-validation.yml` |
-| DocFX build succeeds with warnings treated as errors where the repository already does so | Learning, Framework, Template | Each repository's documentation workflow |
+| Every DocFX build in a pull-request, release, or publication workflow runs with `--warningsAsErrors` | Learning, Framework, Template | Each repository's workflows (see [Strict DocFX builds](#strict-docfx-builds)) |
+| No workflow DocFX build drops `--warningsAsErrors`, and each required workflow still builds DocFX | Framework, Template | `scripts/Validate-DocFxStrictBuild.ps1` in each repository, on every pull request |
+| The same rule holds across all three DocFX sites, including newly added workflows | Learning, Framework, Template | `scripts/Test-DocFxStrictBuilds.ps1` in this repository, weekly and on demand through `.github/workflows/docfx-strict-builds-validation.yml` |
 | Internal and external links resolve | All HTML and DocFX surfaces | Each repository's link checker (for example lychee) |
 
 Automated checks assert the presence of destinations, headings, metadata, and served markup. They do not assert visual appearance, contrast, or focus behavior.
 
 The published-site check reads the deployed sites, so it runs on a schedule rather than as a required pull-request check; its self-test runs with the organization profile validation. A finding names the repository that owns the fix.
+
+### Strict DocFX builds
+
+A DocFX warning, such as a broken cross-reference, an unresolved link, or an invalid metadata source, means the published site differs from what the source describes. Every DocFX build that validates a pull request, validates a release, or publishes a site therefore runs with `--warningsAsErrors`, so a warning fails the workflow instead of publishing.
+
+The following workflows must build DocFX strictly. Adding a DocFX build to another workflow is allowed only if that build is strict too; removing a workflow from this table is a change to this standard.
+
+| Site | Repository | Workflows that must build DocFX with `--warningsAsErrors` |
+| --- | --- | --- |
+| Learning | [`AsiBackbone/Learning`](https://github.com/AsiBackbone/Learning) | `docs-validation.yml`, `publish-docs.yml`, `publish-release-evidence.yml` |
+| Framework | [`AsiBackbone/AsiBackbone`](https://github.com/AsiBackbone/AsiBackbone) | `ci.yml`, `publish-docs.yml`, `publish-packages.yml`, `publish-quality-reports.yml`, `release-validation.yml` |
+| Template | [`AsiBackbone/NetCoreApplicationTemplate`](https://github.com/AsiBackbone/NetCoreApplicationTemplate) | `link-validation.yml`, `publish-docs.yml` |
+
+Contributor documentation that shows how to build a site locally uses the same strict command, for example `dotnet tool run docfx -- docs/docfx.json --warningsAsErrors`. Local preview commands may add `--serve`. Dated release records keep the commands that were actually run.
 
 ### Periodic visual review
 
@@ -326,7 +343,7 @@ Use this checklist for each surface. Mark not applicable items explicitly.
 - [ ] **Without JavaScript:** with scripts disabled, the skip link is present, moves focus to main content, and the homepage content is readable at full width.
 - [ ] **Internal links:** every relative link in the homepage source resolves in the build output.
 - [ ] **External links:** all six ecosystem destinations and the three project documentation, repository, and archive links resolve.
-- [ ] **DocFX build output (DocFX sites):** `docfx build` completes without new warnings, and `_site/index.html` contains the hero, Start Here, Product fit, Related Projects, and Design Philosophy sections.
+- [ ] **DocFX build output (DocFX sites):** `docfx build` with `--warningsAsErrors` completes with no warnings, and `_site/index.html` contains the hero, Start Here, Product fit, Related Projects, and Design Philosophy sections.
 - [ ] **Published Pages rendering:** after deployment, the published URL renders the same content as the local build, with styles and theme switching working.
 
 ## Surface adaptations
@@ -353,6 +370,7 @@ Rollout order:
 4. **NetCoreApplicationTemplate** — adopt the same vocabulary on the template homepage: [AsiBackbone/.github#18](https://github.com/AsiBackbone/.github/issues/18).
 5. **Organization landing page** — apply the review findings below in `asibackbone.github.io`.
 6. **Cross-site metadata and accessibility drift** — close the remaining DocFX output drift in Framework and Template and add the published-site check: [AsiBackbone/.github#21](https://github.com/AsiBackbone/.github/issues/21).
+7. **Strict DocFX builds** — make every Framework and Template DocFX build fail on warnings, guard the rule in each repository and across the organization: [AsiBackbone/.github#20](https://github.com/AsiBackbone/.github/issues/20).
 
 Learning goes first because it already implements most of the DocFX contract; its components then become the copy source for steps 3 and 4.
 
