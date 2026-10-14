@@ -29,3 +29,7 @@ jobs:
       - name: Test published-site validator
         shell: pwsh
         run: ./scripts/Test-PublishedSites.ps1 -SelfTest
+
+      - name: Test strict DocFX build conformance validator
+        shell: pwsh
+        run: ./scripts/Test-DocFxStrictBuilds.ps1 -SelfTest
