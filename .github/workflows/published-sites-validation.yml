@@ -1,10 +1,10 @@
 name: Published documentation sites validation
 
-# Checks the deployed Learning, AsiBackbone, and .NET Core Application Template
-# DocFX sites against LANDING-PAGE-STANDARD.md. The sites are built and deployed
-# by their own repositories, so this is a scheduled drift check rather than a
-# required pull-request check. Fix findings in the repository named in the
-# job summary.
+# Checks the deployed Learning, AsiBackbone, .NET Core Application Template, and
+# Reference Application DocFX sites against LANDING-PAGE-STANDARD.md. The sites
+# are built and deployed by their own repositories, so this is a scheduled drift
+# check rather than a required pull-request check. Fix findings in the
+# repository named in the job summary.
 
 on:
   workflow_dispatch:

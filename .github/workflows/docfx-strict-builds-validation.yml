@@ -1,11 +1,12 @@
 name: Strict DocFX builds validation
 
-# Checks that every DocFX build in the Learning, AsiBackbone, and .NET Core
-# Application Template workflows runs with --warningsAsErrors, and that each
-# repository's required pull-request, release, and publication workflows still
-# build DocFX. Each repository also guards its own workflows on every pull
-# request; this scheduled check catches drift across the organization. Fix
-# findings in the repository named in the job summary.
+# Checks that every DocFX build in the Learning, AsiBackbone, .NET Core
+# Application Template, and Reference Application workflows runs with
+# --warningsAsErrors, and that each repository's required pull-request,
+# release, and publication workflows still build DocFX. Each repository also
+# guards its own workflows on every pull request; this scheduled check catches
+# drift across the organization. Fix findings in the repository named in the
+# job summary.
 
 on:
   workflow_dispatch:

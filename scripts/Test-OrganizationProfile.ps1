@@ -21,6 +21,8 @@ $requiredContent = [ordered]@{
     'https://asibackbone.github.io/AsiBackbone/' = 'AsiBackbone documentation link'
     'https://github.com/AsiBackbone/NetCoreApplicationTemplate' = 'NetCoreApplicationTemplate repository link'
     'https://asibackbone.github.io/NetCoreApplicationTemplate/' = 'NetCoreApplicationTemplate documentation link'
+    'https://github.com/AsiBackbone/ReferenceApplication' = 'ReferenceApplication repository link'
+    'https://asibackbone.github.io/ReferenceApplication/' = 'ReferenceApplication documentation link'
     '## Learn, Ask, and Contribute' = 'community-routing section'
     'https://github.com/orgs/AsiBackbone/discussions/categories/q-a' = 'organization Q&A route'
     'https://github.com/orgs/AsiBackbone/discussions/categories/ideas' = 'organization Ideas route'
@@ -35,6 +37,44 @@ $requiredContent = [ordered]@{
     'https://github.com/AsiBackbone/.github/blob/main/LICENSES.md' = 'licensing boundary link'
 }
 
+# Canonical project order (LANDING-PAGE-STANDARD.md, Related Projects contract): Learn → Framework → Template → Reference.
+$profileProjectHeadings = @(
+    '### [AsiBackbone Learning](https://github.com/AsiBackbone/Learning) — learn the patterns'
+    '### [AsiBackbone](https://github.com/AsiBackbone/AsiBackbone) — add governed decisions'
+    '### [.NET Core Application Template](https://github.com/AsiBackbone/NetCoreApplicationTemplate) — start a secure application'
+    '### [AsiBackbone Reference Application](https://github.com/AsiBackbone/ReferenceApplication) — follow the integration'
+)
+$standardProjectRows = @(
+    '| AsiBackbone Learning | Learn the patterns |'
+    '| AsiBackbone | Add governed decisions |'
+    '| .NET Core Application Template | Start a secure application |'
+    '| AsiBackbone Reference Application | Follow the integration |'
+)
+
+function Test-CanonicalOrder {
+    param(
+        [string]$Content,
+        [string[]]$Markers,
+        [string]$Source,
+        [AllowEmptyCollection()][System.Collections.Generic.List[string]]$Failures
+    )
+
+    $previous = -1
+    foreach ($marker in $Markers) {
+        $index = $Content.IndexOf($marker, [StringComparison]::Ordinal)
+        if ($index -lt 0) {
+            continue
+        }
+
+        if ($index -lt $previous) {
+            $Failures.Add("$Source lists the projects out of canonical order (Learn → Framework → Template → Reference): '$marker' appears too early.")
+            return
+        }
+
+        $previous = $index
+    }
+}
+
 $failures = [System.Collections.Generic.List[string]]::new()
 foreach ($entry in $requiredContent.GetEnumerator()) {
     if (-not $profile.Contains($entry.Key, [StringComparison]::Ordinal)) {
@@ -44,9 +84,7 @@ foreach ($entry in $requiredContent.GetEnumerator()) {
 
 foreach ($requiredText in @(
     'https://asibackbone.github.io/'
-    '### [AsiBackbone Learning](https://github.com/AsiBackbone/Learning) — learn the patterns'
-    '### [AsiBackbone](https://github.com/AsiBackbone/AsiBackbone) — add governed decisions'
-    '### [.NET Core Application Template](https://github.com/AsiBackbone/NetCoreApplicationTemplate) — start a secure application'
+    $profileProjectHeadings
     '## Design Philosophy'
     'We favor architectures where consequential operations are explicit, constrained, reviewable, and auditable.'
     'https://doi.org/10.5281/zenodo.21938556'
@@ -57,6 +95,8 @@ foreach ($requiredText in @(
         $failures.Add("profile/README.md is missing landing-page standard content: $requiredText")
     }
 }
+
+Test-CanonicalOrder -Content $profile -Markers $profileProjectHeadings -Source 'profile/README.md' -Failures $failures
 
 if ($profile -match 'ASI Backbone') {
     $failures.Add('profile/README.md uses the legacy "ASI Backbone" spelling; use the canonical project names from LANDING-PAGE-STANDARD.md.')
@@ -75,6 +115,8 @@ if (Test-Path -LiteralPath $standardPath -PathType Leaf) {
         'https://asibackbone.github.io/Learning/'
         'https://asibackbone.github.io/AsiBackbone/'
         'https://asibackbone.github.io/NetCoreApplicationTemplate/'
+        'https://asibackbone.github.io/ReferenceApplication/'
+        'https://github.com/AsiBackbone/ReferenceApplication'
         '## Required and optional sections'
         '## 1. Ecosystem navigation contract'
         '## 2. Hero contract'
@@ -107,6 +149,11 @@ if (Test-Path -LiteralPath $standardPath -PathType Leaf) {
         'scripts/Validate-DocFxStrictBuild.ps1'
         'scripts/Test-DocFxStrictBuilds.ps1'
         '.github/workflows/docfx-strict-builds-validation.yml'
+        'https://github.com/AsiBackbone/ReferenceApplication/issues/7'
+        '**Canonical order:**'
+        'aria-current="page"'
+        '## Baseline review: Reference'
+        $standardProjectRows
     )
     foreach ($requiredText in $standardContent) {
         if (-not $standard.Contains($requiredText, [StringComparison]::Ordinal)) {
@@ -114,10 +161,18 @@ if (Test-Path -LiteralPath $standardPath -PathType Leaf) {
         }
     }
 
+    Test-CanonicalOrder -Content $standard -Markers $standardProjectRows -Source 'LANDING-PAGE-STANDARD.md (Related Projects)' -Failures $failures
+
+    foreach ($surface in @('Organization profile', 'Organization landing page', 'Learning', 'Framework', 'Template', 'Reference')) {
+        if ($standard -notmatch "(?m)^\| $([regex]::Escape($surface)) \| <https://") {
+            $failures.Add("LANDING-PAGE-STANDARD.md is missing the '$surface' public surface.")
+        }
+    }
+
     # The strict-build table in the standard and the conformance script must name the same workflows.
     $strictScriptPath = Join-Path $RepositoryRoot 'scripts/Test-DocFxStrictBuilds.ps1'
     $strictScript = if (Test-Path -LiteralPath $strictScriptPath -PathType Leaf) { Get-Content -LiteralPath $strictScriptPath -Raw } else { '' }
-    foreach ($site in @('Learning', 'Framework', 'Template')) {
+    foreach ($site in @('Learning', 'Framework', 'Template', 'Reference')) {
         $row = [regex]::Match($standard, "(?m)^\| $site \| \[``AsiBackbone/[^``]+``\]\([^)]+\) \| (?<workflows>``[^|]+``) \|\s*$")
         if (-not $row.Success) {
             $failures.Add("LANDING-PAGE-STANDARD.md is missing the '$site' row of the strict DocFX builds table.")
@@ -132,7 +187,7 @@ if (Test-Path -LiteralPath $standardPath -PathType Leaf) {
         }
     }
 
-    foreach ($label in @('Organization', 'Learning', 'Community', 'Framework', 'Template', 'GitHub')) {
+    foreach ($label in @('Organization', 'Learning', 'Community', 'Framework', 'Template', 'Reference', 'GitHub')) {
         if ($standard -notmatch "(?m)^\| $label \| ") {
             $failures.Add("LANDING-PAGE-STANDARD.md is missing the '$label' ecosystem navigation destination.")
         }
@@ -277,6 +332,7 @@ $communityContracts = [ordered]@{
         "Repository = 'AsiBackbone/Learning'"
         "Repository = 'AsiBackbone/AsiBackbone'"
         "Repository = 'AsiBackbone/NetCoreApplicationTemplate'"
+        "Repository = 'AsiBackbone/ReferenceApplication'"
         '--warningsAsErrors'
     )
     '.github/workflows/published-sites-validation.yml' = @(
@@ -291,6 +347,7 @@ $communityContracts = [ordered]@{
         'https://asibackbone.github.io/Learning/'
         'https://asibackbone.github.io/AsiBackbone/'
         'https://asibackbone.github.io/NetCoreApplicationTemplate/'
+        'https://asibackbone.github.io/ReferenceApplication/'
         'manifest.json'
         'application/ld\+json'
         'skip-link'
