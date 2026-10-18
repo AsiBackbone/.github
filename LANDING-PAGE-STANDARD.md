@@ -1,6 +1,6 @@
 # AsiBackbone Landing-Page Standard
 
-**Version:** 1.2.0
+**Version:** 2.0.0
 **Status:** Active
 **Contract issue:** [AsiBackbone/.github#15](https://github.com/AsiBackbone/.github/issues/15)
 
@@ -25,6 +25,7 @@ Implementations should record which version they were last reviewed against, for
 | 1.0.0 | [AsiBackbone/.github#15](https://github.com/AsiBackbone/.github/issues/15) | Initial standard. |
 | 1.1.0 | [AsiBackbone/.github#21](https://github.com/AsiBackbone/.github/issues/21) | Adds document-language, page-metadata, published-output, full-width DocFX homepage, and template-rendered skip-link requirements, and the scheduled published-site check. |
 | 1.2.0 | [AsiBackbone/.github#20](https://github.com/AsiBackbone/.github/issues/20) | Requires every DocFX build in pull-request, release, and publication workflows to fail on warnings, and adds per-repository and scheduled strict-build checks. |
+| 2.0.0 | [AsiBackbone/ReferenceApplication#7](https://github.com/AsiBackbone/ReferenceApplication/issues/7) | Adds the Reference Application as a sixth surface, a `Reference` ecosystem navigation destination, and a fourth Related Projects entry; requires the canonical project order Learn → Framework → Template → Reference on every surface and defines how a current-site card is marked; extends the profile, published-site, and strict-build checks to Reference. |
 
 ## Public surfaces
 
@@ -35,16 +36,17 @@ Implementations should record which version they were last reviewed against, for
 | Learning | <https://asibackbone.github.io/Learning/> | DocFX `modern` template with custom template overrides | [`AsiBackbone/Learning`](https://github.com/AsiBackbone/Learning) |
 | Framework | <https://asibackbone.github.io/AsiBackbone/> | DocFX `modern` template | [`AsiBackbone/AsiBackbone`](https://github.com/AsiBackbone/AsiBackbone) |
 | Template | <https://asibackbone.github.io/NetCoreApplicationTemplate/> | DocFX `modern` template | [`AsiBackbone/NetCoreApplicationTemplate`](https://github.com/AsiBackbone/NetCoreApplicationTemplate) |
+| Reference | <https://asibackbone.github.io/ReferenceApplication/> | DocFX `modern` template with custom template overrides | [`AsiBackbone/ReferenceApplication`](https://github.com/AsiBackbone/ReferenceApplication) |
 
 ## Baselines
 
 - **Semantic baseline:** the organization landing page and organization profile. Their problem-first positioning, Start Here routing, ecosystem cards, simpler-alternative guidance, and practical architectural voice define the shared content model.
-- **DocFX visual baseline:** Learning. Its homepage hero, calls to action, entry-point cards, learning-path cards, skip link, reduced-motion handling, and light/dark support (`docs/index.md` and `docs/templates/` in the Learning repository) are the reference implementation for DocFX sites. Framework and Template should reuse that vocabulary rather than invent another.
+- **DocFX visual baseline:** Learning. Its homepage hero, calls to action, entry-point cards, learning-path cards, skip link, reduced-motion handling, and light/dark support (`docs/index.md` and `docs/templates/` in the Learning repository) are the reference implementation for DocFX sites. Framework, Template, and Reference should reuse that vocabulary rather than invent another.
 - **Product-fit baseline:** AsiBackbone's [Adoption and Target Use Cases](https://asibackbone.github.io/AsiBackbone/articles/use-cases.html), with its "Good product fit" and "Poor product fit" sections, and Learning's [When ASP.NET Core Authorization Is Enough](https://asibackbone.github.io/Learning/architecture/when-aspnet-core-authorization-is-enough.html) and [When a Simple Application Service Is Enough](https://asibackbone.github.io/Learning/architecture/when-a-simple-application-service-is-enough.html). These pages are referenced, not recreated.
 
 ## Required and optional sections
 
-A product landing page (Learning, Framework, Template) contains the required sections in this order. The organization landing page and profile follow the same order where their platform allows it; their substitutions are listed in [Surface adaptations](#surface-adaptations).
+A product landing page (Learning, Framework, Template, Reference) contains the required sections in this order. The organization landing page and profile follow the same order where their platform allows it; their substitutions are listed in [Surface adaptations](#surface-adaptations).
 
 | Order | Section | Requirement |
 | --- | --- | --- |
@@ -61,7 +63,8 @@ Project-specific sections may appear between Product fit and Related Projects. E
 
 - Learning: core model flow, learning paths, how Learning works, recently added, scope and limitations;
 - Framework: current stable package family, product documentation map;
-- Template: At a Glance, generated application reference, deployment and operations, release and compatibility.
+- Template: At a Glance, generated application reference, deployment and operations, release and compatibility;
+- Reference: At a Glance, integration status.
 
 Optional sections must not displace the required sections from the first screenful of the page on desktop: the hero and the start of Start Here should be visible without scrolling at a 1280×800 viewport.
 
@@ -69,7 +72,7 @@ DocFX homepages disable the table-of-contents sidebar and the affix (`_disableTo
 
 ## 1. Ecosystem navigation contract
 
-Every surface exposes the same six destinations with the same labels:
+Every surface exposes the same seven destinations with the same labels:
 
 | Label | Destination | Notes |
 | --- | --- | --- |
@@ -78,6 +81,7 @@ Every surface exposes the same six destinations with the same labels:
 | Community | `https://asibackbone.github.io/#community` | The organization landing page may use the in-page anchor `#community`. |
 | Framework | `https://asibackbone.github.io/AsiBackbone/` | |
 | Template | `https://asibackbone.github.io/NetCoreApplicationTemplate/` | |
+| Reference | `https://asibackbone.github.io/ReferenceApplication/` | |
 | GitHub | `https://github.com/AsiBackbone` | The organization, not a single repository. |
 
 Requirements:
@@ -86,8 +90,8 @@ Requirements:
 - The current site is identified with `aria-current="page"` or the platform's equivalent active state where the platform permits it.
 - The ecosystem navigation is a labelled navigation landmark (for example `aria-label="AsiBackbone sites"`) on HTML surfaces.
 - Navigation remains reachable on mobile. It may collapse into a disclosure control, but it must not be removed with `display: none` without an accessible alternative.
-- **DocFX adaptation:** add a top-level `AsiBackbone` (or `Resources`) entry in `toc.yml` whose items use the six labels above, plus a link to the site's own repository. The repository link is in addition to, not a replacement for, `GitHub`.
-- **Profile adaptation:** GitHub profile Markdown cannot host a navigation landmark. The profile satisfies this contract by linking Organization, Learning, Framework, and Template in its body. Its "Learn, Ask, and Contribute" routes to organization Discussions stand in for Community, and the profile is itself the GitHub destination.
+- **DocFX adaptation:** add a top-level `AsiBackbone` (or `Resources`) entry in `toc.yml` whose items use the seven labels above, plus a link to the site's own repository. The repository link is in addition to, not a replacement for, `GitHub`.
+- **Profile adaptation:** GitHub profile Markdown cannot host a navigation landmark. The profile satisfies this contract by linking Organization, Learning, Framework, Template, and Reference in its body. Its "Learn, Ask, and Contribute" routes to organization Discussions stand in for Community, and the profile is itself the GitHub destination.
 
 ## 2. Hero contract
 
@@ -122,25 +126,29 @@ Requirements:
 - The section links to the canonical fit guidance instead of duplicating it:
   - Learning: the "when it is enough" architecture pages listed in [Baselines](#baselines), and the statement that Learning does not require installing the package;
   - Framework: [Adoption and Target Use Cases](https://asibackbone.github.io/AsiBackbone/articles/use-cases.html);
-  - Template: the template's own guidance on when plain `dotnet new webapp` or `dotnet new webapi` is sufficient. If that page does not yet exist, creating it is part of the Template rollout issue.
+  - Template: the template's own guidance on when plain `dotnet new webapp` or `dotnet new webapi` is sufficient. If that page does not yet exist, creating it is part of the Template rollout issue;
+  - Reference: the "when it is enough" architecture pages listed in [Baselines](#baselines) for readers still deciding whether to adopt governance, Learning for readers who need the concepts, and the Framework and Template documentation as the authority for their own features. The section also states that the Reference Application is an example, not a product, and that its sample rules are not recommendations for any specific domain.
 - The organization landing page and profile satisfy this contract through the Design Philosophy section's links to simpler-alternative guidance.
 
 ## 5. Related Projects contract
 
-The three-project ecosystem uses the same names, roles, and destinations everywhere:
+The four-project ecosystem uses the same names, roles, and destinations everywhere, listed here in canonical order:
 
 | Canonical name | Role label | Documentation | Repository | Archive |
 | --- | --- | --- | --- | --- |
 | AsiBackbone Learning | Learn the patterns | `https://asibackbone.github.io/Learning/` | `https://github.com/AsiBackbone/Learning` | `https://doi.org/10.5281/zenodo.21938556` |
 | AsiBackbone | Add governed decisions | `https://asibackbone.github.io/AsiBackbone/` | `https://github.com/AsiBackbone/AsiBackbone` | `https://doi.org/10.5281/zenodo.20546032` |
 | .NET Core Application Template | Start a secure application | `https://asibackbone.github.io/NetCoreApplicationTemplate/` | `https://github.com/AsiBackbone/NetCoreApplicationTemplate` | `https://doi.org/10.5281/zenodo.20373042` |
+| AsiBackbone Reference Application | Follow the integration | `https://asibackbone.github.io/ReferenceApplication/` | `https://github.com/AsiBackbone/ReferenceApplication` | None yet |
 
 Requirements:
 
 - Use the canonical names in headings and cards. "ASI Backbone" (with a space) is a legacy spelling.
 - Site names use the canonical names too: the browser title suffix (DocFX `_appTitle`), the navbar brand (DocFX `_appName`), and `og:site_name` must not use the legacy spelling.
-- Each project card contains, in order: role label, project name as a heading linked to its documentation, a one- or two-sentence description, and links labelled `Documentation`, `Repository`, and `Archive (DOI)`.
+- **Canonical order:** project cards, profile subsections, and any other list of the projects appear in the order of the table above: Learn → Framework → Template → Reference. The order runs from understanding the patterns, to the framework, to the template, to the example that combines them. A surface that omits a card keeps the remaining cards in this order.
+- Each project card contains, in order: role label, project name as a heading linked to its documentation, a one- or two-sentence description, and links labelled `Documentation`, `Repository`, and `Archive (DOI)`. The `Archive (DOI)` link is omitted while a project has no published archive and added when one is published.
 - On a product site, the card for the current project is either omitted or marked as the current site; it is never presented as an external destination.
+- A current-site card keeps its canonical position and is marked as follows: the `article` carries `aria-current="page"`; the heading is not a link and is followed by a visible "Current site" label; and the `Documentation` link is omitted so the card does not link to the page the reader is on. The `Repository` and `Archive (DOI)` links remain.
 - Cards are `article` elements (or Markdown subsections on the profile) with a heading, so they are discoverable by heading navigation.
 - Descriptions are owned by each project. The organization surfaces use the descriptions from the projects' own README or homepage, shortened if needed, rather than inventing new claims.
 
@@ -289,15 +297,15 @@ Drift is controlled by a small set of automated checks owned by each repository 
 
 | Check | Surface | Where it runs |
 | --- | --- | --- |
-| Profile contains all ecosystem destinations, community routes, canonical project names, Design Philosophy statement, and license links | Profile | `scripts/Test-OrganizationProfile.ps1` in this repository |
-| This standard names all five surfaces, all ten contracts, the rollout issues, the page-metadata and published-output requirements, and the validation checklist | Standard | `scripts/Test-OrganizationProfile.ps1` in this repository |
+| Profile contains all ecosystem destinations, community routes, canonical project names in canonical order, Design Philosophy statement, and license links | Profile | `scripts/Test-OrganizationProfile.ps1` in this repository |
+| This standard names all six surfaces, all seven ecosystem destinations, all ten contracts, the rollout issues, the page-metadata and published-output requirements, and the validation checklist, and lists the Related Projects in canonical order | Standard | `scripts/Test-OrganizationProfile.ps1` in this repository |
 | Landing page contains required community and project routes, structured data, and sitemap entries | Organization landing page | `scripts/Test-LandingSite.ps1` in `asibackbone.github.io` |
-| Homepage source contains the six navigation destinations, the required section headings, and the Design Philosophy statement | Learning, Framework, Template | A repository-owned script or test added by each rollout issue |
-| Homepage front matter, `docfx.json`, and the layout override declare the document language, page metadata, full-width homepage, and template-rendered skip link; the built homepage contains them | Framework, Template | `scripts/Validate-LandingPage.ps1` in each repository |
-| Published homepages declare `lang="en"`, a concise non-duplicated title, the canonical URL, a social image, and JSON-LD; render the skip link without JavaScript; omit the sidebar; and do not serve `manifest.json` | Learning, Framework, Template | `scripts/Test-PublishedSites.ps1` in this repository, weekly and on demand through `.github/workflows/published-sites-validation.yml` |
-| Every DocFX build in a pull-request, release, or publication workflow runs with `--warningsAsErrors` | Learning, Framework, Template | Each repository's workflows (see [Strict DocFX builds](#strict-docfx-builds)) |
-| No workflow DocFX build drops `--warningsAsErrors`, and each required workflow still builds DocFX | Framework, Template | `scripts/Validate-DocFxStrictBuild.ps1` in each repository, on every pull request |
-| The same rule holds across all three DocFX sites, including newly added workflows | Learning, Framework, Template | `scripts/Test-DocFxStrictBuilds.ps1` in this repository, weekly and on demand through `.github/workflows/docfx-strict-builds-validation.yml` |
+| Homepage source contains the seven navigation destinations, the required section headings, and the Design Philosophy statement | Learning, Framework, Template, Reference | A repository-owned script or test added by each rollout issue |
+| Homepage front matter, `docfx.json`, and the layout override declare the document language, page metadata, full-width homepage, and template-rendered skip link; the built homepage contains them | Framework, Template, Reference | `scripts/Validate-LandingPage.ps1` in each repository |
+| Published homepages declare `lang="en"`, a concise non-duplicated title, the canonical URL, a social image, and JSON-LD; render the skip link without JavaScript; omit the sidebar; and do not serve `manifest.json` | Learning, Framework, Template, Reference | `scripts/Test-PublishedSites.ps1` in this repository, weekly and on demand through `.github/workflows/published-sites-validation.yml` |
+| Every DocFX build in a pull-request, release, or publication workflow runs with `--warningsAsErrors` | Learning, Framework, Template, Reference | Each repository's workflows (see [Strict DocFX builds](#strict-docfx-builds)) |
+| No workflow DocFX build drops `--warningsAsErrors`, and each required workflow still builds DocFX | Framework, Template, Reference | `scripts/Validate-DocFxStrictBuild.ps1` in each repository, on every pull request |
+| The same rule holds across all four DocFX sites, including newly added workflows | Learning, Framework, Template, Reference | `scripts/Test-DocFxStrictBuilds.ps1` in this repository, weekly and on demand through `.github/workflows/docfx-strict-builds-validation.yml` |
 | Internal and external links resolve | All HTML and DocFX surfaces | Each repository's link checker (for example lychee) |
 
 Automated checks assert the presence of destinations, headings, metadata, and served markup. They do not assert visual appearance, contrast, or focus behavior.
@@ -315,6 +323,7 @@ The following workflows must build DocFX strictly. Adding a DocFX build to anoth
 | Learning | [`AsiBackbone/Learning`](https://github.com/AsiBackbone/Learning) | `docs-validation.yml`, `publish-docs.yml`, `publish-release-evidence.yml` |
 | Framework | [`AsiBackbone/AsiBackbone`](https://github.com/AsiBackbone/AsiBackbone) | `ci.yml`, `publish-docs.yml`, `publish-packages.yml`, `publish-quality-reports.yml`, `release-validation.yml` |
 | Template | [`AsiBackbone/NetCoreApplicationTemplate`](https://github.com/AsiBackbone/NetCoreApplicationTemplate) | `link-validation.yml`, `publish-docs.yml` |
+| Reference | [`AsiBackbone/ReferenceApplication`](https://github.com/AsiBackbone/ReferenceApplication) | `publish-docs.yml` |
 
 Contributor documentation that shows how to build a site locally uses the same strict command, for example `dotnet tool run docfx -- docs/docfx.json --warningsAsErrors`. Local preview commands may add `--serve`. Dated release records keep the commands that were actually run.
 
@@ -341,8 +350,9 @@ Use this checklist for each surface. Mark not applicable items explicitly.
 - [ ] **Headings and landmarks:** one `h1`, required sections as `h2`, labelled navigation landmarks, one `main`.
 - [ ] **Document language and metadata:** the page declares `lang="en"`; the title, description, canonical URL, social preview, and structured data meet [Page metadata](#page-metadata).
 - [ ] **Without JavaScript:** with scripts disabled, the skip link is present, moves focus to main content, and the homepage content is readable at full width.
+- [ ] **Project order:** project cards follow the canonical order Learn → Framework → Template → Reference, and a current-site card is marked as the [Related Projects contract](#5-related-projects-contract) requires.
 - [ ] **Internal links:** every relative link in the homepage source resolves in the build output.
-- [ ] **External links:** all six ecosystem destinations and the three project documentation, repository, and archive links resolve.
+- [ ] **External links:** all seven ecosystem destinations and the four projects' documentation, repository, and published archive links resolve.
 - [ ] **DocFX build output (DocFX sites):** `docfx build` with `--warningsAsErrors` completes with no warnings, and `_site/index.html` contains the hero, Start Here, Product fit, Related Projects, and Design Philosophy sections.
 - [ ] **Published Pages rendering:** after deployment, the published URL renders the same content as the local build, with styles and theme switching working.
 
@@ -350,7 +360,7 @@ Use this checklist for each surface. Mark not applicable items explicitly.
 
 | Contract | Organization profile | Organization landing page |
 | --- | --- | --- |
-| Ecosystem navigation | Destinations linked in the body; Discussions routes stand in for Community | Header `nav` with Learning, Community, Framework, Template, GitHub; brand link is Organization |
+| Ecosystem navigation | Destinations linked in the body; Discussions routes stand in for Community | Header `nav` with Learning, Community, Framework, Template, Reference, GitHub; brand link is Organization |
 | Hero | Opening paragraphs | Hero section |
 | Start Here | "Learn, Ask, and Contribute" routes and "Start Here" project sections | "Learn, ask, and contribute" route cards and "Start here" project cards |
 | Product fit | Design Philosophy links to simpler-alternative pages | Design Philosophy links to simpler-alternative pages |
@@ -371,6 +381,7 @@ Rollout order:
 5. **Organization landing page** — apply the review findings below in `asibackbone.github.io`.
 6. **Cross-site metadata and accessibility drift** — close the remaining DocFX output drift in Framework and Template and add the published-site check: [AsiBackbone/.github#21](https://github.com/AsiBackbone/.github/issues/21).
 7. **Strict DocFX builds** — make every Framework and Template DocFX build fail on warnings, guard the rule in each repository and across the organization: [AsiBackbone/.github#20](https://github.com/AsiBackbone/.github/issues/20).
+8. **Reference Application and canonical project order** — add Reference to this standard, the organization profile, and the organization checks: [AsiBackbone/ReferenceApplication#7](https://github.com/AsiBackbone/ReferenceApplication/issues/7). Follow-up rollout: close the gaps in [Baseline review: Reference](#baseline-review-reference), and add the `Reference` destination and project card, in canonical order, to the organization landing page, Learning, Framework, and Template.
 
 Learning goes first because it already implements most of the DocFX contract; its components then become the copy source for steps 3 and 4.
 
@@ -391,6 +402,16 @@ The landing page satisfies the hero, Start Here, Related Projects, Design Philos
 - The header navigation is hidden with `display: none` below `36rem` and has no mobile alternative (Ecosystem navigation contract; Accessibility: mobile layout).
 - The footer does not link the landing page's own repository, organization Discussions, or license files (Footer contract).
 - The header navigation does not mark the current site with `aria-current` (Ecosystem navigation contract).
+
+## Baseline review: Reference
+
+Reviewed against version 2.0.0 of this standard, from the [Reference homepage](https://asibackbone.github.io/ReferenceApplication/) and `docs/` in [`AsiBackbone/ReferenceApplication`](https://github.com/AsiBackbone/ReferenceApplication).
+
+The homepage satisfies the hero, Start Here, Product-fit, Related Projects, Design Philosophy, footer, page-metadata, and published-output contracts. Its project cards follow the canonical order, its own card is marked as the current site, and `publish-docs.yml` builds DocFX with `--warningsAsErrors`. Remaining mismatches, to be fixed in that repository:
+
+- The `toc.yml` ecosystem entry labels the current site "Reference Application" instead of `Reference` (Ecosystem navigation contract).
+- No `scripts/Validate-DocFxStrictBuild.ps1` guard runs on pull requests (Strict DocFX builds).
+- No archive DOI is published yet. Until one is, the Related Projects entry has no `Archive (DOI)` link; when it is, this standard and the profile add it.
 
 ## Non-goals
 

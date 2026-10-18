@@ -2,7 +2,7 @@
 
 Most applications don't need a governance layer. When you do need one — when you have to explain why an operation was permitted, under which policy, with what evidence — these are the patterns and the working implementations.
 
-The organization maintains three related projects covering policy-as-code, auditable decision systems, capability-based authorization, host-owned execution boundaries, AI governance, and secure ASP.NET Core application architecture. The [organization site](https://asibackbone.github.io/) gives an overview of all three.
+The organization maintains three related projects covering policy-as-code, auditable decision systems, capability-based authorization, host-owned execution boundaries, AI governance, and secure ASP.NET Core application architecture, plus a reference application that combines them. The [organization site](https://asibackbone.github.io/) gives an overview of all four.
 
 ## Learn, Ask, and Contribute
 
@@ -33,6 +33,12 @@ A .NET governance and policy-control framework for building auditable, policy-go
 A secure-by-default ASP.NET Core enterprise application template for building maintainable, production-ready .NET applications: authentication and authorization, Serilog structured logging, security headers, rate limiting, EF Core with SQL Server and SQLite, reverse proxy support, and Problem Details error handling.
 
 [Documentation](https://asibackbone.github.io/NetCoreApplicationTemplate/) · [Repository](https://github.com/AsiBackbone/NetCoreApplicationTemplate) · [Archive (DOI 10.5281/zenodo.20373042)](https://doi.org/10.5281/zenodo.20373042)
+
+### [AsiBackbone Reference Application](https://github.com/AsiBackbone/ReferenceApplication) — follow the integration
+
+An ASP.NET Core host generated from the .NET Core Application Template, with AsiBackbone integration in progress, a step-by-step walkthrough of the procedure, and a generated API reference. It is an example, not a product; its planned sample governance rules illustrate patterns and are not recommendations for any specific domain.
+
+[Documentation](https://asibackbone.github.io/ReferenceApplication/) · [Repository](https://github.com/AsiBackbone/ReferenceApplication)
 
 ## Design Philosophy
 

@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('Learning', 'Framework', 'Template')]
-    [string[]]$Site = @('Learning', 'Framework', 'Template'),
+    [ValidateSet('Learning', 'Framework', 'Template', 'Reference')]
+    [string[]]$Site = @('Learning', 'Framework', 'Template', 'Reference'),
 
     [string]$Ref = 'main',
 
@@ -11,9 +11,10 @@ param(
     [switch]$SelfTest
 )
 
-# Checks that every DocFX build in the Learning, AsiBackbone, and .NET Core Application Template workflows fails on
-# warnings, and that each repository's required pull-request, release, and publication workflows still build DocFX
-# (LANDING-PAGE-STANDARD.md, Strict DocFX builds; AsiBackbone/.github#20). It reads public workflow files only.
+# Checks that every DocFX build in the Learning, AsiBackbone, .NET Core Application Template, and Reference Application
+# workflows fails on warnings, and that each repository's required pull-request, release, and publication workflows
+# still build DocFX (LANDING-PAGE-STANDARD.md, Strict DocFX builds; AsiBackbone/.github#20). It reads public workflow
+# files only.
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -30,6 +31,10 @@ $siteDefinitions = [ordered]@{
     Template = [pscustomobject]@{
         Repository = 'AsiBackbone/NetCoreApplicationTemplate'
         RequiredWorkflows = @('link-validation.yml', 'publish-docs.yml')
+    }
+    Reference = [pscustomobject]@{
+        Repository = 'AsiBackbone/ReferenceApplication'
+        RequiredWorkflows = @('publish-docs.yml')
     }
 }
 

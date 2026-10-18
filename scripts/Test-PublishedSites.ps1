@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('Learning', 'Framework', 'Template')]
-    [string[]]$Site = @('Learning', 'Framework', 'Template'),
+    [ValidateSet('Learning', 'Framework', 'Template', 'Reference')]
+    [string[]]$Site = @('Learning', 'Framework', 'Template', 'Reference'),
 
     [ValidateRange(1, 5)]
     [int]$MaximumAttempts = 3,
@@ -31,6 +31,11 @@ $siteDefinitions = [ordered]@{
         Url = 'https://asibackbone.github.io/NetCoreApplicationTemplate/'
         SiteName = '.NET Core Application Template'
         Repository = 'AsiBackbone/NetCoreApplicationTemplate'
+    }
+    Reference = [pscustomobject]@{
+        Url = 'https://asibackbone.github.io/ReferenceApplication/'
+        SiteName = 'AsiBackbone Reference Application'
+        Repository = 'AsiBackbone/ReferenceApplication'
     }
 }
 
