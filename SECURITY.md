@@ -63,8 +63,9 @@ accepts untrusted application input.
 - Path-filtered and scheduled checks are intentionally not required, because a
   required check that does not run would block unrelated pull requests. Zizmor
   and actionlint run on pull requests that change workflows or Dependabot
-  configuration, the compatibility matrix reference check runs on pull requests
-  that change the matrix, and OpenSSF Scorecard runs on its weekly schedule.
+  configuration, the compatibility matrix and assurance map reference checks run
+  on pull requests that change them and weekly, and OpenSSF Scorecard runs on its
+  weekly schedule.
 - Fuzzing is not used because the repository has no fuzzable runtime or untrusted
   input-processing surface. Reconsider this decision if executable application,
   parsing, or request-handling code is added.
