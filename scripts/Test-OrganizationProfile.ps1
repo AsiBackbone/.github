@@ -35,6 +35,7 @@ $requiredContent = [ordered]@{
     'https://github.com/AsiBackbone/NetCoreApplicationTemplate/security/policy' = 'template security route'
     '## License' = 'license section'
     'https://github.com/AsiBackbone/.github/blob/main/LICENSES.md' = 'licensing boundary link'
+    'https://github.com/AsiBackbone/.github/blob/main/compatibility/README.md' = 'ecosystem compatibility matrix link'
 }
 
 # Canonical project order (LANDING-PAGE-STANDARD.md, Related Projects contract): Learn → Framework → Template → Reference.
@@ -201,7 +202,7 @@ if ($profile -match '(?i)(password|token|secret)\s*[:=]\s*\S+') {
 $readmePath = Join-Path $RepositoryRoot 'README.md'
 if (Test-Path -LiteralPath $readmePath -PathType Leaf) {
     $readme = Get-Content -LiteralPath $readmePath -Raw
-    foreach ($requiredText in @('[conduct](CODE_OF_CONDUCT.md)', '[contribution](CONTRIBUTING.md)', '[support](SUPPORT.md)', '[security](SECURITY.md)', 'Repository-specific community files remain authoritative')) {
+    foreach ($requiredText in @('[conduct](CODE_OF_CONDUCT.md)', '[contribution](CONTRIBUTING.md)', '[support](SUPPORT.md)', '[security](SECURITY.md)', 'Repository-specific community files remain authoritative', '[ecosystem compatibility matrix](compatibility/README.md)')) {
         if (-not $readme.Contains($requiredText, [StringComparison]::Ordinal)) {
             $failures.Add("README.md is missing required community-health content: $requiredText")
         }
@@ -232,6 +233,10 @@ $requiredFiles = @(
     '.github/workflows/docfx-strict-builds-validation.yml'
     'scripts/Test-PublishedSites.ps1'
     'scripts/Test-DocFxStrictBuilds.ps1'
+    '.github/workflows/compatibility-matrix-validation.yml'
+    'scripts/Test-CompatibilityMatrix.ps1'
+    'compatibility/ecosystem-compatibility.json'
+    'compatibility/README.md'
 )
 foreach ($relativePath in $requiredFiles) {
     if (-not (Test-Path -LiteralPath (Join-Path $RepositoryRoot $relativePath) -PathType Leaf)) {
@@ -318,6 +323,27 @@ $communityContracts = [ordered]@{
         './scripts/Test-OrganizationProfile.ps1'
         './scripts/Test-PublishedSites.ps1 -SelfTest'
         './scripts/Test-DocFxStrictBuilds.ps1 -SelfTest'
+        './scripts/Test-CompatibilityMatrix.ps1'
+        './scripts/Test-CompatibilityMatrix.ps1 -SelfTest'
+    )
+    '.github/workflows/compatibility-matrix-validation.yml' = @(
+        'name: Compatibility matrix validation'
+        'pull_request:'
+        'schedule:'
+        'workflow_dispatch:'
+        'contents: read'
+        'persist-credentials: false'
+        'GITHUB_TOKEN: ${{ github.token }}'
+        './scripts/Test-CompatibilityMatrix.ps1 -VerifyReferences'
+    )
+    'scripts/Test-CompatibilityMatrix.ps1' = @(
+        "Repository = 'AsiBackbone/Learning'"
+        "Repository = 'AsiBackbone/AsiBackbone'"
+        "Repository = 'AsiBackbone/NetCoreApplicationTemplate'"
+        "Repository = 'AsiBackbone/ReferenceApplication'"
+        'not known to be broken'
+        'not a certification'
+        'not a package dependency'
     )
     '.github/workflows/docfx-strict-builds-validation.yml' = @(
         'name: Strict DocFX builds validation'

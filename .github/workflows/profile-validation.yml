@@ -33,3 +33,11 @@ jobs:
       - name: Test strict DocFX build conformance validator
         shell: pwsh
         run: ./scripts/Test-DocFxStrictBuilds.ps1 -SelfTest
+
+      - name: Validate compatibility matrix
+        shell: pwsh
+        run: ./scripts/Test-CompatibilityMatrix.ps1
+
+      - name: Test compatibility matrix validator
+        shell: pwsh
+        run: ./scripts/Test-CompatibilityMatrix.ps1 -SelfTest

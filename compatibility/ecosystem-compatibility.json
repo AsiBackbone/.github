@@ -1,0 +1,191 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-10-23",
+  "dotnet": {
+    "line": ".NET 10",
+    "targetFramework": "net10.0",
+    "sdk": "10.0.400",
+    "releaseType": "LTS",
+    "endOfSupport": "2028-11-14",
+    "policy": "https://dotnet.microsoft.com/platform/support/policy/dotnet-core"
+  },
+  "supportLines": [
+    {
+      "product": "asiBackbone",
+      "line": "7.x",
+      "current": "7.5.0",
+      "targetFrameworks": ["net10.0", "netstandard2.0"],
+      "notes": "Stable 7.x packages target net10.0 only and are not multi-targeted for .NET 8. AsiBackbone.Analyzers targets netstandard2.0 because it loads in the compiler.",
+      "evidence": [
+        { "repository": "AsiBackbone/AsiBackbone", "tag": "v7.5.0" }
+      ]
+    },
+    {
+      "product": "netCoreApplicationTemplate",
+      "line": "2.x",
+      "current": "2.11.5",
+      "targetFrameworks": ["net10.0"],
+      "notes": "The 2.x line is feature-complete and maintained for security fixes, dependency servicing, and documentation corrections. Generated applications are not modified by later releases.",
+      "evidence": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "tag": "v2.11.5", "path": "README.md" }
+      ]
+    },
+    {
+      "product": "referenceApplication",
+      "line": "0.1.0 pre-release",
+      "current": "0.1.0-alpha.11",
+      "targetFrameworks": ["net10.0"],
+      "notes": "An example host, not a product. Releases remain 0.x pre-releases and do not declare a stable public contract.",
+      "evidence": [
+        { "repository": "AsiBackbone/ReferenceApplication", "tag": "v0.1.0-alpha.11", "path": "README.md" }
+      ]
+    },
+    {
+      "product": "learning",
+      "line": "1.x",
+      "current": "1.3.0",
+      "targetFrameworks": ["net10.0"],
+      "notes": "Educational material and runnable samples. Learning releases are archival and citation snapshots; they do not establish runtime compatibility or package support lines.",
+      "evidence": [
+        { "repository": "AsiBackbone/Learning", "tag": "v1.3.0", "path": "README.md" }
+      ]
+    }
+  ],
+  "combinations": [
+    {
+      "id": "reference-0.1.0-alpha.11",
+      "kind": "integration",
+      "status": "reviewed",
+      "components": {
+        "netCoreApplicationTemplate": "2.11.5",
+        "asiBackbone": "7.5.0",
+        "referenceApplication": ["0.1.0-alpha.11"],
+        "learning": []
+      },
+      "targetFramework": "net10.0",
+      "sdk": "10.0.400",
+      "reviewed": "2026-10-22",
+      "evidence": [
+        { "repository": "AsiBackbone/ReferenceApplication", "tag": "v0.1.0-alpha.11", "path": "CHANGELOG.md" },
+        { "repository": "AsiBackbone/ReferenceApplication", "tag": "v0.1.0-alpha.11", "path": "Directory.Packages.props" }
+      ],
+      "notes": "Current integration-reviewed combination: the NCAT 2.11.5 scaffold with the AsiBackbone 7.5.0 packages, built and tested by this Reference Application pre-release."
+    },
+    {
+      "id": "reference-0.1.0-alpha.5-to-alpha.10",
+      "kind": "integration",
+      "status": "historical",
+      "components": {
+        "netCoreApplicationTemplate": "2.11.5",
+        "asiBackbone": "7.2.1",
+        "referenceApplication": [
+          "0.1.0-alpha.5",
+          "0.1.0-alpha.6",
+          "0.1.0-alpha.7",
+          "0.1.0-alpha.8",
+          "0.1.0-alpha.9",
+          "0.1.0-alpha.10"
+        ],
+        "learning": []
+      },
+      "targetFramework": "net10.0",
+      "sdk": "10.0.400",
+      "reviewed": "2026-10-19",
+      "evidence": [
+        { "repository": "AsiBackbone/ReferenceApplication", "tag": "v0.1.0-alpha.10", "path": "CHANGELOG.md" }
+      ],
+      "notes": "Governed endpoints, persisted and verified governance evidence, evidence query, hashing, and the evidence explorer on AsiBackbone 7.2.1. Superseded by 0.1.0-alpha.11."
+    },
+    {
+      "id": "reference-0.1.0-alpha.2-to-alpha.4",
+      "kind": "integration",
+      "status": "historical",
+      "components": {
+        "netCoreApplicationTemplate": "2.11.5",
+        "asiBackbone": "7.2.0",
+        "referenceApplication": ["0.1.0-alpha.2", "0.1.0-alpha.3", "0.1.0-alpha.4"],
+        "learning": []
+      },
+      "targetFramework": "net10.0",
+      "sdk": "10.0.400",
+      "reviewed": "2026-10-18",
+      "evidence": [
+        { "repository": "AsiBackbone/ReferenceApplication", "tag": "v0.1.0-alpha.4", "path": "CHANGELOG.md" }
+      ],
+      "notes": "Partial integration: packages added, services registered, and sample governance rules defined. Endpoints were not yet governed."
+    },
+    {
+      "id": "reference-0.1.0-alpha.1",
+      "kind": "integration",
+      "status": "historical",
+      "components": {
+        "netCoreApplicationTemplate": "2.11.5",
+        "asiBackbone": null,
+        "referenceApplication": ["0.1.0-alpha.1"],
+        "learning": []
+      },
+      "targetFramework": "net10.0",
+      "sdk": "10.0.400",
+      "reviewed": "2026-10-18",
+      "evidence": [
+        { "repository": "AsiBackbone/ReferenceApplication", "tag": "v0.1.0-alpha.1" }
+      ],
+      "notes": "NCAT 2.11.5 baseline only, with walkthrough Step 1 complete. No AsiBackbone packages were referenced."
+    },
+    {
+      "id": "learning-1.3.0",
+      "kind": "learning-review",
+      "status": "reviewed",
+      "components": {
+        "netCoreApplicationTemplate": null,
+        "asiBackbone": "7.0.0",
+        "referenceApplication": [],
+        "learning": ["1.3.0"]
+      },
+      "targetFramework": "net10.0",
+      "sdk": "10.0.400",
+      "reviewed": "2026-10-10",
+      "evidence": [
+        { "repository": "AsiBackbone/Learning", "tag": "v1.3.0", "path": "docs/getting-started/asibackbone-7-api-boundary.md" }
+      ],
+      "notes": "Current Learning documentation baseline. Its implementation-dependent pages were reviewed against AsiBackbone 7.0.0. Newer AsiBackbone 7.x releases exist; this row records what Learning reviewed, not a recommended package version."
+    },
+    {
+      "id": "learning-1.1.0-to-1.2.0",
+      "kind": "learning-review",
+      "status": "historical",
+      "components": {
+        "netCoreApplicationTemplate": null,
+        "asiBackbone": "7.0.0",
+        "referenceApplication": [],
+        "learning": ["1.1.0", "1.2.0"]
+      },
+      "targetFramework": "net10.0",
+      "sdk": "10.0.400",
+      "reviewed": "2026-10-03",
+      "evidence": [
+        { "repository": "AsiBackbone/Learning", "tag": "v1.1.0", "path": "RELEASE-NOTES-1.1.0.md" },
+        { "repository": "AsiBackbone/Learning", "tag": "v1.2.0", "path": "RELEASE-NOTES-1.2.0.md" }
+      ],
+      "notes": "Earlier Learning snapshots aligned with the AsiBackbone 7.0.0 boundary. Superseded by Learning 1.3.0."
+    },
+    {
+      "id": "learning-1.0.0",
+      "kind": "learning-review",
+      "status": "historical",
+      "components": {
+        "netCoreApplicationTemplate": null,
+        "asiBackbone": "6.0.0",
+        "referenceApplication": [],
+        "learning": ["1.0.0"]
+      },
+      "targetFramework": "net10.0",
+      "sdk": "10.0.400",
+      "reviewed": "2026-09-19",
+      "evidence": [
+        { "repository": "AsiBackbone/Learning", "tag": "v1.0.0", "path": "RELEASE-NOTES-1.0.0.md" }
+      ],
+      "notes": "First Learning documentation baseline, the educational companion to AsiBackbone 6.0.0. Retained as immutable history."
+    }
+  ]
+}
