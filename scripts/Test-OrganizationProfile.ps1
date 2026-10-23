@@ -203,7 +203,7 @@ if ($profile -match '(?i)(password|token|secret)\s*[:=]\s*\S+') {
 $readmePath = Join-Path $RepositoryRoot 'README.md'
 if (Test-Path -LiteralPath $readmePath -PathType Leaf) {
     $readme = Get-Content -LiteralPath $readmePath -Raw
-    foreach ($requiredText in @('[conduct](CODE_OF_CONDUCT.md)', '[contribution](CONTRIBUTING.md)', '[support](SUPPORT.md)', '[security](SECURITY.md)', 'Repository-specific community files remain authoritative', '[ecosystem compatibility matrix](compatibility/README.md)', '[security assurance and control-ownership map](assurance/README.md)')) {
+    foreach ($requiredText in @('[conduct](CODE_OF_CONDUCT.md)', '[contribution](CONTRIBUTING.md)', '[support](SUPPORT.md)', '[security](SECURITY.md)', 'Repository-specific community files remain authoritative', '[ecosystem compatibility matrix](compatibility/README.md)', '[security assurance and control-ownership map](assurance/README.md)', '[documentation ownership map](documentation/README.md)')) {
         if (-not $readme.Contains($requiredText, [StringComparison]::Ordinal)) {
             $failures.Add("README.md is missing required community-health content: $requiredText")
         }
@@ -242,6 +242,10 @@ $requiredFiles = @(
     'scripts/Test-AssuranceMap.ps1'
     'assurance/control-ownership.json'
     'assurance/README.md'
+    '.github/workflows/documentation-ownership-review.yml'
+    'scripts/Test-DocumentationOwnership.ps1'
+    'documentation/ownership.json'
+    'documentation/README.md'
 )
 foreach ($relativePath in $requiredFiles) {
     if (-not (Test-Path -LiteralPath (Join-Path $RepositoryRoot $relativePath) -PathType Leaf)) {
@@ -257,6 +261,8 @@ $communityContracts = [ordered]@{
         'Contributor Covenant, version 2.1'
     )
     'CONTRIBUTING.md' = @(
+        '## Documentation Ownership'
+        'https://github.com/AsiBackbone/.github/blob/main/documentation/README.md#review-rule-for-new-documentation'
         'Repository-specific contribution, support, security, governance, and validation files are authoritative'
         'https://github.com/orgs/AsiBackbone/discussions/categories/q-a'
         'https://github.com/orgs/AsiBackbone/discussions/categories/ideas'
@@ -284,6 +290,7 @@ $communityContracts = [ordered]@{
         'An approving human review is not mandatory while the organization has one'
     )
     '.github/PULL_REQUEST_TEMPLATE.md' = @(
+        'https://github.com/AsiBackbone/.github/blob/main/documentation/README.md'
         '## Summary'
         '## Scope and Boundaries'
         '## Validation'
@@ -332,6 +339,27 @@ $communityContracts = [ordered]@{
         './scripts/Test-CompatibilityMatrix.ps1 -SelfTest'
         './scripts/Test-AssuranceMap.ps1'
         './scripts/Test-AssuranceMap.ps1 -SelfTest'
+        './scripts/Test-DocumentationOwnership.ps1'
+        './scripts/Test-DocumentationOwnership.ps1 -SelfTest'
+    )
+    '.github/workflows/documentation-ownership-review.yml' = @(
+        'name: Documentation ownership review'
+        'pull_request:'
+        'schedule:'
+        'workflow_dispatch:'
+        'contents: read'
+        'persist-credentials: false'
+        'GITHUB_TOKEN: ${{ github.token }}'
+        './scripts/Test-DocumentationOwnership.ps1 -VerifyReferences -ScanVersionClaims'
+    )
+    'scripts/Test-DocumentationOwnership.ps1' = @(
+        "Repository = 'AsiBackbone/Learning'"
+        "Repository = 'AsiBackbone/AsiBackbone'"
+        "Repository = 'AsiBackbone/NetCoreApplicationTemplate'"
+        "Repository = 'AsiBackbone/ReferenceApplication'"
+        '## Review rule for new documentation'
+        '## Current-version claim review'
+        'does not move or delete content'
     )
     '.github/workflows/assurance-map-validation.yml' = @(
         'name: Assurance map validation'

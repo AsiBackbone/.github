@@ -20,6 +20,12 @@ The three primary projects have tailored guidance:
 
 Do not open a public issue or discussion containing passwords, tokens, personal information, exploit details, or other sensitive material. Follow [the security reporting guidance](SECURITY.md) instead.
 
+## Documentation Ownership
+
+Several repositories document overlapping concepts. The [documentation ownership map](https://github.com/AsiBackbone/.github/blob/main/documentation/README.md) names the canonical owner of each recurring cross-repository topic and how other repositories should reference it: link only, a short summary with a canonical link, or a version-pinned snapshot.
+
+Before adding or expanding documentation, apply its [review rule](https://github.com/AsiBackbone/.github/blob/main/documentation/README.md#review-rule-for-new-documentation): if the content states behavior, an option, an API, a version, or a support boundary that another repository owns, link to that owner instead of restating it. State another project's current version only through the [compatibility matrix](https://github.com/AsiBackbone/.github/blob/main/compatibility/README.md), or tie it to a named release as a pinned snapshot. Keep existing useful summaries, linked to their canonical detail.
+
 ## Pull Requests
 
 Keep pull requests focused. Explain:
