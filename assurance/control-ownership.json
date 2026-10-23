@@ -1,0 +1,704 @@
+{
+  "schemaVersion": 1,
+  "reviewed": "2026-10-23",
+  "baselines": {
+    "netCoreApplicationTemplate": "2.11.5",
+    "asiBackbone": "7.5.0",
+    "referenceApplication": "0.1.0-alpha.11"
+  },
+  "controls": [
+    {
+      "id": "authenticated-by-default",
+      "scope": "authentication-authorization",
+      "title": "Authenticated-by-default routed endpoints",
+      "invariant": "A routed endpoint without authorization metadata requires an authenticated user; public access needs explicit anonymous metadata.",
+      "owner": "ncat",
+      "enforcement": {
+        "description": "Authenticated-user fallback authorization policy",
+        "link": { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "src/ProjectTemplate.Web/Authentication/Extensions/AuthorizationServiceExtensions.cs" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "tests/ProjectTemplate.Web.Tests/FallbackAuthorizationPolicyTests.cs" },
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "tests/ProjectTemplate.Web.Tests/AuthorizationPolicyTests.cs" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/articles/authorization.md" },
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/articles/authentication.md" }
+      ],
+      "operationalDependency": "A configured sign-in provider or host-owned identity flow. The default scaffold has none, so protected routes stay unavailable until one is added.",
+      "failure": {
+        "mode": "fail-closed",
+        "detail": "Unannotated routed endpoints reject anonymous users. The --authProvider none scaffold and RequireAuthenticatedUserByDefault=false are explicit opt-outs that make unannotated endpoints public."
+      },
+      "hostResponsibility": "Configure the identity provider, review and test every anonymous exception, and authorize access to business resources and operations.",
+      "nonClaims": "Requires an authenticated identity; it does not decide whether that identity may act on a specific resource. Named role and permission policies apply only where an endpoint declares them."
+    },
+    {
+      "id": "policy-evaluation",
+      "scope": "policy-evaluation",
+      "title": "Governance policy evaluation",
+      "invariant": "A governance decision reflects every registered constraint, and a denial from any constraint wins.",
+      "owner": "asibackbone",
+      "enforcement": {
+        "description": "Default governance policy evaluator",
+        "link": { "repository": "AsiBackbone/AsiBackbone", "path": "src/AsiBackbone.Core/Evaluation/DefaultGovernancePolicyEvaluator.cs" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "tests/AsiBackbone.Core.Tests/Evaluation/DefaultAsiBackbonePolicyEvaluatorTests.cs" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "tests/AsiBackbone.Core.Tests/Evaluation/DefaultAsiBackbonePolicyEvaluatorCriticalExceptionTests.cs" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/policy-evaluator-pipeline.md" }
+      ],
+      "operationalDependency": "Host-registered constraints, threat contributors, and decision policy.",
+      "failure": {
+        "mode": "fail-closed",
+        "detail": "An empty constraint set denies by default (DenyWhenNoConstraints), and constraint and threat-contributor exceptions become denials by default. Both defaults can be switched off; the permissive empty-policy path then only logs a warning."
+      },
+      "hostResponsibility": "Register constraints that express the real policy, and keep the fail-closed defaults unless a documented lower-risk exception applies.",
+      "nonClaims": "A decision is only as complete as the registered constraints. Endpoint policy markers do not select or derive constraints; every registered constraint runs on every governed endpoint."
+    },
+    {
+      "id": "decision-before-execution",
+      "scope": "policy-evaluation",
+      "title": "Decision before execution at the HTTP edge",
+      "invariant": "A governed endpoint executes only after an allowing decision; denied, unverified, or misconfigured requests do not reach the endpoint.",
+      "owner": "asibackbone",
+      "enforcement": {
+        "description": "Endpoint governance middleware, registered after routing and authentication",
+        "link": { "repository": "AsiBackbone/AsiBackbone", "path": "src/AsiBackbone.AspNetCore/Endpoints/EndpointGovernanceMiddleware.cs" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "tests/AsiBackbone.AspNetCore.Tests/Endpoints/AsiBackboneEndpointGovernanceTests.cs" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "tests/AsiBackbone.AspNetCore.Tests/Endpoints/AsiBackboneEndpointGovernanceOrderingTests.cs" },
+        { "repository": "AsiBackbone/ReferenceApplication", "path": "tests/ReferenceApplication.Web.Tests/GovernanceEnforcementTests.cs" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/aspnetcore-endpoint-governance.md" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/host-owned-execution-enforcement.md" }
+      ],
+      "operationalDependency": "Correct middleware order and a registered policy evaluator.",
+      "failure": {
+        "mode": "fail-closed",
+        "detail": "The middleware blocks the endpoint with a safe HTTP result when policy, capability, or configuration checks fail. Invalid endpoint-governance options fail at startup through options validation."
+      },
+      "hostResponsibility": "Gate every non-HTTP path yourself (background jobs, message consumers, internal services, CLI tools), place side effects below the decision check, and treat a missing decision or failed evaluation as a denial on consequential paths.",
+      "nonClaims": "Protects only the HTTP endpoints where the middleware is registered. AsiBackbone does not execute operations and cannot make a host honor a decision."
+    },
+    {
+      "id": "acknowledgment-handshake",
+      "scope": "acknowledgment",
+      "title": "Acknowledgment challenge before continuation",
+      "invariant": "An acknowledgment-required decision answers with a challenge and does not execute until an acknowledged retry is evaluated again.",
+      "owner": "asibackbone",
+      "enforcement": {
+        "description": "Acknowledgment challenge service",
+        "link": { "repository": "AsiBackbone/AsiBackbone", "path": "src/AsiBackbone.AspNetCore/Acknowledgments/DefaultAcknowledgmentChallengeService.cs" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "tests/AsiBackbone.AspNetCore.Tests/Acknowledgments/AsiBackboneAcknowledgmentChallengeServiceTests.cs" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "tests/AsiBackbone.Core.Tests/Acknowledgments/AcknowledgmentResponseTests.cs" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/dynamic-liability-handshake.md" }
+      ],
+      "operationalDependency": "Host storage for acknowledgment requests and responses, linked to decision and lifecycle evidence.",
+      "failure": {
+        "mode": "fail-closed",
+        "detail": "The challenged request does not execute. A valid capability grant never upgrades an acknowledgment-required decision, so a grant cannot bypass the challenge."
+      },
+      "hostResponsibility": "Authenticate and authorize the acknowledging actor, present the acknowledgment accessibly, define when acknowledgment is required, choose storage and retention, and decide freshness rules before execution.",
+      "nonClaims": "Records an acknowledgment checkpoint. It is not legal protection, non-repudiation, compliance certification, or production tamper-evidence, and an acknowledgment record is not an execution credential."
+    },
+    {
+      "id": "capability-grants",
+      "scope": "capability-grants",
+      "title": "Signed capability grants and replay protection",
+      "invariant": "A signed capability grant authorizes one bound request for one subject, operation, scope, and policy, and cannot be replayed beyond its use limit.",
+      "owner": "asibackbone",
+      "enforcement": {
+        "description": "Capability grant validator with a capability-grant use store",
+        "link": { "repository": "AsiBackbone/AsiBackbone", "path": "src/AsiBackbone.Core/CapabilityGrants/CapabilityGrantValidator.cs" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "tests/AsiBackbone.Core.Tests/CapabilityGrants/CapabilityGrantValidatorTests.cs" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "tests/AsiBackbone.AspNetCore.Tests/CapabilityGrants/SignedCapabilityGrantEndpointValidatorTests.cs" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "tests/AsiBackbone.EntityFrameworkCore.Tests/CapabilityGrants/EfCoreCapabilityGrantUseStoreTests.cs" },
+        { "repository": "AsiBackbone/ReferenceApplication", "path": "tests/ReferenceApplication.Web.Tests/CapabilityTokenEndpointTests.cs" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/signed-capability-grants.md" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/capability-grant-hardening.md" },
+        { "repository": "AsiBackbone/ReferenceApplication", "path": "docs/walkthrough/signed-capability-tokens.md" }
+      ],
+      "operationalDependency": "A verification service, a request binding provider, and a durable use store shared by every replica, with expired records purged on a schedule.",
+      "failure": {
+        "mode": "fail-closed",
+        "detail": "The signed endpoint validator denies every result other than Valid, including results the core validator would defer or escalate. A missing verification service, use store, or binding provider denies, as does one that throws. Grants are single-use by default."
+      },
+      "hostResponsibility": "Own key material and the verification service, the use store and its migration and purge, issuer and audience expectations, clock skew, and what a request binding covers.",
+      "nonClaims": "Signed grants are opt-in; the default claim-backed validator has no replay semantics. Replay protection is only as wide as the use store: the in-memory store is process-local, so behind a load balancer a single-use grant can be accepted once per replica."
+    },
+    {
+      "id": "decision-evidence-persistence",
+      "scope": "evidence-persistence",
+      "title": "Decision evidence persistence",
+      "invariant": "Governance decision receipts are persisted to the host database before the governed operation executes.",
+      "owner": "asibackbone",
+      "enforcement": {
+        "description": "EF Core audit ledger store on a host-owned DbContext",
+        "link": { "repository": "AsiBackbone/AsiBackbone", "path": "src/AsiBackbone.EntityFrameworkCore/Audit/EfCoreAuditLedgerStore.cs" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "tests/AsiBackbone.EntityFrameworkCore.Tests/EfCoreAuditLedgerStoreTests.cs" },
+        { "repository": "AsiBackbone/ReferenceApplication", "path": "tests/ReferenceApplication.Web.Tests/LedgerDecisionReceiptSinkTests.cs" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/ef-core-host-ownership-and-migrations.md" },
+        { "repository": "AsiBackbone/ReferenceApplication", "path": "docs/walkthrough/06-persist-and-verify-audit.md" }
+      ],
+      "operationalDependency": "A host-owned DbContext, database provider, and applied migrations that include the AsiBackbone tables.",
+      "failure": {
+        "mode": "host-defined",
+        "detail": "Whether a failed append blocks execution is decided by the host's decision receipt sink. In the Reference Application a failed append throws, so the governed operation fails closed, and governed operations fail closed until the migration is applied."
+      },
+      "hostResponsibility": "Own the DbContext, connection, migrations, transactions, retention, and backups, and make the receipt sink fail closed on consequential paths.",
+      "nonClaims": "Ledger rows are not immutable or tamper-evident by themselves. Tamper-evidence needs signing or hash-chain verification plus protected storage and retention controls."
+    },
+    {
+      "id": "mutation-manifest-digest",
+      "scope": "evidence-persistence",
+      "title": "Application mutation audit manifest digest",
+      "invariant": "A retained audit batch can be checked against the receipt issued when the mutation was saved.",
+      "owner": "ncat",
+      "enforcement": {
+        "description": "Canonical mutation manifest verifier with a fixed-time digest comparison",
+        "link": { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "src/ProjectTemplate.Infrastructure/Data/Auditing/ApplicationMutationManifestVerifier.cs" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "tests/ProjectTemplate.Web.Tests/ApplicationMutationManifestTests.cs" },
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "tests/ProjectTemplate.Web.Tests/AuditCompletionContractVectorTests.cs" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/articles/audit-accountability-integration.md" }
+      ],
+      "operationalDependency": "Retained audit batches and their receipts.",
+      "failure": {
+        "mode": "host-defined",
+        "detail": "Verification succeeds only when the retained batch still matches the receipt's manifest and record count. The caller decides what a mismatch blocks."
+      },
+      "hostResponsibility": "Retain batches and receipts, run verification where it matters, and supply transaction strategy, access controls, retention, immutable storage, and signing or timestamping where required.",
+      "nonClaims": "The default digest is an unkeyed SHA-256 hash, so it detects change but not a rewrite by someone who can also replace the stored digest. A match does not prove an atomic commit, immutable storage, retention compliance, an authenticated actor or upstream decision, or a complete archive transfer."
+    },
+    {
+      "id": "governance-outbox",
+      "scope": "outbox-reconciliation",
+      "title": "Governance outbox delivery",
+      "invariant": "Governance emissions are saved locally before downstream delivery, and delivery failures are preserved as outbox state.",
+      "owner": "asibackbone",
+      "enforcement": {
+        "description": "Provider-neutral governance outbox drain",
+        "link": { "repository": "AsiBackbone/AsiBackbone", "path": "src/AsiBackbone.Core/Outbox/GovernanceOutboxDrain.cs" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "tests/AsiBackbone.Core.Tests/Outbox/GovernanceOutboxDrainClaimSafetyTests.cs" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "tests/AsiBackbone.EntityFrameworkCore.Tests/EfCoreGovernanceOutboxSemanticsTests.cs" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/governance-outbox-delivery-semantics.md" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/durable-audit-outbox-persistence.md" }
+      ],
+      "operationalDependency": "A durable outbox store, a drain worker, and an emission provider.",
+      "failure": {
+        "mode": "defer",
+        "detail": "Provider failures become retryable, deferred, failed, or dead-lettered outbox state; the local record is kept for review and retry."
+      },
+      "hostResponsibility": "Own worker topology, claim and lease behavior, provider idempotency, migrations, duplicate reconciliation, retention, and monitoring.",
+      "nonClaims": "Not a distributed queue, an append-only event stream, or an immutable ledger. Delivery is at-least-once and best-effort; exactly-once delivery is not claimed."
+    },
+    {
+      "id": "audit-completion-reconciliation",
+      "scope": "outbox-reconciliation",
+      "title": "Audit completion outbox and reconciliation",
+      "invariant": "A committed mutation's audit completion is handed off durably, and missing, altered, or stalled evidence is detected afterwards.",
+      "owner": "ncat",
+      "enforcement": {
+        "description": "Optional audit completion outbox, with a scheduled reconciler",
+        "link": { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "src/ProjectTemplate.Infrastructure/Data/Auditing/ApplicationAuditCompletionOutbox.cs" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "tests/ProjectTemplate.Web.Tests/ApplicationAuditCompletionOutboxTests.cs" },
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "tests/ProjectTemplate.Web.Tests/ApplicationAuditReconciliationTests.cs" },
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "tests/ProjectTemplate.Web.Tests/ApplicationAuditIntegrityHealthCheckTests.cs" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/articles/audit-completion-outbox.md" },
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/articles/audit-reconciliation.md" }
+      ],
+      "operationalDependency": "The outbox and reconciliation features enabled, the application database, and an optional external publisher.",
+      "failure": {
+        "mode": "defer",
+        "detail": "With no publisher, ready entries are deferred rather than failing the business mutation. Retryable failures back off and dead-letter after MaxRetryAttempts. Reconciliation findings surface through the audit-integrity health check, which is kept out of readiness."
+      },
+      "hostResponsibility": "Make publishers idempotent on the idempotency key, and review and remediate reconciliation findings.",
+      "nonClaims": "A durable local handoff, not a distributed queue; exactly-once delivery is not promised. Reconciliation detects problems after the transaction; it does not replace transactional persistence."
+    },
+    {
+      "id": "signature-verification",
+      "scope": "signing-verification",
+      "title": "Signature verification policy",
+      "invariant": "Only a valid signature from a trusted key and signing context is accepted.",
+      "owner": "asibackbone",
+      "enforcement": {
+        "description": "Verification policy evaluator",
+        "link": { "repository": "AsiBackbone/AsiBackbone", "path": "src/AsiBackbone.Core/Signing/VerificationPolicyEvaluator.cs" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "tests/AsiBackbone.Core.Tests/Signing/VerificationPolicySafetyTests.cs" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "tests/AsiBackbone.Core.Tests/Signing/VerificationPolicyHandlingTests.cs" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "tests/AsiBackbone.Signing.ManagedKey.Tests/PublicKeySignatureVerificationServiceTests.cs" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/verification-policy-and-result-handling.md" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/cryptographic-security-posture.md" }
+      ],
+      "operationalDependency": "A verification provider, key lookup, and trust pins for keys and signing context.",
+      "failure": {
+        "mode": "fail-closed",
+        "detail": "Only Valid allows by default. Hash mismatches, untrusted keys, and untrusted signing contexts deny; an unknown key version escalates and an unavailable provider defers."
+      },
+      "hostResponsibility": "Provide the signing and verification infrastructure, configure key and context pins, and map deferred or escalated results to execution decisions.",
+      "nonClaims": "A valid signature shows the payload matches what the key signed. It does not prove legal non-repudiation, immutable storage, or that the signer was authorized to act."
+    },
+    {
+      "id": "audit-integrity-chain",
+      "scope": "signing-verification",
+      "title": "Audit-integrity hash chain",
+      "invariant": "Changed, missing, reordered, or forked audit records are detected when the chain is verified.",
+      "owner": "asibackbone",
+      "enforcement": {
+        "description": "Audit integrity verifier",
+        "link": { "repository": "AsiBackbone/AsiBackbone", "path": "src/AsiBackbone.Core/Integrity/AuditIntegrityVerifier.cs" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "tests/AsiBackbone.Core.Tests/Integrity/AuditIntegrityVerifierTests.cs" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "tests/AsiBackbone.Core.Tests/Integrity/AuditIntegritySequencePrecedenceTests.cs" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/audit-integrity-chain-model.md" }
+      ],
+      "operationalDependency": "Retained chain metadata stored next to the audit records, and a process that runs verification.",
+      "failure": {
+        "mode": "host-defined",
+        "detail": "Verification reports categorized failures such as a previous-link hash mismatch. The host decides what a failure blocks and how it is escalated."
+      },
+      "hostResponsibility": "Persist link metadata, run verification on a schedule or before reliance, and protect chain tips, for example in immutable storage.",
+      "nonClaims": "A local hash chain detects change only when verified against retained metadata. It is not tamper-evident without protected storage, external anchoring, and retention controls, and it is not a blockchain or transparency log."
+    },
+    {
+      "id": "key-custody",
+      "scope": "key-custody",
+      "title": "Production signing-key custody",
+      "invariant": "Production private keys stay in a host-controlled key-management system and never pass through AsiBackbone.",
+      "owner": "host",
+      "enforcement": {
+        "description": "Host-owned managed-key signing client behind the AsiBackbone managed-key adapter",
+        "link": { "repository": "AsiBackbone/AsiBackbone", "path": "src/AsiBackbone.Signing.ManagedKey/IManagedKeySigningClient.cs" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "tests/AsiBackbone.Signing.ManagedKey.Tests/ManagedKeySigningServiceTests.cs" },
+        { "repository": "AsiBackbone/ReferenceApplication", "path": "tests/ReferenceApplication.Web.Tests/CapabilityTokenConfigurationTests.cs" }
+      ],
+      "evidenceGap": "Custody evidence is deployment-specific. These tests cover the adapter boundary and the Reference Application's startup key checks, not any production key-management system.",
+      "documentation": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/managed-key-signing-provider.md" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/production-managed-key-integration.md" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/key-rotation-and-retired-key-verification.md" }
+      ],
+      "operationalDependency": "A cloud KMS, HSM, or organization signing service reachable from the host.",
+      "failure": {
+        "mode": "host-defined",
+        "detail": "An unavailable signing provider maps to a deferral or retry for lower-risk work and should fail closed for high-risk execution. The Reference Application fails startup when its signing key does not match a trusted, unrevoked verification key."
+      },
+      "hostResponsibility": "Choose and operate the key-management system, control access to keys, rotate and revoke key versions, and distribute public verification keys.",
+      "nonClaims": "AsiBackbone is not a key-management system: it ships no first-party cloud KMS or HSM provider, automatic rotation, or emergency revocation. The Reference Application's configured PEM key is a sample, not production custody."
+    },
+    {
+      "id": "data-protection",
+      "scope": "data-protection",
+      "title": "ASP.NET Core Data Protection key ring",
+      "invariant": "Every replica protects and unprotects cookies and antiforgery tokens with the same persisted key ring.",
+      "owner": "ncat",
+      "enforcement": {
+        "description": "Data Protection registration and startup posture checks",
+        "link": { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "src/ProjectTemplate.Web/Extensions/DataProtectionServiceExtensions.cs" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "tests/ProjectTemplate.Web.Tests/DataProtectionServiceExtensionsTests.cs" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/articles/deployment.md" },
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/articles/authentication-hardening.md" }
+      ],
+      "operationalDependency": "Durable, access-restricted key-ring storage shared by every replica, and an optional key-encryption certificate.",
+      "failure": {
+        "mode": "warn",
+        "detail": "Startup fails when the key-encryption certificate is missing, has no private key, or a password is set without a certificate path. Outside Development, warnings 1003 (relative key-ring path) and 1004 (unencrypted key ring) flag common deployment problems without stopping startup."
+      },
+      "hostResponsibility": "Provide durable shared storage, use one ApplicationName per application, encrypt the key ring, and keep retired certificates available until their keys age out.",
+      "nonClaims": "Without a key-encryption certificate or storage-level encryption, key-ring files are stored unencrypted by the application."
+    },
+    {
+      "id": "proxy-tls-trust",
+      "scope": "proxy-tls",
+      "title": "Reverse-proxy and TLS trust",
+      "invariant": "Client address and scheme come only from forwarded headers sent by an explicitly trusted proxy or network.",
+      "owner": "ncat",
+      "enforcement": {
+        "description": "Forwarded-headers configuration with a startup trust check",
+        "link": { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "src/ProjectTemplate.Web/Diagnostics/ForwardedHeadersTrustDiagnosticsHostedService.cs" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "tests/ProjectTemplate.Web.Tests/ForwardedHeadersTests.cs" },
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "tests/ProjectTemplate.Web.Tests/ForwardedHeadersTrustDiagnosticsTests.cs" },
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "tests/ProjectTemplate.Web.Tests/HstsTests.cs" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/articles/forwarded-headers.md" },
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/articles/deployment.md" }
+      ],
+      "operationalDependency": "The deployment's proxy, ingress, or load balancer topology, and TLS termination.",
+      "failure": {
+        "mode": "fail-closed",
+        "detail": "Outside Development, startup fails when forwarded client-IP processing and rate limiting are active without a KnownProxies or KnownNetworks entry. Raw X-Forwarded-For values are never trusted directly."
+      },
+      "hostResponsibility": "Terminate TLS and manage certificates, configure the narrowest trusted proxy addresses or networks (replace the sample Kubernetes range), and set AllowedHosts if X-Forwarded-Host is enabled.",
+      "nonClaims": "An over-broad trusted network lets clients spoof their address. The template cannot know the deployment's proxy topology."
+    },
+    {
+      "id": "rate-limiting",
+      "scope": "rate-limiting",
+      "title": "Request rate limiting",
+      "invariant": "Clients are rate limited per resolved address, and unresolved clients remain limited.",
+      "owner": "ncat",
+      "enforcement": {
+        "description": "Fixed-window and concurrency rate limiters",
+        "link": { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "src/ProjectTemplate.Web/Extensions/RateLimitingServiceExtensions.cs" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "tests/ProjectTemplate.Web.Tests/RateLimitingTests.cs" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/articles/rate-limiting.md" }
+      ],
+      "operationalDependency": "Correct proxy trust, so the client address is the real client rather than the ingress.",
+      "failure": {
+        "mode": "fail-closed",
+        "detail": "By default, clients without a resolved address share one fallback partition and stay rate limited, with warning 6002 when that path is used. Rejections are inexpensive 429 responses."
+      },
+      "hostResponsibility": "Tune limits for real traffic, and provide edge or distributed rate limiting and denial-of-service protection where needed.",
+      "nonClaims": "The limiter keeps its counters in each application instance's memory, so limits apply per replica rather than across a scaled deployment. It is not denial-of-service protection."
+    },
+    {
+      "id": "health-readiness",
+      "scope": "health-readiness",
+      "title": "Health and readiness endpoints",
+      "invariant": "Probes report liveness and readiness without login state and without exposing sensitive diagnostics.",
+      "owner": "ncat",
+      "enforcement": {
+        "description": "Anonymous health, readiness, liveness, and audit-integrity endpoints",
+        "link": { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "src/ProjectTemplate.Web/Extensions/HealthCheckExtensions.cs" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "tests/ProjectTemplate.Web.Tests/HealthCheckTests.cs" },
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "tests/ProjectTemplate.Web.Tests/ApplicationDatabaseHealthCheckTests.cs" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/articles/health-checks.md" },
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/articles/runtime-readiness.md" }
+      ],
+      "operationalDependency": "The application database for readiness when data access is enabled.",
+      "failure": {
+        "mode": "warn",
+        "detail": "Readiness fails when the database is unreachable, liveness has no dependency checks, and audit integrity is kept out of readiness. In Production, a startup warning names the anonymously mapped health routes."
+      },
+      "hostResponsibility": "Restrict health endpoint reachability at the deployment boundary, and register any further dependency checks that define readiness for the service.",
+      "nonClaims": "Anonymous mapping does not mean the endpoints should be reachable from the Internet. Responses must not carry secrets, configuration, or exception details."
+    },
+    {
+      "id": "migrations-providers",
+      "scope": "migrations-providers",
+      "title": "Database migrations and provider support",
+      "invariant": "Schema changes are applied as an explicit, reviewed deployment step, never automatically at startup.",
+      "owner": "ncat",
+      "enforcement": {
+        "description": "Data-access startup diagnostic and explicit migration commands",
+        "link": { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "src/ProjectTemplate.Web/Services/DataAccessStartupLogger.cs" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "tests/ProjectTemplate.Web.Tests/EfCoreMigrationCoverageTests.cs" },
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "tests/ProjectTemplate.Web.Tests/DataAccessStartupLoggerTests.cs" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/articles/data-access.md" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/ef-core-host-ownership-and-migrations.md" }
+      ],
+      "operationalDependency": "A supported provider (SQLite or SQL Server) and a deployment step that applies migrations.",
+      "failure": {
+        "mode": "warn",
+        "detail": "The application never migrates at startup. A SQL Server scaffold ships without migration history and logs a warning with the command to create one."
+      },
+      "hostResponsibility": "Generate, review, and apply provider-specific migrations, including the AsiBackbone tables, and back up the database before schema changes.",
+      "nonClaims": "Providers other than SQLite and SQL Server are not supported. Generated migrations are not reviewed by the template; their correctness for the selected provider is the host's to check."
+    },
+    {
+      "id": "development-insecure-cookie",
+      "scope": "development-isolation",
+      "title": "Development-only plain-HTTP cookie override",
+      "invariant": "Authentication cookies are sent over HTTP only in Development.",
+      "owner": "ncat",
+      "enforcement": {
+        "description": "Authentication options validation at startup",
+        "link": { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "src/ProjectTemplate.Web/Authentication/Options/ApplicationAuthenticationOptionsValidator.cs" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "tests/ProjectTemplate.Web.Tests/AuthenticationCookieSecurePolicyTests.cs" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/articles/authentication-hardening.md" }
+      ],
+      "operationalDependency": "An accurate hosting environment name.",
+      "failure": {
+        "mode": "fail-closed",
+        "detail": "Startup validation rejects AllowInsecureHttp=true in every environment other than Development."
+      },
+      "hostResponsibility": "Keep the override in Development-only configuration sources, and make sure deployed environments never run as Development.",
+      "nonClaims": "The guard trusts the environment name; a deployment that runs as Development disables it."
+    },
+    {
+      "id": "development-local-signing",
+      "scope": "development-isolation",
+      "title": "Local-development signing kept out of production",
+      "invariant": "The local-development signing provider is not registered in a production environment.",
+      "owner": "asibackbone",
+      "enforcement": {
+        "description": "Registration-time production guard, backed by analyzers ASIB002 and ASIB003",
+        "link": { "repository": "AsiBackbone/AsiBackbone", "path": "src/AsiBackbone.Signing.LocalDevelopment/LocalDevelopmentSigningBuilderExtensions.cs" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "tests/AsiBackbone.Signing.LocalDevelopment.Tests/LocalDevelopmentSigningProductionGuardTests.cs" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "tests/AsiBackbone.Analyzers.Tests/LocalDevelopmentSigningProductionAnalyzerTests.cs" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/roslyn-analyzers.md" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/signing-provider-package-boundary.md" }
+      ],
+      "operationalDependency": "An accurate hosting environment name, and analyzers enabled in the build.",
+      "failure": {
+        "mode": "fail-closed",
+        "detail": "Registering the provider in a production environment throws unless AllowInProduction is set. The analyzers warn at build time by default."
+      },
+      "hostResponsibility": "Elevate ASIB002 and ASIB003 to errors in production CI, and never set AllowInProduction.",
+      "nonClaims": "The provider generates a new key in each process by default; its signatures are not production evidence."
+    },
+    {
+      "id": "development-demo-identity",
+      "scope": "development-isolation",
+      "title": "Reference Application demo identity",
+      "invariant": "The demonstration sign-in and its fixed claims exist only in Development.",
+      "owner": "reference-application",
+      "enforcement": {
+        "description": "Environment-gated service and endpoint registration",
+        "link": { "repository": "AsiBackbone/ReferenceApplication", "path": "src/ReferenceApplication.Web/Authentication/Extensions/DemoIdentityServiceExtensions.cs" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/ReferenceApplication", "path": "tests/ReferenceApplication.Web.Tests/DemoIdentityTests.cs" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/ReferenceApplication", "path": "docs/walkthrough/development-demo-identity.md" }
+      ],
+      "operationalDependency": "An accurate hosting environment name.",
+      "failure": {
+        "mode": "fail-closed",
+        "detail": "Outside the Development environment neither the service nor the sign-in endpoint is registered, even when the switch is set. A startup warning is written whenever the control is active."
+      },
+      "hostResponsibility": "Do not carry the demonstration identity into a derived application.",
+      "nonClaims": "A demonstration aid, not an identity provider; its fixed claims prove nothing about a real user."
+    },
+    {
+      "id": "ncat-release-evidence",
+      "scope": "release-provenance",
+      "title": "NCAT release provenance and SBOM evidence",
+      "invariant": "Each tagged release publishes a durable, hashed evidence set for the exact NuGet package and container image.",
+      "owner": "ncat",
+      "enforcement": {
+        "description": "Tag-driven publish workflows that generate evidence before publication",
+        "link": { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": ".github/workflows/publish-template-package.yml" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "scripts/Test-ReleaseEvidence.ps1" },
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "scripts/Assert-GitHubReleaseAssets.ps1" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/articles/container-publish.md" },
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/adr/0005-defer-nuget-package-signing.md" }
+      ],
+      "operationalDependency": "GitHub Actions OIDC, artifact attestations, keyless image signing, and the protected publishing environment.",
+      "failure": {
+        "mode": "fail-closed",
+        "detail": "The publish workflow fails when the GitHub release is missing a required evidence asset."
+      },
+      "hostResponsibility": "Verify the evidence manifest hashes, SBOMs, provenance attestations, and image signature before relying on a release.",
+      "nonClaims": "NuGet author signing is deferred (ADR-0005). SBOMs and provenance describe how an artifact was built; they do not show it is free of vulnerabilities."
+    },
+    {
+      "id": "asibackbone-release-evidence",
+      "scope": "release-provenance",
+      "title": "AsiBackbone package provenance and SBOM evidence",
+      "invariant": "Each stable release attaches attested packages, SBOMs, release notes, and a checksum manifest to the GitHub release.",
+      "owner": "asibackbone",
+      "enforcement": {
+        "description": "Package publish workflow",
+        "link": { "repository": "AsiBackbone/AsiBackbone", "path": ".github/workflows/publish-packages.yml" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "scripts/Test-ReleaseEvidence.ps1" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "scripts/Assert-GitHubReleaseAssets.ps1" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/supply-chain-provenance.md" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/nuget-package-signing-decision.md" }
+      ],
+      "operationalDependency": "GitHub Actions artifact attestations where the workflow event supports them.",
+      "failure": {
+        "mode": "fail-closed",
+        "detail": "The release workflow verifies every required release asset and package attestation."
+      },
+      "hostResponsibility": "Verify package hashes, SBOMs, and attestations before adopting a release.",
+      "nonClaims": "NuGet package signing is deferred for the 7.x line under a time-bounded decision record. SBOMs and provenance do not make the packages a compliance product."
+    },
+    {
+      "id": "ncat-repository-controls",
+      "scope": "repository-host",
+      "title": "NCAT repository rulesets and security scanning",
+      "invariant": "Changes reach main only through pull requests that pass the required checks and code-scanning thresholds.",
+      "owner": "ncat",
+      "enforcement": {
+        "description": "Main branch ruleset, recorded as a desired-state manifest",
+        "link": { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "eng/repository-controls/main-branch-ruleset.json" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "scripts/Test-RepositorySecurityControls.ps1" },
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": ".github/workflows/repository-controls-audit.yml" }
+      ],
+      "evidenceGap": null,
+      "documentation": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/articles/repository-security-profile.md" }
+      ],
+      "operationalDependency": "GitHub-hosted settings, which live outside git.",
+      "failure": {
+        "mode": "fail-closed",
+        "detail": "The read-only drift audit exits nonzero on required drift and reports administrator-only controls as Unavailable rather than compliant."
+      },
+      "hostResponsibility": "Run the audit with an administrator login before each stable release, and change the manifest and live setting together.",
+      "nonClaims": "The audit detects drift; it never changes settings. Settings it cannot read are unverified, not compliant."
+    },
+    {
+      "id": "asibackbone-repository-controls",
+      "scope": "repository-host",
+      "title": "AsiBackbone repository rulesets and security scanning",
+      "invariant": "Changes reach main only through pull requests that pass release-blocking CI.",
+      "owner": "asibackbone",
+      "enforcement": {
+        "description": "Main branch ruleset, recorded as a desired-state manifest",
+        "link": { "repository": "AsiBackbone/AsiBackbone", "path": "eng/repository-controls/main-branch-ruleset.json" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "scripts/Manage-RepositorySecurityControls.ps1" }
+      ],
+      "evidenceGap": "No scheduled workflow compares the live ruleset with the manifest; that depends on a maintainer running the script with administrator access.",
+      "documentation": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/repository-host-security-controls.md" }
+      ],
+      "operationalDependency": "GitHub-hosted settings, which live outside git.",
+      "failure": {
+        "mode": "fail-closed",
+        "detail": "The ruleset blocks merges that skip required checks. Emergency bypass is limited to one maintainer and to pull requests."
+      },
+      "hostResponsibility": "Apply manifest changes deliberately; the script changes GitHub settings only when run with -Apply.",
+      "nonClaims": "The manifest records intent; without a scheduled comparison, drift between it and the live ruleset is not detected automatically."
+    },
+    {
+      "id": "reference-repository-controls",
+      "scope": "repository-host",
+      "title": "Reference Application repository rulesets",
+      "invariant": "Changes reach main only through pull requests that pass every CI job, and reach ncat-baseline only through pull requests.",
+      "owner": "reference-application",
+      "enforcement": {
+        "description": "Main and ncat-baseline branch rulesets, recorded as desired-state manifests",
+        "link": { "repository": "AsiBackbone/ReferenceApplication", "path": "eng/repository-controls/main-branch-ruleset.json" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/ReferenceApplication", "path": "tests/ReferenceApplication.Web.Tests/RepositoryControlsTests.cs" }
+      ],
+      "evidenceGap": "The tests check the committed manifests against the CI workflows; nothing compares them with the live rulesets.",
+      "documentation": [
+        { "repository": "AsiBackbone/ReferenceApplication", "path": "eng/repository-controls/README.md" }
+      ],
+      "operationalDependency": "GitHub-hosted settings, which live outside git.",
+      "failure": {
+        "mode": "fail-closed",
+        "detail": "The rulesets block merges that skip a required CI job, and the tests fail when the manifest stops requiring a CI job."
+      },
+      "hostResponsibility": "Change the manifest and live rulesets together.",
+      "nonClaims": "The manifests record intent; live drift is not detected automatically."
+    },
+    {
+      "id": "organization-repository-controls",
+      "scope": "repository-host",
+      "title": "Organization repository rulesets and security scanning",
+      "invariant": "Changes to organization defaults, standards, and this map reach main only through pull requests that pass the required checks and CodeQL thresholds.",
+      "owner": "organization",
+      "enforcement": {
+        "description": "Main branch security baseline ruleset, recorded as a desired-state manifest",
+        "link": { "repository": "AsiBackbone/.github", "path": "eng/repository-controls/main-branch-ruleset.json" }
+      },
+      "evidence": [
+        { "repository": "AsiBackbone/.github", "path": "scripts/Test-OrganizationProfile.ps1" },
+        { "repository": "AsiBackbone/.github", "path": ".github/workflows/profile-validation.yml" }
+      ],
+      "evidenceGap": "No drift audit compares the ruleset manifest with the live ruleset.",
+      "documentation": [
+        { "repository": "AsiBackbone/.github", "path": "SECURITY.md" }
+      ],
+      "operationalDependency": "GitHub-hosted settings, which live outside git.",
+      "failure": {
+        "mode": "fail-closed",
+        "detail": "The ruleset requires three status checks and CodeQL code-scanning results on every pull request. Path-filtered and scheduled checks are deliberately not required."
+      },
+      "hostResponsibility": "Change the manifest and live ruleset together.",
+      "nonClaims": "The manifest records intent; live drift is not detected automatically."
+    }
+  ]
+}

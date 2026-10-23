@@ -41,3 +41,11 @@ jobs:
       - name: Test compatibility matrix validator
         shell: pwsh
         run: ./scripts/Test-CompatibilityMatrix.ps1 -SelfTest
+
+      - name: Validate assurance map
+        shell: pwsh
+        run: ./scripts/Test-AssuranceMap.ps1
+
+      - name: Test assurance map validator
+        shell: pwsh
+        run: ./scripts/Test-AssuranceMap.ps1 -SelfTest

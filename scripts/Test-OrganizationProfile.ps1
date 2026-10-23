@@ -36,6 +36,7 @@ $requiredContent = [ordered]@{
     '## License' = 'license section'
     'https://github.com/AsiBackbone/.github/blob/main/LICENSES.md' = 'licensing boundary link'
     'https://github.com/AsiBackbone/.github/blob/main/compatibility/README.md' = 'ecosystem compatibility matrix link'
+    'https://github.com/AsiBackbone/.github/blob/main/assurance/README.md' = 'security assurance map link'
 }
 
 # Canonical project order (LANDING-PAGE-STANDARD.md, Related Projects contract): Learn → Framework → Template → Reference.
@@ -202,7 +203,7 @@ if ($profile -match '(?i)(password|token|secret)\s*[:=]\s*\S+') {
 $readmePath = Join-Path $RepositoryRoot 'README.md'
 if (Test-Path -LiteralPath $readmePath -PathType Leaf) {
     $readme = Get-Content -LiteralPath $readmePath -Raw
-    foreach ($requiredText in @('[conduct](CODE_OF_CONDUCT.md)', '[contribution](CONTRIBUTING.md)', '[support](SUPPORT.md)', '[security](SECURITY.md)', 'Repository-specific community files remain authoritative', '[ecosystem compatibility matrix](compatibility/README.md)')) {
+    foreach ($requiredText in @('[conduct](CODE_OF_CONDUCT.md)', '[contribution](CONTRIBUTING.md)', '[support](SUPPORT.md)', '[security](SECURITY.md)', 'Repository-specific community files remain authoritative', '[ecosystem compatibility matrix](compatibility/README.md)', '[security assurance and control-ownership map](assurance/README.md)')) {
         if (-not $readme.Contains($requiredText, [StringComparison]::Ordinal)) {
             $failures.Add("README.md is missing required community-health content: $requiredText")
         }
@@ -237,6 +238,10 @@ $requiredFiles = @(
     'scripts/Test-CompatibilityMatrix.ps1'
     'compatibility/ecosystem-compatibility.json'
     'compatibility/README.md'
+    '.github/workflows/assurance-map-validation.yml'
+    'scripts/Test-AssuranceMap.ps1'
+    'assurance/control-ownership.json'
+    'assurance/README.md'
 )
 foreach ($relativePath in $requiredFiles) {
     if (-not (Test-Path -LiteralPath (Join-Path $RepositoryRoot $relativePath) -PathType Leaf)) {
@@ -325,6 +330,27 @@ $communityContracts = [ordered]@{
         './scripts/Test-DocFxStrictBuilds.ps1 -SelfTest'
         './scripts/Test-CompatibilityMatrix.ps1'
         './scripts/Test-CompatibilityMatrix.ps1 -SelfTest'
+        './scripts/Test-AssuranceMap.ps1'
+        './scripts/Test-AssuranceMap.ps1 -SelfTest'
+    )
+    '.github/workflows/assurance-map-validation.yml' = @(
+        'name: Assurance map validation'
+        'pull_request:'
+        'schedule:'
+        'workflow_dispatch:'
+        'contents: read'
+        'persist-credentials: false'
+        'GITHUB_TOKEN: ${{ github.token }}'
+        './scripts/Test-AssuranceMap.ps1 -VerifyReferences'
+    )
+    'scripts/Test-AssuranceMap.ps1' = @(
+        "asiBackbone = 'AsiBackbone/AsiBackbone'"
+        "netCoreApplicationTemplate = 'AsiBackbone/NetCoreApplicationTemplate'"
+        "referenceApplication = 'AsiBackbone/ReferenceApplication'"
+        'compatibility/ecosystem-compatibility.json'
+        'not a compliance matrix or a certification claim'
+        '## Review cadence'
+        'record an evidenceGap'
     )
     '.github/workflows/compatibility-matrix-validation.yml' = @(
         'name: Compatibility matrix validation'
