@@ -49,3 +49,11 @@ jobs:
       - name: Test assurance map validator
         shell: pwsh
         run: ./scripts/Test-AssuranceMap.ps1 -SelfTest
+
+      - name: Validate documentation ownership map
+        shell: pwsh
+        run: ./scripts/Test-DocumentationOwnership.ps1
+
+      - name: Test documentation ownership validator
+        shell: pwsh
+        run: ./scripts/Test-DocumentationOwnership.ps1 -SelfTest

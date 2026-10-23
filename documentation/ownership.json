@@ -1,0 +1,276 @@
+{
+  "schemaVersion": 1,
+  "reviewed": "2026-10-23",
+  "surfaces": [
+    {
+      "id": "learning",
+      "name": "AsiBackbone Learning",
+      "repository": "AsiBackbone/Learning",
+      "site": "https://asibackbone.github.io/Learning/",
+      "kind": "education",
+      "owns": "Framework-neutral architecture education: tutorials, labs, runnable teaching samples, comparisons, tradeoff analysis, and educational terminology. Implementation-dependent pages are reviewed against a pinned AsiBackbone or NCAT release; Learning never defines product behavior.",
+      "guide": { "repository": "AsiBackbone/Learning", "path": "CONTRIBUTING.md" },
+      "firstContact": ["README.md", "docs/index.md"]
+    },
+    {
+      "id": "asibackbone",
+      "name": "AsiBackbone",
+      "repository": "AsiBackbone/AsiBackbone",
+      "site": "https://asibackbone.github.io/AsiBackbone/",
+      "kind": "implementation-contract",
+      "owns": "Package, API, runtime, and integration-boundary truth: installation, public API behavior, runtime semantics, security and cryptographic posture, exact terminology-to-API mappings, release notes, upgrade guides, and consumer verification.",
+      "guide": { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/documentation-ownership.md" },
+      "firstContact": ["README.md", "docs/index.md"]
+    },
+    {
+      "id": "ncat",
+      "name": ".NET Core Application Template",
+      "repository": "AsiBackbone/NetCoreApplicationTemplate",
+      "site": "https://asibackbone.github.io/NetCoreApplicationTemplate/",
+      "kind": "implementation-contract",
+      "owns": "Template and generated-application truth: template options, generated configuration, middleware order, runtime contracts, the public surface, ADRs, deployment guidance, and release history.",
+      "guide": { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/articles/documentation-ownership.md" },
+      "firstContact": ["README.md", "PACKAGE-README.md", "docs/index.md"]
+    },
+    {
+      "id": "reference-application",
+      "name": "AsiBackbone Reference Application",
+      "repository": "AsiBackbone/ReferenceApplication",
+      "site": "https://asibackbone.github.io/ReferenceApplication/",
+      "kind": "integration-evidence",
+      "owns": "The ordered NCAT-to-AsiBackbone integration walkthrough, its host-specific API reference, and measured integration evidence such as benchmarks, recorded per release.",
+      "guide": { "repository": "AsiBackbone/ReferenceApplication", "path": "docs/walkthrough/index.md" },
+      "firstContact": ["README.md", "docs/index.md"]
+    },
+    {
+      "id": "organization",
+      "name": "Organization profile and landing pages",
+      "repository": "AsiBackbone/.github",
+      "site": "https://asibackbone.github.io/",
+      "kind": "routing",
+      "owns": "Ecosystem positioning and navigation, the landing-page standard, organization community defaults, and the cross-repository registers: the compatibility matrix, the security assurance map, and this ownership map.",
+      "guide": { "repository": "AsiBackbone/.github", "path": "LANDING-PAGE-STANDARD.md" },
+      "firstContact": ["profile/README.md", "README.md"]
+    }
+  ],
+  "topics": [
+    {
+      "id": "product-fit",
+      "title": "Product fit and choosing a project",
+      "owner": "organization",
+      "currency": "current",
+      "canonical": [
+        { "repository": "AsiBackbone/.github", "path": "LANDING-PAGE-STANDARD.md" },
+        { "repository": "AsiBackbone/.github", "path": "profile/README.md" }
+      ],
+      "reuse": {
+        "learning": { "pattern": "summary-link", "note": "Keeps its own fit guidance under the landing-page standard's product-fit contract and links the organization overview for choosing between projects." },
+        "asibackbone": { "pattern": "summary-link", "note": "Keeps its own fit guidance under the product-fit contract, including when simpler designs are enough." },
+        "ncat": { "pattern": "summary-link", "note": "Keeps its own \"Is the template a fit?\" section under the product-fit contract." },
+        "reference-application": { "pattern": "summary-link", "note": "States that it is an example host, not a product, and links the organization overview." }
+      },
+      "note": "The organization owns the cross-project choice and the shared structure of fit sections. Each project's own fit section stays canonical for its own adoption criteria."
+    },
+    {
+      "id": "asibackbone-api-runtime",
+      "title": "AsiBackbone API and runtime behavior",
+      "owner": "asibackbone",
+      "currency": "current",
+      "canonical": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/index.md" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/api-reference.md" }
+      ],
+      "reuse": {
+        "learning": { "pattern": "pinned-snapshot", "note": "Implementation-dependent pages name the reviewed AsiBackbone release and pin source links to its tag." },
+        "ncat": { "pattern": "link-only", "note": "Documents only the host-owned integration seams and links AsiBackbone for package behavior." },
+        "reference-application": { "pattern": "pinned-snapshot", "note": "Each release records the exact package version it integrates." },
+        "organization": { "pattern": "link-only", "note": "Routes to the AsiBackbone documentation." }
+      },
+      "note": "AsiBackbone's own documentation-ownership page classifies its articles; this row only routes other repositories to it."
+    },
+    {
+      "id": "ncat-template-contracts",
+      "title": "NCAT template options and runtime contracts",
+      "owner": "ncat",
+      "currency": "current",
+      "canonical": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/articles/public-surface-v1.md" },
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/articles/template-option-matrix.md" }
+      ],
+      "reuse": {
+        "learning": { "pattern": "pinned-snapshot", "note": "Pages that cite NCAT behavior name the reviewed NCAT release and pin links to its tag." },
+        "asibackbone": { "pattern": "link-only", "note": "Its NCAT host-validation guide is a procedure that links NCAT for generated behavior." },
+        "reference-application": { "pattern": "pinned-snapshot", "note": "Records its NCAT baseline as an ncat-v<version> tag; NCAT's documentation stays authoritative for baseline behavior." },
+        "organization": { "pattern": "link-only", "note": "Routes to the NCAT documentation." }
+      },
+      "note": "Generated applications are not modified by later NCAT releases, so a derived host's baseline is always a pinned snapshot."
+    },
+    {
+      "id": "reference-integration",
+      "title": "Reference Application integration sequence and measured evidence",
+      "owner": "reference-application",
+      "currency": "current",
+      "canonical": [
+        { "repository": "AsiBackbone/ReferenceApplication", "path": "docs/walkthrough/index.md" },
+        { "repository": "AsiBackbone/ReferenceApplication", "path": "docs/walkthrough/08-benchmarks.md" }
+      ],
+      "reuse": {
+        "learning": { "pattern": "summary-link", "note": "May describe the integration path in teaching terms and link the walkthrough for the concrete steps." },
+        "asibackbone": { "pattern": "summary-link", "note": "May point adopters to the walkthrough as a worked example." },
+        "ncat": { "pattern": "summary-link", "note": "Lists the Reference Application as a related project." },
+        "organization": { "pattern": "summary-link", "note": "Describes it in the profile and landing pages and links the walkthrough." }
+      },
+      "note": "The walkthrough is current guidance. Measured results, such as benchmarks, belong to the release that produced them and are cited by release tag."
+    },
+    {
+      "id": "architecture-education",
+      "title": "Framework-neutral tutorials, comparisons, and architecture explanations",
+      "owner": "learning",
+      "currency": "current",
+      "canonical": [
+        { "repository": "AsiBackbone/Learning", "path": "docs/index.md" },
+        { "repository": "AsiBackbone/Learning", "path": "docs/architecture/index.md" }
+      ],
+      "reuse": {
+        "asibackbone": { "pattern": "summary-link", "note": "Keeps short product-boundary or transition pages that route to Learning for the broader explanation." },
+        "ncat": { "pattern": "summary-link", "note": "Links Learning for general rationale, alternatives, and tradeoffs from its implementation articles." },
+        "reference-application": { "pattern": "link-only", "note": "Links Learning for concepts instead of teaching them." },
+        "organization": { "pattern": "summary-link", "note": "Introduces Learning as the first stop for the patterns." }
+      },
+      "note": "If a page teaches an idea that stays useful without the AsiBackbone packages, it belongs in Learning."
+    },
+    {
+      "id": "educational-terminology",
+      "title": "Educational terminology and glossary",
+      "owner": "learning",
+      "currency": "current",
+      "canonical": [
+        { "repository": "AsiBackbone/Learning", "path": "docs/architecture/glossary.md" },
+        { "repository": "AsiBackbone/Learning", "path": "docs/architecture/terminology-and-established-concepts.md" }
+      ],
+      "reuse": {
+        "asibackbone": { "pattern": "summary-link", "note": "Owns only the exact mapping from terms to API types, in its API glossary and terminology map, and links Learning for definitions." },
+        "ncat": { "pattern": "link-only", "note": "Uses the terms without redefining them." },
+        "reference-application": { "pattern": "link-only", "note": "Uses the terms without redefining them." },
+        "organization": { "pattern": "link-only", "note": "Uses the terms without redefining them." }
+      },
+      "note": "Definitions live in Learning; type and namespace mappings live in AsiBackbone."
+    },
+    {
+      "id": "compatibility-matrix",
+      "title": "Compatibility and version matrix",
+      "owner": "organization",
+      "currency": "current",
+      "canonical": [
+        { "repository": "AsiBackbone/.github", "path": "compatibility/README.md" }
+      ],
+      "reuse": {
+        "learning": { "pattern": "pinned-snapshot", "note": "May state the release a page was reviewed against; links the matrix for current combinations." },
+        "asibackbone": { "pattern": "summary-link", "note": "States its own supported line and target framework, and links the matrix for cross-project combinations." },
+        "ncat": { "pattern": "summary-link", "note": "States its own supported line and target framework, and links the matrix for cross-project combinations." },
+        "reference-application": { "pattern": "pinned-snapshot", "note": "Each release records its exact NCAT and AsiBackbone pins; the matrix records which combination it qualifies." }
+      },
+      "note": "Statements about another project's current version belong in the matrix. The current-version claim review below checks first-contact pages for stale copies."
+    },
+    {
+      "id": "security-control-ownership",
+      "title": "Security control ownership",
+      "owner": "organization",
+      "currency": "current",
+      "canonical": [
+        { "repository": "AsiBackbone/.github", "path": "assurance/README.md" }
+      ],
+      "reuse": {
+        "learning": { "pattern": "link-only", "note": "Teaches security architecture without assigning ownership of the organization's controls." },
+        "asibackbone": { "pattern": "link-only", "note": "Its security and cryptographic documentation stays canonical for each control's contract; it links the map for cross-repository ownership." },
+        "ncat": { "pattern": "link-only", "note": "Its security documentation stays canonical for each control's contract; it links the map for cross-repository ownership." },
+        "reference-application": { "pattern": "link-only", "note": "Documents its own host controls and links the map for cross-repository ownership." }
+      },
+      "note": "The map records who owns each control and links each repository's documentation; it does not restate the technical contract."
+    },
+    {
+      "id": "asibackbone-releases",
+      "title": "AsiBackbone release history and migration guidance",
+      "owner": "asibackbone",
+      "currency": "pinned",
+      "canonical": [
+        { "repository": "AsiBackbone/AsiBackbone", "path": "CHANGELOG.md" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/api-compatibility-and-semver.md" }
+      ],
+      "reuse": {
+        "learning": { "pattern": "pinned-snapshot", "note": "Records which AsiBackbone release a Learning release reviewed." },
+        "ncat": { "pattern": "link-only", "note": "Does not restate AsiBackbone release notes." },
+        "reference-application": { "pattern": "pinned-snapshot", "note": "Records each package update in its own changelog, naming the versions." },
+        "organization": { "pattern": "link-only", "note": "Links release pages from the compatibility matrix." }
+      },
+      "note": "Release notes are historical once published. Upgrade guides are current for the version span they cover."
+    },
+    {
+      "id": "ncat-releases",
+      "title": "NCAT release history and support lifecycle",
+      "owner": "ncat",
+      "currency": "pinned",
+      "canonical": [
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "CHANGELOG.md" },
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": ".github/SUPPORT.md" }
+      ],
+      "reuse": {
+        "learning": { "pattern": "pinned-snapshot", "note": "Records which NCAT release a Learning page was reviewed against." },
+        "asibackbone": { "pattern": "link-only", "note": "Does not restate NCAT release notes." },
+        "reference-application": { "pattern": "pinned-snapshot", "note": "Records each NCAT baseline refresh, naming the versions." },
+        "organization": { "pattern": "link-only", "note": "Links release pages from the compatibility matrix." }
+      },
+      "note": "Release notes are historical once published. The support policy is current guidance owned by NCAT."
+    },
+    {
+      "id": "reference-releases",
+      "title": "Reference Application release history",
+      "owner": "reference-application",
+      "currency": "pinned",
+      "canonical": [
+        { "repository": "AsiBackbone/ReferenceApplication", "path": "CHANGELOG.md" }
+      ],
+      "reuse": {
+        "learning": { "pattern": "link-only", "note": "Links the Reference Application instead of restating its releases." },
+        "asibackbone": { "pattern": "link-only", "note": "Links the Reference Application instead of restating its releases." },
+        "ncat": { "pattern": "link-only", "note": "Links the Reference Application instead of restating its releases." },
+        "organization": { "pattern": "pinned-snapshot", "note": "The compatibility matrix records each release's qualified combination with tag-pinned evidence." }
+      },
+      "note": "Each release is a pre-release snapshot of the walkthrough's progress."
+    },
+    {
+      "id": "learning-releases",
+      "title": "Learning release history and citation",
+      "owner": "learning",
+      "currency": "pinned",
+      "canonical": [
+        { "repository": "AsiBackbone/Learning", "path": "CHANGELOG.md" },
+        { "repository": "AsiBackbone/Learning", "path": "README.md" }
+      ],
+      "reuse": {
+        "asibackbone": { "pattern": "link-only", "note": "Links Learning instead of restating its releases." },
+        "ncat": { "pattern": "link-only", "note": "Links Learning instead of restating its releases." },
+        "reference-application": { "pattern": "link-only", "note": "Links Learning instead of restating its releases." },
+        "organization": { "pattern": "pinned-snapshot", "note": "The compatibility matrix records each Learning release's reviewed baseline." }
+      },
+      "note": "Learning releases are archival and citation snapshots; they do not establish runtime compatibility or package support lines."
+    },
+    {
+      "id": "organization-navigation",
+      "title": "Organization positioning and navigation",
+      "owner": "organization",
+      "currency": "current",
+      "canonical": [
+        { "repository": "AsiBackbone/.github", "path": "LANDING-PAGE-STANDARD.md" },
+        { "repository": "AsiBackbone/.github", "path": "profile/README.md" }
+      ],
+      "reuse": {
+        "learning": { "pattern": "summary-link", "note": "Carries the shared ecosystem navigation and related-project section defined by the landing-page standard." },
+        "asibackbone": { "pattern": "summary-link", "note": "Carries the shared ecosystem navigation and related-project section defined by the landing-page standard." },
+        "ncat": { "pattern": "summary-link", "note": "Carries the shared ecosystem navigation and related-project section defined by the landing-page standard." },
+        "reference-application": { "pattern": "summary-link", "note": "Carries the shared ecosystem navigation and related-project section defined by the landing-page standard." }
+      },
+      "note": "Each project owns its own description. As the landing-page standard requires, the organization surfaces reuse those descriptions, shortened if needed, rather than inventing new claims."
+    }
+  ]
+}

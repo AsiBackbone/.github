@@ -17,5 +17,6 @@ List the commands, automated checks, and manual verification performed.
 - [ ] I read the affected repository's contribution and security guidance.
 - [ ] I kept this pull request focused and reviewed the final diff.
 - [ ] I added or updated tests or validation where the change requires them.
+- [ ] Documentation I added or changed follows the [documentation ownership map](https://github.com/AsiBackbone/.github/blob/main/documentation/README.md): it links the canonical owner instead of restating another repository's contract or current version.
 - [ ] I did not include credentials, tokens, personal data, or sensitive vulnerability details.
 - [ ] I have the right to submit this contribution under the affected repository's licensing terms.
