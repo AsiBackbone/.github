@@ -2,7 +2,7 @@
 
 Most applications don't need a governance layer. When you do need one — when you have to explain why an operation was permitted, under which policy, with what evidence — these are the patterns and the working implementations.
 
-The organization maintains three related projects covering policy-as-code, auditable decision systems, capability-based authorization, host-owned execution boundaries, AI governance, and secure ASP.NET Core application architecture, plus a reference application that combines them. The [organization site](https://asibackbone.github.io/) gives an overview of all four.
+The organization maintains three related projects covering policy-as-code, auditable decision systems, capability-based authorization, host-owned execution boundaries, AI governance, and secure ASP.NET Core application architecture, plus a reference application that combines them. The [organization site](https://asibackbone.github.io/) gives an overview of all four, and the [ecosystem compatibility matrix](https://github.com/AsiBackbone/.github/blob/main/compatibility/README.md) records which of their versions have been reviewed together.
 
 ## Learn, Ask, and Contribute
 
