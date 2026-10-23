@@ -42,18 +42,29 @@ These projects do not provide end-to-end production security, legal assurance, r
 ## Repository Control Posture
 
 This repository publishes organization-profile content, default community files,
-GitHub Actions workflows, a deterministic PowerShell validation script, and
-scheduled PowerShell checks that read the public AsiBackbone documentation sites
-and the public workflow files of the documentation repositories with read-only
-repository permissions. It does not ship a service, library,
-parser, or other runtime that accepts untrusted application input.
+GitHub Actions workflows, the ecosystem compatibility manifest and matrix,
+deterministic PowerShell validation scripts, and PowerShell checks that read the
+public AsiBackbone documentation sites and the public workflow files, release
+tags, and files of the ecosystem repositories with read-only repository
+permissions. It does not ship a service, library, parser, or other runtime that
+accepts untrusted application input.
 
 - CodeQL analyzes every pull request and every push to `main` for vulnerabilities
   in GitHub Actions workflows. Zizmor and actionlint provide complementary
   workflow-specific analysis.
 - The active `Main branch security baseline` ruleset requires pull requests,
-  resolved review conversations, linear history, and the strict organization
-  profile validation check, while blocking deletion and force pushes to `main`.
+  resolved review conversations, linear history, and three status checks that
+  run on every pull request to `main`: `Validate organization profile`,
+  `Analyze GitHub Actions with CodeQL`, and `Dependency review`. It also requires
+  CodeQL code-scanning results, blocking security alerts of medium severity or
+  higher and alerts at error or warning level, and it blocks deletion and force
+  pushes to `main`. Its desired state is versioned in
+  [`eng/repository-controls/main-branch-ruleset.json`](eng/repository-controls/main-branch-ruleset.json).
+- Path-filtered and scheduled checks are intentionally not required, because a
+  required check that does not run would block unrelated pull requests. Zizmor
+  and actionlint run on pull requests that change workflows or Dependabot
+  configuration, the compatibility matrix reference check runs on pull requests
+  that change the matrix, and OpenSSF Scorecard runs on its weekly schedule.
 - Fuzzing is not used because the repository has no fuzzable runtime or untrusted
   input-processing surface. Reconsider this decision if executable application,
   parsing, or request-handling code is added.
