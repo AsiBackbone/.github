@@ -505,8 +505,15 @@ function ConvertTo-MatrixMarkdown {
     return (($lines -join "`n") + "`n")
 }
 
+# Set by the self-test to answer requests offline; $null in normal runs.
+$script:GitHubResponder = $null
+
 function Invoke-GitHubRequest {
     param([string]$Uri)
+
+    if ($script:GitHubResponder) {
+        return & $script:GitHubResponder $Uri
+    }
 
     $headers = @{
         'Accept' = 'application/vnd.github+json'
@@ -570,7 +577,8 @@ function Get-GitHubTags {
         }
     }
 
-    return , $names.ToArray()
+    # Emit the names individually; callers collect them with @().
+    return $names.ToArray()
 }
 
 function Test-References {
@@ -640,7 +648,9 @@ function Test-References {
         }
     }
 
-    foreach ($tag in @(& $ListTags $products['referenceApplication'].Repository)) {
+    # ForEach-Object flattens a list that arrives as one array object, so each tag is checked on its own.
+    $releaseTags = @(& $ListTags $products['referenceApplication'].Repository | ForEach-Object { $_ } | ForEach-Object { [string]$_ })
+    foreach ($tag in $releaseTags) {
         if ($tag -match '^v' -and $tag.Substring(1) -match $semVerPattern -and -not $recordedReferenceReleases.Contains($tag)) {
             $Errors.Add("Reference Application release $tag is not recorded in any integration entry.")
         }
@@ -763,14 +773,57 @@ function Invoke-SelfTest {
         @{ Name = 'nonexistent component tag'; Manifest = (& $mutate { param($m) $m['combinations'][0]['components']['asiBackbone'] = '7.9.0' }); Releases = @('v1.0.0'); Pass = $false }
         @{ Name = 'nonexistent evidence file'; Manifest = (& $mutate { param($m) $m['combinations'][0]['evidence'][0]['path'] = 'MISSING.md' }); Releases = @('v1.0.0'); Pass = $false }
         @{ Name = 'unrecorded Reference Application release'; Manifest = (& $clone); Releases = @('v1.0.0', 'v1.1.0'); Pass = $false }
+        @{ Name = 'tag list returned as one array object'; Manifest = (& $clone); Releases = @('v1.0.0', 'ncat-v2.11.5'); Wrapped = $true; Pass = $true }
     )
     foreach ($case in $referenceCases) {
         $caseErrors = [System.Collections.Generic.List[string]]::new()
-        $releases = $case.Releases
-        $null = Test-References -Manifest $case.Manifest -Errors $caseErrors -TagExists $tagExists -FileExists $fileExists -ListTags { param($Repository) $releases }.GetNewClosure()
+        $releases = [string[]]$case.Releases
+        $listTags = if ($case.ContainsKey('Wrapped')) { { param($Repository) , $releases }.GetNewClosure() } else { { param($Repository) $releases }.GetNewClosure() }
+        $null = Test-References -Manifest $case.Manifest -Errors $caseErrors -TagExists $tagExists -FileExists $fileExists -ListTags $listTags
         if (($caseErrors.Count -eq 0) -ne $case.Pass) {
             $expected = if ($case.Pass) { 'success' } else { 'failure' }
             $failures.Add("Self-test '$($case.Name)' expected $expected but got $($caseErrors.Count) error(s): $($caseErrors -join ' ')")
+        }
+    }
+
+    # Drive the real GitHub request, tag-listing, and lookup functions against an offline responder that answers
+    # the way the GitHub REST API does: 404 for a missing ref or file, and a JSON array for the tag listing.
+    $httpCases = @(
+        @{ Name = 'GitHub API: all references exist'; Tags = @('v1.0.0', 'ncat-v2.11.5', 'ncat-v2.11.4'); Pass = $true }
+        @{ Name = 'GitHub API: unrecorded Reference Application release'; Tags = @('v1.0.0', 'v1.1.0'); Pass = $false }
+    )
+    foreach ($case in $httpCases) {
+        $listed = $case.Tags
+        $script:GitHubResponder = {
+            param($Uri)
+            $ok = { param($Content) [pscustomobject]@{ StatusCode = 200; Content = $Content } }
+            if ($Uri -match '/repos/(?<repo>[^/]+/[^/]+)/git/ref/tags/(?<tag>[^/?]+)$') {
+                if ($existingTags -contains "$($Matches.repo)@$([uri]::UnescapeDataString($Matches.tag))") { return & $ok '{}' }
+                return $null
+            }
+            if ($Uri -match '/repos/(?<repo>[^/]+/[^/]+)/contents/(?<path>[^?]+)\?ref=(?<tag>.+)$') {
+                if (& $fileExists $Matches.repo ([uri]::UnescapeDataString($Matches.tag)) ([uri]::UnescapeDataString($Matches.path))) { return & $ok '{}' }
+                return $null
+            }
+            if ($Uri -match '/repos/AsiBackbone/ReferenceApplication/tags\?') {
+                return & $ok (ConvertTo-Json -InputObject @($listed | ForEach-Object { @{ name = $_ } }) -Depth 3)
+            }
+            throw "Unexpected request: $Uri"
+        }.GetNewClosure()
+
+        $caseErrors = [System.Collections.Generic.List[string]]::new()
+        try {
+            $null = Test-References -Manifest (& $clone) -Errors $caseErrors
+        }
+        finally {
+            $script:GitHubResponder = $null
+        }
+        if (($caseErrors.Count -eq 0) -ne $case.Pass) {
+            $expected = if ($case.Pass) { 'success' } else { 'failure' }
+            $failures.Add("Self-test '$($case.Name)' expected $expected but got $($caseErrors.Count) error(s): $($caseErrors -join ' ')")
+        }
+        elseif (-not $case.Pass -and ($caseErrors -join ' ') -notmatch 'release v1\.1\.0 is not recorded') {
+            $failures.Add("Self-test '$($case.Name)' reported the wrong finding: $($caseErrors -join ' ')")
         }
     }
 
