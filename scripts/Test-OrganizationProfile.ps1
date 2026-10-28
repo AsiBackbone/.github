@@ -98,6 +98,20 @@ foreach ($requiredText in @(
     }
 }
 
+foreach ($requiredText in @(
+    'A reusable, production-oriented ASP.NET Core baseline with secure defaults'
+    'It is not a finished, penetration-tested, or certified application'
+    'each generated application still requires application-specific configuration, threat analysis, deployment controls, testing, and security review.'
+)) {
+    if (-not $profile.Contains($requiredText, [StringComparison]::Ordinal)) {
+        $failures.Add("profile/README.md is missing the NCAT product-boundary statement: $requiredText")
+    }
+}
+
+if ($profile -match '(?i)production-ready|enterprise application template') {
+    $failures.Add('profile/README.md overstates the NCAT boundary; use production-oriented baseline terminology.')
+}
+
 Test-CanonicalOrder -Content $profile -Markers $profileProjectHeadings -Source 'profile/README.md' -Failures $failures
 
 if ($profile -match 'ASI Backbone') {

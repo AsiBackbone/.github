@@ -30,7 +30,7 @@ A .NET governance and policy-control framework for building auditable, policy-go
 
 ### [.NET Core Application Template](https://github.com/AsiBackbone/NetCoreApplicationTemplate) — start a secure application
 
-A secure-by-default ASP.NET Core enterprise application template for building maintainable, production-ready .NET applications: authentication and authorization, Serilog structured logging, security headers, rate limiting, EF Core with SQL Server and SQLite, reverse proxy support, and Problem Details error handling.
+A reusable, production-oriented ASP.NET Core baseline with secure defaults for building maintainable .NET applications: authentication and authorization, Serilog structured logging, security headers, rate limiting, EF Core with SQL Server and SQLite, reverse proxy support, and Problem Details error handling. It is not a finished, penetration-tested, or certified application; each generated application still requires application-specific configuration, threat analysis, deployment controls, testing, and security review.
 
 [Documentation](https://asibackbone.github.io/NetCoreApplicationTemplate/) · [Repository](https://github.com/AsiBackbone/NetCoreApplicationTemplate) · [Archive (DOI 10.5281/zenodo.20373042)](https://doi.org/10.5281/zenodo.20373042)
 
