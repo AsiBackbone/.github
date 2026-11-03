@@ -1,6 +1,6 @@
 # AsiBackbone Landing-Page Standard
 
-**Version:** 2.0.0
+**Version:** 2.1.0
 **Status:** Active
 **Contract issue:** [AsiBackbone/.github#15](https://github.com/AsiBackbone/.github/issues/15)
 
@@ -92,6 +92,12 @@ Requirements:
 - Navigation remains reachable on mobile. It may collapse into a disclosure control, but it must not be removed with `display: none` without an accessible alternative.
 - **DocFX adaptation:** add a top-level `AsiBackbone` (or `Resources`) entry in `toc.yml` whose items use the seven labels above, plus a link to the site's own repository. The repository link is in addition to, not a replacement for, `GitHub`.
 - **Profile adaptation:** GitHub profile Markdown cannot host a navigation landmark. The profile satisfies this contract by linking Organization, Learning, Framework, Template, and Reference in its body. Its "Learn, Ask, and Contribute" routes to organization Discussions stand in for Community, and the profile is itself the GitHub destination.
+
+### Optional organization funding destination
+
+The organization profile and organization landing page may expose a `Funding` destination that links to `https://www.patreon.com/AsiBackbone`. On the organization landing page, the navigation label links to the in-page `#funding` section. This organization-level destination is optional on project documentation sites and does not change the seven required ecosystem destinations above.
+
+When present, the section is titled `Support AsiBackbone`, briefly describes what sponsorship supports, states that sponsorship is voluntary, and makes clear that sponsorship does not provide roadmap priority, governance authority, or preferential technical support. It also preserves a route to non-financial open-source contribution.
 
 ## 2. Hero contract
 
@@ -366,6 +372,7 @@ Use this checklist for each surface. Mark not applicable items explicitly.
 | Product fit | Design Philosophy links to simpler-alternative pages | Design Philosophy links to simpler-alternative pages |
 | Related Projects | "Start Here" project subsections | "Start here" project cards |
 | Design Philosophy | Required | Required |
+| Funding | Optional `Support AsiBackbone` section linked to Patreon | Optional `Funding` navigation destination and `Support AsiBackbone` section linked to Patreon |
 | Footer | License section | Footer |
 
 On the two organization surfaces, the Start Here project list doubles as the Related Projects section; repeating it would duplicate content.
