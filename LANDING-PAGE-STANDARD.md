@@ -1,6 +1,6 @@
 # AsiBackbone Landing-Page Standard
 
-**Version:** 2.1.0
+**Version:** 3.0.0
 **Status:** Active
 **Contract issue:** [AsiBackbone/.github#15](https://github.com/AsiBackbone/.github/issues/15)
 
@@ -72,7 +72,7 @@ DocFX homepages disable the table-of-contents sidebar and the affix (`_disableTo
 
 ## 1. Ecosystem navigation contract
 
-Every surface exposes the same seven destinations with the same labels:
+Every surface exposes the same eight destinations with the same labels:
 
 | Label | Destination | Notes |
 | --- | --- | --- |
@@ -82,6 +82,7 @@ Every surface exposes the same seven destinations with the same labels:
 | Framework | `https://asibackbone.github.io/AsiBackbone/` | |
 | Template | `https://asibackbone.github.io/NetCoreApplicationTemplate/` | |
 | Reference | `https://asibackbone.github.io/ReferenceApplication/` | |
+| Funding | `https://asibackbone.github.io/#funding` | The organization landing page may use the in-page anchor `#funding`. |
 | GitHub | `https://github.com/AsiBackbone` | The organization, not a single repository. |
 
 Requirements:
@@ -90,14 +91,14 @@ Requirements:
 - The current site is identified with `aria-current="page"` or the platform's equivalent active state where the platform permits it.
 - The ecosystem navigation is a labelled navigation landmark (for example `aria-label="AsiBackbone sites"`) on HTML surfaces.
 - Navigation remains reachable on mobile. It may collapse into a disclosure control, but it must not be removed with `display: none` without an accessible alternative.
-- **DocFX adaptation:** add a top-level `AsiBackbone` (or `Resources`) entry in `toc.yml` whose items use the seven labels above, plus a link to the site's own repository. The repository link is in addition to, not a replacement for, `GitHub`.
-- **Profile adaptation:** GitHub profile Markdown cannot host a navigation landmark. The profile satisfies this contract by linking Organization, Learning, Framework, Template, and Reference in its body. Its "Learn, Ask, and Contribute" routes to organization Discussions stand in for Community, and the profile is itself the GitHub destination.
+- **DocFX adaptation:** add a top-level `AsiBackbone` (or `Resources`) entry in `toc.yml` whose items use the eight labels above, plus a link to the site's own repository. The repository link is in addition to, not a replacement for, `GitHub`.
+- **Profile adaptation:** GitHub profile Markdown cannot host a navigation landmark. The profile satisfies this contract by linking Organization, Learning, Framework, Template, Reference, and Funding in its body. Its "Learn, Ask, and Contribute" routes to organization Discussions stand in for Community, and the profile is itself the GitHub destination.
 
-### Optional organization funding destination
+### Funding destination
 
-The organization profile and organization landing page may expose a `Funding` destination that links to `https://www.patreon.com/AsiBackbone`. On the organization landing page, the navigation label links to the in-page `#funding` section. This organization-level destination is optional on project documentation sites and does not change the seven required ecosystem destinations above.
+The `Funding` destination routes readers to the organization landing page's `Support AsiBackbone` section at `https://asibackbone.github.io/#funding`. That section links to `https://www.patreon.com/AsiBackbone` after explaining what sponsorship supports and the boundaries below. DocFX sites use the absolute organization URL so the same destination works from every published site.
 
-When present, the section is titled `Support AsiBackbone`, briefly describes what sponsorship supports, states that sponsorship is voluntary, and makes clear that sponsorship does not provide roadmap priority, governance authority, or preferential technical support. It also preserves a route to non-financial open-source contribution.
+The section is titled `Support AsiBackbone`, briefly describes what sponsorship supports, states that sponsorship is voluntary, and makes clear that sponsorship does not provide roadmap priority, governance authority, or preferential technical support. It also preserves a route to non-financial open-source contribution.
 
 ## 2. Hero contract
 
@@ -304,9 +305,9 @@ Drift is controlled by a small set of automated checks owned by each repository 
 | Check | Surface | Where it runs |
 | --- | --- | --- |
 | Profile contains all ecosystem destinations, community routes, canonical project names in canonical order, Design Philosophy statement, and license links | Profile | `scripts/Test-OrganizationProfile.ps1` in this repository |
-| This standard names all six surfaces, all seven ecosystem destinations, all ten contracts, the rollout issues, the page-metadata and published-output requirements, and the validation checklist, and lists the Related Projects in canonical order | Standard | `scripts/Test-OrganizationProfile.ps1` in this repository |
+| This standard names all six surfaces, all eight ecosystem destinations, all ten contracts, the rollout issues, the page-metadata and published-output requirements, and the validation checklist, and lists the Related Projects in canonical order | Standard | `scripts/Test-OrganizationProfile.ps1` in this repository |
 | Landing page contains required community and project routes, structured data, and sitemap entries | Organization landing page | `scripts/Test-LandingSite.ps1` in `asibackbone.github.io` |
-| Homepage source contains the seven navigation destinations, the required section headings, and the Design Philosophy statement | Learning, Framework, Template, Reference | A repository-owned script or test added by each rollout issue |
+| Homepage source contains the eight navigation destinations, the required section headings, and the Design Philosophy statement | Learning, Framework, Template, Reference | A repository-owned script or test added by each rollout issue |
 | Homepage front matter, `docfx.json`, and the layout override declare the document language, page metadata, full-width homepage, and template-rendered skip link; the built homepage contains them | Framework, Template, Reference | `scripts/Validate-LandingPage.ps1` in each repository |
 | Published homepages declare `lang="en"`, a concise non-duplicated title, the canonical URL, a social image, and JSON-LD; render the skip link without JavaScript; omit the sidebar; and do not serve `manifest.json` | Learning, Framework, Template, Reference | `scripts/Test-PublishedSites.ps1` in this repository, weekly and on demand through `.github/workflows/published-sites-validation.yml` |
 | Every DocFX build in a pull-request, release, or publication workflow runs with `--warningsAsErrors` | Learning, Framework, Template, Reference | Each repository's workflows (see [Strict DocFX builds](#strict-docfx-builds)) |
@@ -358,7 +359,7 @@ Use this checklist for each surface. Mark not applicable items explicitly.
 - [ ] **Without JavaScript:** with scripts disabled, the skip link is present, moves focus to main content, and the homepage content is readable at full width.
 - [ ] **Project order:** project cards follow the canonical order Learn → Framework → Template → Reference, and a current-site card is marked as the [Related Projects contract](#5-related-projects-contract) requires.
 - [ ] **Internal links:** every relative link in the homepage source resolves in the build output.
-- [ ] **External links:** all seven ecosystem destinations and the four projects' documentation, repository, and published archive links resolve.
+- [ ] **External links:** all eight ecosystem destinations and the four projects' documentation, repository, and published archive links resolve.
 - [ ] **DocFX build output (DocFX sites):** `docfx build` with `--warningsAsErrors` completes with no warnings, and `_site/index.html` contains the hero, Start Here, Product fit, Related Projects, and Design Philosophy sections.
 - [ ] **Published Pages rendering:** after deployment, the published URL renders the same content as the local build, with styles and theme switching working.
 
@@ -366,13 +367,13 @@ Use this checklist for each surface. Mark not applicable items explicitly.
 
 | Contract | Organization profile | Organization landing page |
 | --- | --- | --- |
-| Ecosystem navigation | Destinations linked in the body; Discussions routes stand in for Community | Header `nav` with Learning, Community, Framework, Template, Reference, GitHub; brand link is Organization |
+| Ecosystem navigation | Destinations linked in the body; Discussions routes stand in for Community | Header `nav` with Learning, Community, Framework, Template, Reference, Funding, GitHub; brand link is Organization |
 | Hero | Opening paragraphs | Hero section |
 | Start Here | "Learn, Ask, and Contribute" routes and "Start Here" project sections | "Learn, ask, and contribute" route cards and "Start here" project cards |
 | Product fit | Design Philosophy links to simpler-alternative pages | Design Philosophy links to simpler-alternative pages |
 | Related Projects | "Start Here" project subsections | "Start here" project cards |
 | Design Philosophy | Required | Required |
-| Funding | Optional `Support AsiBackbone` section linked to Patreon | Optional `Funding` navigation destination and `Support AsiBackbone` section linked to Patreon |
+| Funding | Required `Support AsiBackbone` section linked to Patreon | Required `Funding` navigation destination and `Support AsiBackbone` section linked to Patreon |
 | Footer | License section | Footer |
 
 On the two organization surfaces, the Start Here project list doubles as the Related Projects section; repeating it would duplicate content.

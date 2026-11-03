@@ -172,7 +172,7 @@ if (Test-Path -LiteralPath $standardPath -PathType Leaf) {
         '**Canonical order:**'
         'aria-current="page"'
         '## Baseline review: Reference'
-        '### Optional organization funding destination'
+        '### Funding destination'
         'https://www.patreon.com/AsiBackbone'
         'does not provide roadmap priority, governance authority, or preferential technical support'
         $standardProjectRows
@@ -209,7 +209,7 @@ if (Test-Path -LiteralPath $standardPath -PathType Leaf) {
         }
     }
 
-    foreach ($label in @('Organization', 'Learning', 'Community', 'Framework', 'Template', 'Reference', 'GitHub')) {
+    foreach ($label in @('Organization', 'Learning', 'Community', 'Framework', 'Template', 'Reference', 'Funding', 'GitHub')) {
         if ($standard -notmatch "(?m)^\| $label \| ") {
             $failures.Add("LANDING-PAGE-STANDARD.md is missing the '$label' ecosystem navigation destination.")
         }
