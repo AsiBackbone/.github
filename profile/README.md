@@ -48,6 +48,14 @@ We also document when these patterns are unnecessary. See [When ASP.NET Core Aut
 
 Our projects focus on practical .NET engineering rather than claiming regulatory certification or automatic compliance.
 
+## Support AsiBackbone
+
+AsiBackbone is developed and maintained as an open-source organization. Sponsorship helps support documentation, learning resources, project maintenance, infrastructure, and continued development.
+
+[Support AsiBackbone on Patreon](https://www.patreon.com/AsiBackbone)
+
+Sponsorship is voluntary and does not provide roadmap priority, governance authority, or preferential technical support.
+
 ## Technologies
 
 .NET · C# · ASP.NET Core · EF Core · Serilog · GitHub Actions

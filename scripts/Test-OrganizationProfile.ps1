@@ -37,6 +37,9 @@ $requiredContent = [ordered]@{
     'https://github.com/AsiBackbone/.github/blob/main/LICENSES.md' = 'licensing boundary link'
     'https://github.com/AsiBackbone/.github/blob/main/compatibility/README.md' = 'ecosystem compatibility matrix link'
     'https://github.com/AsiBackbone/.github/blob/main/assurance/README.md' = 'security assurance map link'
+    '## Support AsiBackbone' = 'organization sponsorship section'
+    'https://www.patreon.com/AsiBackbone' = 'organization Patreon link'
+    'Sponsorship is voluntary and does not provide roadmap priority, governance authority, or preferential technical support.' = 'sponsorship boundary statement'
 }
 
 # Canonical project order (LANDING-PAGE-STANDARD.md, Related Projects contract): Learn → Framework → Template → Reference.
@@ -169,6 +172,9 @@ if (Test-Path -LiteralPath $standardPath -PathType Leaf) {
         '**Canonical order:**'
         'aria-current="page"'
         '## Baseline review: Reference'
+        '### Optional organization funding destination'
+        'https://www.patreon.com/AsiBackbone'
+        'does not provide roadmap priority, governance authority, or preferential technical support'
         $standardProjectRows
     )
     foreach ($requiredText in $standardContent) {
@@ -229,6 +235,7 @@ $requiredFiles = @(
     'LICENSE-CODE'
     'LICENSES.md'
     'LANDING-PAGE-STANDARD.md'
+    '.github/FUNDING.yml'
     '.editorconfig'
     '.gitattributes'
     '.gitignore'
@@ -317,6 +324,9 @@ $communityContracts = [ordered]@{
         'https://github.com/orgs/AsiBackbone/discussions/categories/architecture-integration'
         'https://github.com/AsiBackbone/.github/security/advisories/new'
         'Do not disclose secrets or exploit details publicly.'
+    )
+    '.github/FUNDING.yml' = @(
+        'patreon: AsiBackbone'
     )
     '.github/dependabot.yml' = @(
         'package-ecosystem: "github-actions"'
