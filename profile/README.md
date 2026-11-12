@@ -26,17 +26,7 @@ The organization also maintains the **[organization documentation site](https://
 
 ## Current Project State
 
-### [AsiBackbone](https://github.com/AsiBackbone/AsiBackbone)
-
-The stable package family is **7.x**, with **7.5.3** as the current release.
-
-AsiBackbone is a governance framework for **Accountable Systems Infrastructure**. It evaluates policy before host-owned execution, returns structured governance decisions, records decision evidence, supports acknowledgment workflows and scoped capability grants, and provides integration surfaces for persistence, signing, verification, telemetry, and ASP.NET Core.
-
-It is intentionally **not** an authentication system, authorization replacement, immutable ledger, compliance certification service, or intelligence engine. The host application continues to own identity, business authorization, persistence choices, execution, deployment controls, monitoring, and operational response.
-
-[Documentation](https://asibackbone.github.io/AsiBackbone/) · [Repository](https://github.com/AsiBackbone/AsiBackbone) · [NuGet](https://www.nuget.org/packages/AsiBackbone.Core) · [Archive (DOI 10.5281/zenodo.20546032)](https://doi.org/10.5281/zenodo.20546032)
-
-### [AsiBackbone Learning](https://github.com/AsiBackbone/Learning)
+### [AsiBackbone Learning](https://github.com/AsiBackbone/Learning) — learn the patterns
 
 Learning is the **canonical educational layer** for the organization.
 
@@ -46,19 +36,29 @@ The material is designed to remain useful **without requiring the AsiBackbone pa
 
 [Documentation](https://asibackbone.github.io/Learning/) · [Repository](https://github.com/AsiBackbone/Learning) · [Archive (DOI 10.5281/zenodo.21938556)](https://doi.org/10.5281/zenodo.21938556)
 
-### [.NET Core Application Template](https://github.com/AsiBackbone/NetCoreApplicationTemplate)
+### [AsiBackbone](https://github.com/AsiBackbone/AsiBackbone) — add governed decisions
 
-NCAT is a reusable, production-oriented **ASP.NET Core baseline for .NET 10**, distributed as a `dotnet new` template.
+The stable package family is **7.x**, with **7.5.3** as the current release.
+
+AsiBackbone is a governance framework for **Accountable Systems Infrastructure**. It evaluates policy before host-owned execution, returns structured governance decisions, records decision evidence, supports acknowledgment workflows and scoped capability grants, and provides integration surfaces for persistence, signing, verification, telemetry, and ASP.NET Core.
+
+It is intentionally **not** an authentication system, authorization replacement, immutable ledger, compliance certification service, or intelligence engine. The host application continues to own identity, business authorization, persistence choices, execution, deployment controls, monitoring, and operational response.
+
+[Documentation](https://asibackbone.github.io/AsiBackbone/) · [Repository](https://github.com/AsiBackbone/AsiBackbone) · [NuGet](https://www.nuget.org/packages/AsiBackbone.Core) · [Archive (DOI 10.5281/zenodo.20546032)](https://doi.org/10.5281/zenodo.20546032)
+
+### [.NET Core Application Template](https://github.com/AsiBackbone/NetCoreApplicationTemplate) — start a secure application
+
+A reusable, production-oriented ASP.NET Core baseline with secure defaults for .NET 10, distributed as a `dotnet new` template.
 
 The current **2.x** line is feature-complete and actively maintained for security fixes, dependency servicing, and documentation corrections. The generated scaffold includes closed-by-default routed endpoints, explicit anonymous access, structured logging, security headers, rate limiting, centralized Problem Details handling, EF Core patterns, health checks, telemetry, reverse-proxy validation, and release/CI controls.
 
 Current release: **2.11.9**.
 
-NCAT is a baseline, not a finished or certified application. Applications generated from it still require application-specific identity configuration, threat analysis, deployment controls, testing, and security review.
+It is not a finished, penetration-tested, or certified application; each generated application still requires application-specific configuration, threat analysis, deployment controls, testing, and security review.
 
 [Documentation](https://asibackbone.github.io/NetCoreApplicationTemplate/) · [Repository](https://github.com/AsiBackbone/NetCoreApplicationTemplate) · [NuGet](https://www.nuget.org/packages/NetCoreApplicationTemplate) · [Archive (DOI 10.5281/zenodo.20373042)](https://doi.org/10.5281/zenodo.20373042)
 
-### [AsiBackbone Reference Application](https://github.com/AsiBackbone/ReferenceApplication)
+### [AsiBackbone Reference Application](https://github.com/AsiBackbone/ReferenceApplication) — follow the integration
 
 The Reference Application is the organization's **stable integration example**, not a product.
 
@@ -121,14 +121,17 @@ See the [organization site](https://asibackbone.github.io/), [ecosystem compatib
 - **Ask a question:** [Organization Q&A](https://github.com/orgs/AsiBackbone/discussions/categories/q-a)
 - **Propose an idea:** [Ideas](https://github.com/orgs/AsiBackbone/discussions/categories/ideas)
 - **Discuss architecture or integration:** [Architecture & Integration](https://github.com/orgs/AsiBackbone/discussions/categories/architecture-integration)
+- **Contribute:** follow the affected repository's guide: [Learning](https://github.com/AsiBackbone/Learning/blob/main/CONTRIBUTING.md), [AsiBackbone](https://github.com/AsiBackbone/AsiBackbone/blob/main/CONTRIBUTING.md), or [NetCoreApplicationTemplate](https://github.com/AsiBackbone/NetCoreApplicationTemplate/blob/main/CONTRIBUTING.md). See also the [Reference Application contribution guide](https://github.com/AsiBackbone/ReferenceApplication/blob/main/CONTRIBUTING.md).
 - **Report a concrete issue:** use the affected project's issue tracker.
-- **Report a sensitive security concern:** use the affected repository's private vulnerability-reporting path rather than a public issue.
+- **Report a sensitive security concern:** do not disclose details publicly. Use the [Learning security policy](https://github.com/AsiBackbone/Learning/security/policy), [AsiBackbone security policy](https://github.com/AsiBackbone/AsiBackbone/security/policy), [NetCoreApplicationTemplate security policy](https://github.com/AsiBackbone/NetCoreApplicationTemplate/security/policy), or [Reference Application security policy](https://github.com/AsiBackbone/ReferenceApplication/security/policy).
 
 When asking for help, include the affected repository and version whenever possible.
 
 ## Design Philosophy
 
-We favor systems where consequential operations are:
+We favor architectures where consequential operations are explicit, constrained, reviewable, and auditable.
+
+In practice, we favor systems where consequential operations are:
 
 - evaluated **before** execution;
 - constrained by explicit policy;
