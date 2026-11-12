@@ -1,0 +1,75 @@
+# Sigstore release-signing trust and verification policy
+
+**Owner:** AsiBackbone organization governance (`AsiBackbone/.github`)
+**Scope:** published software and versioned downloadable release artifacts across the AsiBackbone organization
+**Reviewed:** 2026-11-12
+**Related:** [AsiBackbone #933](https://github.com/AsiBackbone/AsiBackbone/issues/933), [NetCoreApplicationTemplate #698](https://github.com/AsiBackbone/NetCoreApplicationTemplate/issues/698)
+
+This policy defines the *minimum release-signing trust claims and verification expectations* shared by the organization. It does not implement signing, grant runtime authority, create a compliance certification, or replace any product's release contract. The **artifact-producing repository** owns its signing workflow, validation scripts, protected publishing environment, release assets and exact consumer commands. Its implementation documentation is authoritative for those details.
+
+## Artifact selection and current implementation status
+
+| Repository | Artifact / distribution boundary | Status and responsible implementation |
+| --- | --- | --- |
+| [AsiBackbone](https://github.com/AsiBackbone/AsiBackbone) | Exact validated `AsiBackbone.*.nupkg` **build packages attached to GitHub Releases** | **Implemented in the release workflow:** keyless Cosign blob signing and per-package `*.sigstore.json` bundles; issuer/workflow-bound verification before publication and release evidence verification. See [publish workflow](https://github.com/AsiBackbone/AsiBackbone/blob/main/.github/workflows/publish-packages.yml), [Sigstore bundle verification script](https://github.com/AsiBackbone/AsiBackbone/blob/main/scripts/Assert-SigstorePackageBundles.ps1), and [issue #933](https://github.com/AsiBackbone/AsiBackbone/issues/933). Actual public availability is **release-specific**, not implied by a merged workflow. |
+| [NetCoreApplicationTemplate](https://github.com/AsiBackbone/NetCoreApplicationTemplate) | Exact GitHub Release template `.nupkg` **build package**, and independently the **immutable GHCR image digest** | **Implemented in the release workflows:** keyless Cosign blob-signature bundle for the package, and an OCI digest signature for the image. See [package publish](https://github.com/AsiBackbone/NetCoreApplicationTemplate/blob/main/.github/workflows/publish-template-package.yml), [container publish](https://github.com/AsiBackbone/NetCoreApplicationTemplate/blob/main/.github/workflows/publish-container.yml), and [issue #698](https://github.com/AsiBackbone/NetCoreApplicationTemplate/issues/698). Each subject has a distinct verification path; publication must be checked per release. |
+| [ReferenceApplication](https://github.com/AsiBackbone/ReferenceApplication) | Any independently distributed, immutable, versioned binary/archive, **if** the release inventory identifies one | **Assessment open** in [issue #129](https://github.com/AsiBackbone/ReferenceApplication/issues/129). No organization-wide claim that releases are Sigstore-signed. Do not create artificial archives to earn a score. |
+| [Learning](https://github.com/AsiBackbone/Learning) | Downloadable versioned educational/sample/archive artifacts, **if** the release inventory and byte identity justify signatures | **Assessment open** in [issue #480](https://github.com/AsiBackbone/Learning/issues/480). A Zenodo DOI is an archival identifier, not a signature; compare hashes before claiming a GitHub bundle covers a rehosted file. |
+| [`.github`](https://github.com/AsiBackbone/.github) | Organization profile, governance policy and generated maps | **No per-file signing pipeline.** The repository owns this policy and the [assurance map](README.md); existing branch, review and validation gates remain authoritative. |
+| [`asibackbone.github.io`](https://github.com/AsiBackbone/asibackbone.github.io) | Static GitHub Pages landing/search/sitemap content | **No general website signing pipeline.** Publication-integrity review is tracked in [issue #35](https://github.com/AsiBackbone/asibackbone.github.io/issues/35); reassess only if immutable downloadable artifacts become a consumer interface. |
+
+**State labels matter:** *implemented* describes reviewed workflow code, *published* must be demonstrated for a specific release and its assets, and *verified* means the signature checks passed under the consumer's own explicit trust policy. Closed implementation issues alone do not prove that any particular public artifact verifies.
+
+## Required verification and publication controls
+
+1. **Verify the exact subject.** Sign and attest immutable bytes or an immutable OCI digest. Fail if an expected release asset, bundle, digest or manifest entry is missing or mismatched. Verify the **downloaded** release copy, not only an in-job temporary artifact.
+2. **Pin the expected identity.** Verification must constrain both the OIDC issuer (`https://token.actions.githubusercontent.com` for GitHub Actions keyless issuance) **and the exact authorized repository/workflow identity** used by that producer, including the expected tag/ref or approved reusable-workflow identity. A valid signature by *some* Sigstore identity is insufficient. The product's published verifier is authoritative for the precise certificate identity and any additional claims checked.
+3. **Validate the cryptographic trust evidence.** Use supported Cosign/GitHub tooling and trusted Sigstore roots; validate artifact hash, signature, certificate identity and validity, and transparency-log inclusion/integrated time or trusted timestamp evidence **as applicable to the bundle and verifier version**. Do not assume a bundle is safe merely because JSON parses. Record the verified tool version and the failure behavior of online/offline trust-root and log checks.
+4. **Test failures.** Release validation must reject tampered artifacts, missing/mismatched bundles, an unauthorized identity/issuer and unavailable mandatory verification evidence. Never silently continue a consequential release step on signature-verification failure. Include a negative test in signing validation; use isolated staging to avoid modifying real release assets.
+5. **Protect publishing authority.** Sign only from an authorized protected release workflow after build/tests and package validation. Pin third-party GitHub Actions to immutable commit SHAs, minimize GitHub token permissions, grant `id-token: write` **only to jobs that require OIDC signing**, and avoid persistent signing keys or credentials in build logs and artifacts. A separate verification job need not receive OIDC signing permission.
+6. **Publish durable evidence.** Upload the exact signed subject and its matching bundle to the public release, preserve hashes and source tag/commit in release evidence, and check availability and verification after public publication. Temporary GitHub Actions artifacts are not the permanent consumer interface; if assets are mirrored, verify byte identity before claiming the same signature applies.
+7. **Plan failure and recovery.** On failed signing, verification, asset upload or manifest reconciliation, block release completion, retain safe diagnostics, and fix through a reviewed follow-up. Investigate unexpected signer identities, modified artifacts, revoked/compromised issuers, and keyless trust-root events as supply-chain incidents. Preserve the prior trusted artifacts; revoke or replace affected release assets under a published incident notice, and retest independently before resuming publication. Re-signing identical bytes creates a *new* attestation/signature, not proof that an earlier compromised signature was trustworthy.
+
+### Verifier illustration (not a universal copy/paste identity)
+
+A consumer first downloads the package **and its matching bundle from the same release**. Consult the producing repository's runbook for the exact workflow identity and tested Cosign version:
+
+```bash
+cosign verify-blob \
+  --bundle AsiBackbone.Core.VERSION.nupkg.sigstore.json \
+  --certificate-identity 'EXPECTED_EXACT_GITHUB_WORKFLOW_IDENTITY' \
+  --certificate-oidc-issuer 'https://token.actions.githubusercontent.com' \
+  AsiBackbone.Core.VERSION.nupkg
+```
+
+The placeholder identity must be replaced with the workflow identity that **actually appears in the issuing certificate**, with expected repository/ref constraints reviewed; do not infer or wildcard it. For OCI images, use the producer's `cosign verify` procedure against `image@sha256:...` rather than a mutable tag. GitHub build-provenance attestations have a **separate** `gh attestation verify` procedure and trust policy.
+
+## Trust boundaries and non-claims
+
+| Mechanism | What it can establish, when correctly validated | What it does **not** establish |
+| --- | --- | --- |
+| Sigstore keyless Cosign blob signature | The exact blob digest was signed using a short-lived certificate linked to the accepted workflow identity, with applicable transparency evidence | Native NuGet author signing, semantic correctness, vulnerability absence, compliance, or ongoing authorization of the signer outside the verified context |
+| Cosign OCI signature | A specific immutable image digest was signed by an accepted identity | Integrity of a separate NuGet artifact or equivalence of an image *tag* over time |
+| GitHub build-provenance/SLSA-style attestation | A signed statement associates a subject digest with a claimed build process and source/workflow identity, under its verification rules | An independent security audit or proof the build environment was uncompromised |
+| SPDX SBOM | The producer's declared inventory for a particular scope and artifact | Complete vulnerability discovery or cryptographic origin by itself |
+| SHA-256 manifest | Matching bytes against a previously trusted digest | Who authored that digest or whether its publisher was authorized |
+| NuGet Trusted Publishing | Authentication/authorization of the publishing workflow to the package registry | A package author signature embedded in `.nupkg` |
+| NuGet.org repository signature | Repository-backed signature of package bytes served by the registry | Project-controlled author signing or equivalence to an earlier GitHub build package byte stream |
+| NuGet author signature | Package-level certificate-backed signer evidence under NuGet's own verification model | A substitute for trusted build provenance or runtime governance policy |
+| AsiBackbone managed-key governance signatures | A consuming host's configured cryptographic binding of governance artifacts, with trusted keys and policy | Public Sigstore release signing or automatic authorization to execute an operation |
+
+**NuGet byte boundary:** NuGet.org may apply a repository signature to the uploaded `.nupkg`, changing the bytes. A Cosign bundle for the original GitHub Release **build package** must not be claimed to verify the repository-signed package downloaded from NuGet.org. Verify the registry package through NuGet's signing facilities and the product's separately documented package/source evidence. Native NuGet author signing remains subject to each product's [AsiBackbone decision](https://github.com/AsiBackbone/AsiBackbone/blob/main/docs/articles/nuget-package-signing-decision.md) or [NCAT ADR-0005](https://github.com/AsiBackbone/NetCoreApplicationTemplate/blob/main/docs/adr/0005-defer-nuget-package-signing.md).
+
+**Runtime and privacy boundary:** Sigstore release evidence is not a new `AsiBackbone.Signing.ManagedKey` provider. Do not upload governance receipts, private actor identities, user data, capability grants, or other confidential payloads to public Rekor or release assets. Public signing metadata can expose workflow identity, signing time and artifact hashes. Any future runtime Sigstore adapter requires its own design, privacy assessment, offline/fail-closed behavior and issuer trust model.
+
+**Scores and certification:** OpenSSF Scorecard Signed-Releases signals are helpful discovery metrics, not cryptographic validation. Signing does not certify a repository, make a supply chain compromise-proof, or authorize downstream execution. Operator trust policies remain necessary.
+
+## Canonical ownership, evidence and review
+
+- **Organization (`AsiBackbone/.github`):** owns this shared policy and cross-repository assurance routing; it does not issue signatures. The [generated assurance map](README.md) remains pinned to its declared compatibility baselines and must not be retroactively described as verifying newer release-signing behavior without a manifest review.
+- **AsiBackbone:** owns its NuGet release workflow, product signing decision, bundle checks, release evidence, exact verifier commands and failure handling. [Release supply-chain documentation](https://github.com/AsiBackbone/AsiBackbone/blob/main/docs/articles/supply-chain-provenance.md).
+- **NetCoreApplicationTemplate:** owns template NuGet and container-image release signing, respective verification gates, release runbooks, and the native NuGet author-signing ADR. [Container release guidance](https://github.com/AsiBackbone/NetCoreApplicationTemplate/blob/main/docs/articles/container-publish.md).
+- **ReferenceApplication / Learning:** own their artifact inventories and conditional sign/defer decisions. Documentation sites must link product-owned verification instructions rather than copying unpinned workflow identities.
+- **Organization website:** owns GitHub Pages publication controls and its own future distribution decision, not the other projects' release signatures.
+
+Review this policy when a signature workflow, trust identity/issuer, publication route, package byte boundary, verifier toolchain, Sigstore trust roots or organization ownership changes; after a signing-related incident; and when [ReferenceApplication #129](https://github.com/AsiBackbone/ReferenceApplication/issues/129), [Learning #480](https://github.com/AsiBackbone/Learning/issues/480) or [website #35](https://github.com/AsiBackbone/asibackbone.github.io/issues/35) resolves. Follow the affected product's release/ADR review process and update the organization [assurance map](README.md) and [documentation ownership map](../documentation/README.md) **through their JSON manifests and generated renderers** when a tracked control or canonical owner changes.
