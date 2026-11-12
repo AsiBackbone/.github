@@ -414,6 +414,10 @@ function ConvertTo-AssuranceMarkdown {
     $lines.Add('')
     $lines.Add('The weekly `Assurance map validation` workflow checks that every linked file still exists at its resolved ref, so a moved or deleted enforcement point, test, or document surfaces as a finding.')
     $lines.Add('')
+    $lines.Add('## Release-signing trust policy')
+    $lines.Add('')
+    $lines.Add('The organization [Sigstore release-signing trust policy](SIGSTORE.md) records per-repository implementation and assessment status, exact artifact boundaries, signer-identity and verification expectations, and non-claims. This additional guidance does not alter the version-pinned control records above; update `control-ownership.json` when a mapped control changes at the compatibility baseline.')
+    $lines.Add('')
 
     $lines.Add('## Updating the map')
     $lines.Add('')

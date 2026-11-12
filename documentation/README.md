@@ -230,3 +230,7 @@ Claims about a surface's own project are not checked, because that surface owns 
 1. Edit [`ownership.json`](ownership.json). Give each topic exactly one owner and canonical source, and say how every other surface references it.
 2. Run `./scripts/Test-DocumentationOwnership.ps1 -Update` to regenerate this page, then `./scripts/Test-DocumentationOwnership.ps1 -VerifyReferences -ScanVersionClaims` to confirm every link resolves and see current-version findings.
 3. Open a pull request. The `Validate organization profile` check fails when the manifest is malformed, a required topic or reuse entry is missing, a surface owns nothing, or this page does not match the manifest.
+
+## Release-signing documentation routing
+
+The organization [Sigstore release-signing trust policy](../assurance/SIGSTORE.md) owns the shared identity, verification, evidence and non-claim requirements. Each producing repository owns exact signer identifiers, release workflow behavior, release-specific bundles and consumer commands. This routing note does not change the topic owners in `ownership.json`; update that manifest and regenerate this page if the canonical owner changes.

@@ -498,6 +498,10 @@ Review this map, and update the `reviewed` date, whenever:
 
 The weekly `Assurance map validation` workflow checks that every linked file still exists at its resolved ref, so a moved or deleted enforcement point, test, or document surfaces as a finding.
 
+## Release-signing trust policy
+
+The organization [Sigstore release-signing trust policy](SIGSTORE.md) records per-repository implementation and assessment status, exact artifact boundaries, signer-identity and verification expectations, and non-claims. This additional guidance does not alter the version-pinned control records above; update `control-ownership.json` when a mapped control changes at the compatibility baseline.
+
 ## Updating the map
 
 1. Edit [`control-ownership.json`](control-ownership.json). Give each control exactly one owner and enforcement point, link tests and canonical documentation by repository and path, and record an `evidenceGap` wherever evidence is missing or partial.
