@@ -167,7 +167,7 @@ Release notes are historical once published. The support policy is current guida
 
 ### Reference Application release history
 
-Each release is a pre-release snapshot of the walkthrough's progress.
+Each release is a versioned snapshot of the walkthrough. Stable 1.x releases follow the Reference Application's stable compatibility contract.
 
 - **AsiBackbone Learning** (Link only): Links the Reference Application instead of restating its releases.
 - **AsiBackbone** (Link only): Links the Reference Application instead of restating its releases.

@@ -431,7 +431,7 @@ function ConvertTo-MatrixMarkdown {
 
     $lines.Add('## Current integration')
     $lines.Add('')
-    $lines.Add('Each Reference Application release qualifies exactly one NCAT and AsiBackbone combination. The Reference Application is an example host generated from NCAT; its releases are pre-releases and do not declare a stable public contract.')
+    $lines.Add('Each Reference Application release qualifies exactly one NCAT and AsiBackbone combination. The Reference Application is an example host generated from NCAT; stable 1.x releases follow its versioned compatibility contract.')
     $lines.Add('')
     $currentIntegration = @($current | Where-Object { $_['kind'] -eq 'integration' })
     $lines.AddRange([string[]]$integrationHeader)

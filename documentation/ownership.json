@@ -236,7 +236,7 @@
         "ncat": { "pattern": "link-only", "note": "Links the Reference Application instead of restating its releases." },
         "organization": { "pattern": "pinned-snapshot", "note": "The compatibility matrix records each release's qualified combination with tag-pinned evidence." }
       },
-      "note": "Each release is a pre-release snapshot of the walkthrough's progress."
+      "note": "Each release is a versioned snapshot of the walkthrough. Stable 1.x releases follow the Reference Application's stable compatibility contract."
     },
     {
       "id": "learning-releases",
