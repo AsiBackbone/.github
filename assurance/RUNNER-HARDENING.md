@@ -60,7 +60,7 @@ As of the review date:
 | --- | --- | --- |
 | NetCoreApplicationTemplate | `publish-template-package.yml` (`pack-template`, `publish-template`) and `publish-container.yml` (`build-scan`, `publish`). `publish-stable-release.yml` calls both. `publish-release.yml` (`update-readme`) only opens a pull request and is hardened voluntarily. | Compliant |
 | AsiBackbone | `publish-packages.yml` (`pack-packages`, `publish-packages`, `publish-release-evidence`), `release-validation.yml` (`stable-release-validation`, `attest-artifacts`) | Not yet: [AsiBackbone/AsiBackbone#942](https://github.com/AsiBackbone/AsiBackbone/issues/942) |
-| Learning | `publish-release-evidence.yml` (`validate-and-build-evidence`, `publish-evidence`), `publish-x.yml` (`publish`), `publish-docs.yml` (`publish-x`) | Not yet: [AsiBackbone/Learning#501](https://github.com/AsiBackbone/Learning/issues/501) |
+| Learning | `publish-release-evidence.yml` (`validate-and-build-evidence`, `publish-evidence`), `publish-x.yml` (`publish`; `publish-docs.yml` calls it for its `publish-x` job) | Not yet: [AsiBackbone/Learning#501](https://github.com/AsiBackbone/Learning/issues/501) |
 | ReferenceApplication | None. Releases attach no assets, and documentation deployment is optional. | Not applicable |
 | `.github`, `asibackbone.github.io` | None | Not applicable |
 
