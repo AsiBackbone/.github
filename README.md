@@ -18,6 +18,8 @@ The [Sigstore release-signing trust policy](assurance/SIGSTORE.md) defines which
 
 The [documentation ownership map](documentation/README.md) names the canonical owner of each recurring cross-repository documentation topic, the content responsibilities of every documentation surface, and whether other repositories should link only, summarize with a canonical link, or keep a version-pinned snapshot. It includes a review rule for new documentation, which the organization [contribution guidance](CONTRIBUTING.md) and pull-request template link. It is rendered from [`documentation/ownership.json`](documentation/ownership.json) by `scripts/Test-DocumentationOwnership.ps1` and checked by the required `Validate organization profile` check. A weekly `Documentation ownership review` workflow confirms its links and scans each project's first-contact pages for current-version claims that disagree with the compatibility matrix.
 
+The [repository file baseline](REPOSITORY-FILE-BASELINE.md) lists the contributor, maintainer, and repository-control files each project repository is expected to carry, where they live, and why some exist in only some repositories.
+
 GitHub Actions dependencies are maintained by Dependabot and reviewed by dependency-review, CodeQL, zizmor, actionlint, and OpenSSF Scorecard workflows using immutable action pins.
 
 Organization-profile and community-guidance prose is licensed under CC BY 4.0. Validation scripts, workflows, and repository configuration are licensed under MIT. See [LICENSES.md](LICENSES.md), [LICENSE](LICENSE), and [LICENSE-CODE](LICENSE-CODE) for the complete boundary and trademark notice.
