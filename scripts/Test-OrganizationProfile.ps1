@@ -23,6 +23,7 @@ $requiredContent = [ordered]@{
     'https://asibackbone.github.io/NetCoreApplicationTemplate/' = 'NetCoreApplicationTemplate documentation link'
     'https://github.com/AsiBackbone/ReferenceApplication' = 'ReferenceApplication repository link'
     'https://asibackbone.github.io/ReferenceApplication/' = 'ReferenceApplication documentation link'
+    'The Reference Application is the organization''s **stable integration example**, not a product.' = 'Reference Application canonical description'
     '## Learn, Ask, and Contribute' = 'community-routing section'
     'https://github.com/orgs/AsiBackbone/discussions/categories/q-a' = 'organization Q&A route'
     'https://github.com/orgs/AsiBackbone/discussions/categories/ideas' = 'organization Ideas route'
