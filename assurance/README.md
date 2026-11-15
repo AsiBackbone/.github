@@ -54,6 +54,7 @@ Reviewed 2026-11-15 against [.NET Core Application Template 2.11.10](https://git
 | [Reference Application demo identity](#development-demo-identity) | Development-only feature isolation | Reference Application | Fails closed | 1 linked |
 | [NCAT release provenance, signatures, and SBOM evidence](#ncat-release-evidence) | Release, provenance, and SBOM evidence | .NET Core Application Template | Fails closed | 2 linked |
 | [AsiBackbone package provenance, signatures, and SBOM evidence](#asibackbone-release-evidence) | Release, provenance, and SBOM evidence | AsiBackbone | Fails closed | 2 linked |
+| [Runner hardening for release jobs](#release-runner-hardening) | Release, provenance, and SBOM evidence | Organization (.github) | Fails open | 0 linked, gap recorded |
 | [NCAT repository rulesets and security scanning](#ncat-repository-controls) | Repository-host rulesets and security scanning | .NET Core Application Template | Fails closed | 2 linked |
 | [AsiBackbone repository rulesets and security scanning](#asibackbone-repository-controls) | Repository-host rulesets and security scanning | AsiBackbone | Fails closed | 1 linked, gap recorded |
 | [Reference Application repository rulesets](#reference-repository-controls) | Repository-host rulesets and security scanning | Reference Application | Fails closed | 1 linked, gap recorded |
@@ -421,6 +422,21 @@ Each stable release attaches the exact build packages, one keyless Sigstore bund
 - **Host and operator responsibility:** Verify the exact GitHub Release build package with its matching bundle and pinned workflow identity; verify NuGet.org packages separately through NuGet's signing facilities.
 - **Residual risk and non-claims:** Native NuGet author signing remains deferred. A bundle for GitHub Release build-package bytes does not verify the repository-signed bytes served by NuGet.org, and signatures, SBOMs, and provenance do not make the packages a compliance product.
 - **Canonical documentation:** [AsiBackbone `docs/articles/supply-chain-provenance.md`](https://github.com/AsiBackbone/AsiBackbone/blob/v7.5.4/docs/articles/supply-chain-provenance.md), [AsiBackbone `docs/articles/nuget-package-signing-decision.md`](https://github.com/AsiBackbone/AsiBackbone/blob/v7.5.4/docs/articles/nuget-package-signing-decision.md)
+
+<a id="release-runner-hardening"></a>
+
+#### Runner hardening for release jobs
+
+Every job that builds, signs, attests, or publishes a release artifact, or uses a stored external publishing credential, starts with step-security/harden-runner in egress audit mode.
+
+- **Owner:** Organization (.github)
+- **Enforcement point:** Organization runner-hardening policy, applied in each repository's release workflows — [.github `assurance/RUNNER-HARDENING.md`](https://github.com/AsiBackbone/.github/blob/main/assurance/RUNNER-HARDENING.md)
+- **Evidence gap:** No automated check verifies that every release job starts with harden-runner. NetCoreApplicationTemplate complies; adoption in AsiBackbone (AsiBackbone/AsiBackbone#942) and Learning (AsiBackbone/Learning#501) is tracked in follow-up issues.
+- **Operational dependency:** GitHub-hosted runners and StepSecurity's harden-runner action and insights service.
+- **Failure behavior:** Fails open. Audit mode records outbound network connections, processes, and file changes for review, but blocks nothing. A job moves to block mode only after its audit runs show a stable endpoint list.
+- **Host and operator responsibility:** Review harden-runner insights for release runs, and add the step when a repository adds a release job.
+- **Residual risk and non-claims:** Audit mode detects unexpected egress after the fact; it does not prevent exfiltration of a signing token or credential, and it does not replace SHA-pinned actions, minimal job permissions, protected environments, or post-publication verification.
+- **Canonical documentation:** [.github `assurance/RUNNER-HARDENING.md`](https://github.com/AsiBackbone/.github/blob/main/assurance/RUNNER-HARDENING.md)
 
 ### Repository-host rulesets and security scanning
 
