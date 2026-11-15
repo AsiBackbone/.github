@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "reviewed": "2026-10-23",
+  "reviewed": "2026-11-15",
   "baselines": {
-    "netCoreApplicationTemplate": "2.11.5",
-    "asiBackbone": "7.5.0",
-    "referenceApplication": "0.1.0-alpha.11"
+    "netCoreApplicationTemplate": "2.11.10",
+    "asiBackbone": "7.5.4",
+    "referenceApplication": "1.0.2"
   },
   "controls": [
     {
@@ -547,15 +547,15 @@
     {
       "id": "ncat-release-evidence",
       "scope": "release-provenance",
-      "title": "NCAT release provenance and SBOM evidence",
-      "invariant": "Each tagged release publishes a durable, hashed evidence set for the exact NuGet package and container image.",
+      "title": "NCAT release provenance, signatures, and SBOM evidence",
+      "invariant": "Each tagged release publishes a durable, hashed evidence set for the exact NuGet package and container image, with distinct keyless signature verification for the package bytes and immutable image digest.",
       "owner": "ncat",
       "enforcement": {
         "description": "Tag-driven publish workflows that generate evidence before publication",
         "link": { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": ".github/workflows/publish-template-package.yml" }
       },
       "evidence": [
-        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "scripts/Test-ReleaseEvidence.ps1" },
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "scripts/Test-SigstoreVerification.ps1" },
         { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "scripts/Assert-GitHubReleaseAssets.ps1" }
       ],
       "evidenceGap": null,
@@ -563,26 +563,26 @@
         { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/articles/container-publish.md" },
         { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "docs/adr/0005-defer-nuget-package-signing.md" }
       ],
-      "operationalDependency": "GitHub Actions OIDC, artifact attestations, keyless image signing, and the protected publishing environment.",
+      "operationalDependency": "GitHub Actions OIDC, Sigstore trust services, artifact attestations, and the protected publishing environment.",
       "failure": {
         "mode": "fail-closed",
-        "detail": "The publish workflow fails when the GitHub release is missing a required evidence asset."
+        "detail": "The publish workflows fail when a required evidence asset or package bundle is missing, package verification does not match the expected workflow identity, or the immutable container digest does not verify."
       },
-      "hostResponsibility": "Verify the evidence manifest hashes, SBOMs, provenance attestations, and image signature before relying on a release.",
-      "nonClaims": "NuGet author signing is deferred (ADR-0005). SBOMs and provenance describe how an artifact was built; they do not show it is free of vulnerabilities."
+      "hostResponsibility": "Verify the evidence manifest hashes, SBOMs, package signature bundle, provenance attestations, and immutable image-digest signature under the product's pinned identities before relying on a release.",
+      "nonClaims": "NuGet author signing is deferred (ADR-0005). The GitHub Release build-package signature does not verify the separately repository-signed bytes served by NuGet.org, and signatures, SBOMs, and provenance do not show that an artifact is vulnerability-free."
     },
     {
       "id": "asibackbone-release-evidence",
       "scope": "release-provenance",
-      "title": "AsiBackbone package provenance and SBOM evidence",
-      "invariant": "Each stable release attaches attested packages, SBOMs, release notes, and a checksum manifest to the GitHub release.",
+      "title": "AsiBackbone package provenance, signatures, and SBOM evidence",
+      "invariant": "Each stable release attaches the exact build packages, one keyless Sigstore bundle per package, SBOMs, release notes, and a checksum manifest to the GitHub release.",
       "owner": "asibackbone",
       "enforcement": {
         "description": "Package publish workflow",
         "link": { "repository": "AsiBackbone/AsiBackbone", "path": ".github/workflows/publish-packages.yml" }
       },
       "evidence": [
-        { "repository": "AsiBackbone/AsiBackbone", "path": "scripts/Test-ReleaseEvidence.ps1" },
+        { "repository": "AsiBackbone/AsiBackbone", "path": "scripts/Test-SigstorePackageBundles.ps1" },
         { "repository": "AsiBackbone/AsiBackbone", "path": "scripts/Assert-GitHubReleaseAssets.ps1" }
       ],
       "evidenceGap": null,
@@ -590,13 +590,13 @@
         { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/supply-chain-provenance.md" },
         { "repository": "AsiBackbone/AsiBackbone", "path": "docs/articles/nuget-package-signing-decision.md" }
       ],
-      "operationalDependency": "GitHub Actions artifact attestations where the workflow event supports them.",
+      "operationalDependency": "GitHub Actions OIDC, Sigstore trust services, artifact attestations where supported, and the protected publishing environment.",
       "failure": {
         "mode": "fail-closed",
-        "detail": "The release workflow verifies every required release asset and package attestation."
+        "detail": "The release workflow verifies every required asset and package bundle against the exact release identity before publication and after public download, and rejects tampered packages, wrong identities, and swapped bundles."
       },
-      "hostResponsibility": "Verify package hashes, SBOMs, and attestations before adopting a release.",
-      "nonClaims": "NuGet package signing is deferred for the 7.x line under a time-bounded decision record. SBOMs and provenance do not make the packages a compliance product."
+      "hostResponsibility": "Verify the exact GitHub Release build package with its matching bundle and pinned workflow identity; verify NuGet.org packages separately through NuGet's signing facilities.",
+      "nonClaims": "Native NuGet author signing remains deferred. A bundle for GitHub Release build-package bytes does not verify the repository-signed bytes served by NuGet.org, and signatures, SBOMs, and provenance do not make the packages a compliance product."
     },
     {
       "id": "ncat-repository-controls",
