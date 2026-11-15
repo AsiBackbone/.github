@@ -369,6 +369,16 @@ $communityContracts = [ordered]@{
         './scripts/Test-AssuranceMap.ps1 -SelfTest'
         './scripts/Test-DocumentationOwnership.ps1'
         './scripts/Test-DocumentationOwnership.ps1 -SelfTest'
+        './scripts/Test-EditorConfigBaseline.ps1 -SelfTest'
+    )
+    '.github/workflows/editorconfig-baseline-validation.yml' = @(
+        'name: EditorConfig baseline validation'
+        'pull_request:'
+        'schedule:'
+        'workflow_dispatch:'
+        'contents: read'
+        'persist-credentials: false'
+        './scripts/Test-EditorConfigBaseline.ps1'
     )
     '.github/workflows/documentation-ownership-review.yml' = @(
         'name: Documentation ownership review'
