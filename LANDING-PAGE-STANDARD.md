@@ -1,6 +1,6 @@
 # AsiBackbone Landing-Page Standard
 
-**Version:** 3.0.0
+**Version:** 3.1.0
 **Status:** Active
 **Contract issue:** [AsiBackbone/.github#15](https://github.com/AsiBackbone/.github/issues/15)
 
@@ -26,7 +26,7 @@ Implementations should record which version they were last reviewed against, for
 | 1.1.0 | [AsiBackbone/.github#21](https://github.com/AsiBackbone/.github/issues/21) | Adds document-language, page-metadata, published-output, full-width DocFX homepage, and template-rendered skip-link requirements, and the scheduled published-site check. |
 | 1.2.0 | [AsiBackbone/.github#20](https://github.com/AsiBackbone/.github/issues/20) | Requires every DocFX build in pull-request, release, and publication workflows to fail on warnings, and adds per-repository and scheduled strict-build checks. |
 | 2.0.0 | [AsiBackbone/ReferenceApplication#7](https://github.com/AsiBackbone/ReferenceApplication/issues/7) | Adds the Reference Application as a sixth surface, a `Reference` ecosystem navigation destination, and a fourth Related Projects entry; requires the canonical project order Learn → Framework → Template → Reference on every surface and defines how a current-site card is marked; extends the profile, published-site, and strict-build checks to Reference. |
-
+| 3.1.0 | [AsiBackbone/.github#48](https://github.com/AsiBackbone/.github/issues/48) | Adds the canonical one-phrase description of the Reference Application, "stable integration example, not a product", for every surface and project README, and retires "integration specimen". |
 ## Public surfaces
 
 | Surface | URL | Platform | Repository |
@@ -158,7 +158,7 @@ Requirements:
 - A current-site card keeps its canonical position and is marked as follows: the `article` carries `aria-current="page"`; the heading is not a link and is followed by a visible "Current site" label; and the `Documentation` link is omitted so the card does not link to the page the reader is on. The `Repository` and `Archive (DOI)` links remain.
 - Cards are `article` elements (or Markdown subsections on the profile) with a heading, so they are discoverable by heading navigation.
 - Descriptions are owned by each project. The organization surfaces use the descriptions from the projects' own README or homepage, shortened if needed, rather than inventing new claims.
-
+- **Reference Application description:** wherever a surface, the compatibility matrix, or another project's README describes the Reference Application in a phrase, it calls it the **stable integration example, not a product**, matching the Reference Application's own README ("an example, not a product"). A longer description may add what it integrates, for example "the stable integration example, not a product: an NCAT-generated host that adopts AsiBackbone governance step by step". Do not call it a "specimen", "sample application", or "demo".
 ## 6. Design Philosophy contract
 
 Every surface includes this shared statement verbatim:
