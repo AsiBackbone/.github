@@ -537,7 +537,7 @@ if ((Test-Path -LiteralPath $codeLicensePath) -and -not (Get-Content -LiteralPat
 $licenseScopePath = Join-Path $RepositoryRoot 'LICENSES.md'
 if (Test-Path -LiteralPath $licenseScopePath) {
     $licenseScope = Get-Content -LiteralPath $licenseScopePath -Raw
-    foreach ($requiredText in @('CC BY 4.0 content', 'root community health Markdown files', 'LANDING-PAGE-STANDARD.md', 'MIT-licensed source', '.github/ISSUE_TEMPLATE/config.yml', 'Brand, assets, and third-party boundaries', 'Contributions')) {
+    foreach ($requiredText in @('CC BY 4.0 content', 'root community health Markdown files', 'LANDING-PAGE-STANDARD.md', 'MIT-licensed source', '.github/ISSUE_TEMPLATE/config.yml', 'Brand, assets, and third-party boundaries', 'Contributions', 'That split is not organization-wide.')) {
         if (-not $licenseScope.Contains($requiredText, [StringComparison]::Ordinal)) {
             $failures.Add("LICENSES.md is missing its '$requiredText' boundary.")
         }
