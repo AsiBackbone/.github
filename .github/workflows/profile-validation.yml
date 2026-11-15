@@ -57,3 +57,7 @@ jobs:
       - name: Test documentation ownership validator
         shell: pwsh
         run: ./scripts/Test-DocumentationOwnership.ps1 -SelfTest
+
+      - name: Test EditorConfig baseline validator
+        shell: pwsh
+        run: ./scripts/Test-EditorConfigBaseline.ps1 -SelfTest
