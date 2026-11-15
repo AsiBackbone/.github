@@ -1,6 +1,8 @@
 # Licensing
 
-This repository follows the AsiBackbone documentation/source boundary: content is licensed under Creative Commons Attribution 4.0 International, while implementation and automation source is licensed under the MIT License.
+This repository separates content from source: content is licensed under Creative Commons Attribution 4.0 International, while implementation and automation source is licensed under the MIT License.
+
+That split is not organization-wide. `AsiBackbone/.github`, `AsiBackbone/asibackbone.github.io`, and `AsiBackbone/Learning` (CC BY 4.0 documentation, MIT samples) share it. AsiBackbone, NetCoreApplicationTemplate, and ReferenceApplication license their entire contents, documentation included, under the MIT License. Each repository's own license files are authoritative for that repository.
 
 ## CC BY 4.0 content
 
