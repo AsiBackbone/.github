@@ -6,11 +6,12 @@ Thank you for contributing to an AsiBackbone project.
 
 Repository-specific contribution, support, security, governance, and validation files are authoritative and override these organization defaults. Before opening an issue or pull request, read the affected repository's `CONTRIBUTING.md`, `SUPPORT.md`, `SECURITY.md`, issue templates, and pull-request template when present.
 
-The three primary projects have tailored guidance:
+The four primary projects have tailored guidance:
 
 - [AsiBackbone Learning](https://github.com/AsiBackbone/Learning/blob/main/CONTRIBUTING.md) for tutorials, labs, samples, and educational material;
-- [AsiBackbone](https://github.com/AsiBackbone/AsiBackbone/blob/main/CONTRIBUTING.md) for the governance framework, packages, APIs, and runtime behavior; and
-- [.NET Core Application Template](https://github.com/AsiBackbone/NetCoreApplicationTemplate/blob/main/CONTRIBUTING.md) for the template source, generated scaffold, packaging, and documentation.
+- [AsiBackbone](https://github.com/AsiBackbone/AsiBackbone/blob/main/CONTRIBUTING.md) for the governance framework, packages, APIs, and runtime behavior;
+- [.NET Core Application Template](https://github.com/AsiBackbone/NetCoreApplicationTemplate/blob/main/CONTRIBUTING.md) for the template source, generated scaffold, packaging, and documentation; and
+- [AsiBackbone Reference Application](https://github.com/AsiBackbone/ReferenceApplication/blob/main/CONTRIBUTING.md) for the integration host, its configuration and container files, and the integration walkthrough.
 
 ## Choose the Right Starting Point
 

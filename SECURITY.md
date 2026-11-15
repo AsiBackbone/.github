@@ -13,6 +13,7 @@ Report the concern privately to the repository that owns the affected component:
 | AsiBackbone packages, APIs, or runtime | [Report to AsiBackbone](https://github.com/AsiBackbone/AsiBackbone/security/advisories/new) |
 | Learning documentation, samples, or publishing automation | [Report to Learning](https://github.com/AsiBackbone/Learning/security/advisories/new) |
 | .NET Core Application Template or generated scaffold | [Report to NetCoreApplicationTemplate](https://github.com/AsiBackbone/NetCoreApplicationTemplate/security/advisories/new) |
+| Reference Application host, configuration, container files, or walkthrough | [Report to ReferenceApplication](https://github.com/AsiBackbone/ReferenceApplication/security/advisories/new) |
 | Organization profile or default community files | [Report to the `.github` repository](https://github.com/AsiBackbone/.github/security/advisories/new) |
 | Organization landing page | [Report to the landing repository](https://github.com/AsiBackbone/asibackbone.github.io/security/advisories/new) |
 
