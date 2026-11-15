@@ -212,7 +212,7 @@
       "currency": "pinned",
       "canonical": [
         { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "CHANGELOG.md" },
-        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": ".github/SUPPORT.md" }
+        { "repository": "AsiBackbone/NetCoreApplicationTemplate", "path": "SUPPORT.md" }
       ],
       "reuse": {
         "learning": { "pattern": "pinned-snapshot", "note": "Records which NCAT release a Learning page was reviewed against." },
