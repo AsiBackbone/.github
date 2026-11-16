@@ -6,6 +6,7 @@ param(
     [switch]$Update,
 
     # Also checks that every linked enforcement point, test, and document exists at its resolved ref on GitHub.
+    # Links into this repository are checked in the working tree, so a pull request may add a document and link it.
     # Requires network access; set GITHUB_TOKEN to raise the API rate limit.
     [switch]$VerifyReferences,
 
@@ -477,7 +478,13 @@ function Test-GitHubFile {
 }
 
 function Test-References {
-    param($Manifest, [System.Collections.Generic.List[string]]$Errors)
+    param(
+        $Manifest,
+        [System.Collections.Generic.List[string]]$Errors,
+
+        # When set, links into this repository are checked in this working tree instead of on GitHub's main branch.
+        [string]$OrganizationRoot
+    )
 
     $baselines = $Manifest['baselines']
     $files = [ordered]@{}
@@ -494,7 +501,12 @@ function Test-References {
     }
 
     foreach ($file in $files.Values) {
-        if (-not (Test-GitHubFile -Repository $file.Repository -Ref $file.Ref -Path $file.Path)) {
+        if ($file.Repository -eq $organizationRepository -and (Test-NonEmptyString $OrganizationRoot)) {
+            if (-not (Test-Path -LiteralPath (Join-Path $OrganizationRoot $file.Path) -PathType Leaf)) {
+                $Errors.Add("$($file.Source) links to $($file.Path) in this repository's working tree, which does not exist.")
+            }
+        }
+        elseif (-not (Test-GitHubFile -Repository $file.Repository -Ref $file.Ref -Path $file.Path)) {
             $Errors.Add("$($file.Source) links to $($file.Path) at $($file.Repository) $($file.Ref), which does not exist.")
         }
     }
@@ -611,10 +623,28 @@ function Invoke-SelfTest {
         'AsiBackbone/AsiBackbone@v7.5.0:src/Enforce.cs', 'AsiBackbone/AsiBackbone@v7.5.0:tests/EnforceTests.cs', 'AsiBackbone/AsiBackbone@v7.5.0:docs/control.md'
         'AsiBackbone/.github@main:src/Enforce.cs', 'AsiBackbone/.github@main:tests/EnforceTests.cs', 'AsiBackbone/.github@main:docs/control.md'
     )
+    # A working tree for links into this repository: it has files the GitHub responder does not, as in a pull request
+    # that adds a document and links it, and lacks one the responder has.
+    $organizationRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("assurance-selftest-" + [guid]::NewGuid().ToString('N'))
+    foreach ($relativePath in @('src/Enforce.cs', 'tests/EnforceTests.cs', 'docs/control.md', 'docs/added-in-pull-request.md')) {
+        $localPath = Join-Path $organizationRoot $relativePath
+        $null = New-Item -ItemType Directory -Path (Split-Path -Parent $localPath) -Force
+        Set-Content -LiteralPath $localPath -Value 'fixture'
+    }
+    # The fixture links its repository-host control into this repository.
+    $organizationLinkIndex = @($scopes.Keys).IndexOf('repository-host')
     $referenceCases = @(
         @{ Name = 'GitHub API: all links resolve'; Manifest = (& $clone); Pass = $true }
         @{ Name = 'GitHub API: moved test file'; Manifest = (& $mutate { param($m) $m['controls'][0]['evidence'][0]['path'] = 'tests/Moved.cs' }); Pass = $false }
+        @{ Name = 'Working tree: all links resolve'; Manifest = (& $clone); OrganizationRoot = $organizationRoot; Pass = $true }
     )
+    if ($organizationLinkIndex -ge 0) {
+        $referenceCases += @{ Name = 'Working tree: document added in the pull request resolves'; Manifest = (& $mutate { param($m) $m['controls'][$organizationLinkIndex]['documentation'] = @(@{ repository = 'AsiBackbone/.github'; path = 'docs/added-in-pull-request.md' }) }); OrganizationRoot = $organizationRoot; Pass = $true }
+        $referenceCases += @{ Name = 'Working tree: missing document fails'; Manifest = (& $mutate { param($m) $m['controls'][$organizationLinkIndex]['documentation'] = @(@{ repository = 'AsiBackbone/.github'; path = 'docs/never-added.md' }) }); OrganizationRoot = $organizationRoot; Pass = $false }
+    }
+    else {
+        $failures.Add('Self-test fixture has no control whose enforcement links to AsiBackbone/.github.')
+    }
     foreach ($case in $referenceCases) {
         $script:GitHubResponder = {
             param($Uri)
@@ -628,7 +658,7 @@ function Invoke-SelfTest {
 
         $caseErrors = [System.Collections.Generic.List[string]]::new()
         try {
-            $null = Test-References -Manifest $case.Manifest -Errors $caseErrors
+            $null = Test-References -Manifest $case.Manifest -Errors $caseErrors -OrganizationRoot $case['OrganizationRoot']
         }
         finally {
             $script:GitHubResponder = $null
@@ -638,6 +668,8 @@ function Invoke-SelfTest {
             $failures.Add("Self-test '$($case.Name)' expected $expected but got $($caseErrors.Count) error(s): $($caseErrors -join ' ')")
         }
     }
+
+    Remove-Item -LiteralPath $organizationRoot -Recurse -Force -ErrorAction SilentlyContinue
 
     if ($failures.Count -gt 0) {
         $failures | ForEach-Object { Write-Error $_ -ErrorAction Continue }
@@ -691,7 +723,7 @@ else {
 if ($VerifyReferences) {
     $checked = 0
     try {
-        $checked = Test-References -Manifest $manifest -Errors $errors
+        $checked = Test-References -Manifest $manifest -Errors $errors -OrganizationRoot $RepositoryRoot
     }
     catch {
         $errors.Add("References could not be verified: $($_.Exception.Message)")

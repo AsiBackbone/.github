@@ -675,6 +675,29 @@
       "nonClaims": "The manifests record intent; live drift is not detected automatically."
     },
     {
+      "id": "release-runner-hardening",
+      "scope": "release-provenance",
+      "title": "Runner hardening for release jobs",
+      "invariant": "Every job that builds, signs, attests, or publishes a release artifact, or uses a stored external publishing credential, starts with step-security/harden-runner in egress audit mode.",
+      "owner": "organization",
+      "enforcement": {
+        "description": "Organization runner-hardening policy, applied in each repository's release workflows",
+        "link": { "repository": "AsiBackbone/.github", "path": "assurance/RUNNER-HARDENING.md" }
+      },
+      "evidence": [],
+      "evidenceGap": "No automated check verifies that every release job starts with harden-runner. NetCoreApplicationTemplate complies; adoption in AsiBackbone (AsiBackbone/AsiBackbone#942) and Learning (AsiBackbone/Learning#501) is tracked in follow-up issues.",
+      "documentation": [
+        { "repository": "AsiBackbone/.github", "path": "assurance/RUNNER-HARDENING.md" }
+      ],
+      "operationalDependency": "GitHub-hosted runners and StepSecurity's harden-runner action and insights service.",
+      "failure": {
+        "mode": "fail-open",
+        "detail": "Audit mode records outbound network connections, processes, and file changes for review, but blocks nothing. A job moves to block mode only after its audit runs show a stable endpoint list."
+      },
+      "hostResponsibility": "Review harden-runner insights for release runs, and add the step when a repository adds a release job.",
+      "nonClaims": "Audit mode detects unexpected egress after the fact; it does not prevent exfiltration of a signing token or credential, and it does not replace SHA-pinned actions, minimal job permissions, protected environments, or post-publication verification."
+    },
+    {
       "id": "organization-repository-controls",
       "scope": "repository-host",
       "title": "Organization repository rulesets and security scanning",
