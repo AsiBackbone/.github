@@ -2,7 +2,9 @@ name: Assurance map validation
 
 # Checks that every enforcement point, test, and document linked from
 # assurance/control-ownership.json exists at its resolved ref: the reviewed
-# release tag for product links, or main for repository-host links. It reads
+# release tag for product links, or main for repository-host links. Links into
+# this repository are checked in the checked-out pull request, so a pull request
+# can add a document and link it in the same change. It reads
 # public files only. The offline manifest, coverage, baseline, and rendering
 # checks run in the required Validate organization profile check; this workflow
 # adds the network-dependent link check on map pull requests and every week, so
