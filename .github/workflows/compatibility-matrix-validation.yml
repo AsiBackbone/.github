@@ -3,11 +3,16 @@ name: Compatibility matrix validation
 # Checks that every tag and evidence file referenced by
 # compatibility/ecosystem-compatibility.json exists in the Learning, AsiBackbone,
 # .NET Core Application Template, and Reference Application repositories, and
-# that every Reference Application release is recorded in the matrix. It reads
-# public tags and files only. The offline manifest and rendering checks run in
-# the required Validate organization profile check; this workflow adds the
-# network-dependent reference check on matrix pull requests and every week, so
-# a new release elsewhere surfaces here as drift to record.
+# that every Reference Application release is recorded in the matrix. The
+# release drift audit then compares each support line's current release with
+# the owning repository's latest stable GitHub Release, and reads the four
+# published documentation sites for their current-release markers, telling
+# deployment lag, HTTP failures, missing markers, and version mismatches apart.
+# It reads public tags, releases, files, and pages only, and never edits the
+# manifest. The offline manifest, rendering, and profile checks run in the
+# required Validate organization profile check; this workflow adds the
+# network-dependent checks on matrix pull requests and every week, so a new
+# release elsewhere surfaces here as drift to record.
 
 on:
   workflow_dispatch:
@@ -17,6 +22,7 @@ on:
     paths:
       - 'compatibility/**'
       - 'scripts/Test-CompatibilityMatrix.ps1'
+      - 'profile/README.md'
       - '.github/workflows/compatibility-matrix-validation.yml'
   schedule:
     # Mondays at 13:37 UTC (08:37 America/Chicago during daylight saving time).
@@ -33,16 +39,16 @@ jobs:
   verify:
     name: Verify compatibility matrix references
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - name: Verify compatibility matrix references
+      - name: Verify compatibility matrix references and audit release drift
         shell: pwsh
         env:
-          # Read-only token used only to raise the GitHub API rate limit for public tags and files.
+          # Read-only token used only to raise the GitHub API rate limit for public tags, releases, and files.
           GITHUB_TOKEN: ${{ github.token }}
-        run: ./scripts/Test-CompatibilityMatrix.ps1 -VerifyReferences
+        run: ./scripts/Test-CompatibilityMatrix.ps1 -VerifyReferences -AuditReleases

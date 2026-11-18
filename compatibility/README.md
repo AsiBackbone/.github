@@ -70,8 +70,34 @@ These combinations were reviewed together and have since been superseded. They r
 
 None recorded. Incompatible combinations appear in the tables above with the Incompatible status and the reason in their notes.
 
+## Release drift audit
+
+`./scripts/Test-CompatibilityMatrix.ps1 -AuditReleases` compares this matrix and the published documentation sites with what each owning repository has actually released. The `Compatibility matrix validation` workflow runs it with the reference check on matrix pull requests, every week, and on demand. It only reports: it never edits the manifest, and it never upgrades or reclassifies Learning review baselines or historical combinations, which record what was reviewed rather than what is newest. A finding is not a compatibility statement about a new release.
+
+**Stable-release selection:** for each project, the latest stable release is the highest `vMAJOR.MINOR.PATCH` tag among its GitHub Releases that are neither drafts nor marked as pre-releases. Tags with a pre-release suffix are ignored, publication order does not matter, and a tag without a GitHub Release is not a release.
+
+| Finding | Meaning | Resolution |
+| --- | --- | --- |
+| Superseded | A support line names an existing release, but the project has published a newer stable release. | Record the new release in `supportLines`. For a Reference Application release, add its integration entry and mark the previous one `historical`. Regenerate this page and update the profile. |
+| Not stable or unpublished | A support line names a pre-release, or a version newer than the latest stable release. | Correct the manifest, or publish the release first. |
+| Deployment lag (warning) | The site source on `main` already states the expected release, but the deployed page does not yet. | Re-run after the owning repository finishes deploying its documentation; investigate if the lag persists. |
+| Version mismatch | The deployed page and its source both state another release. | Update the marker in the owning repository. |
+| Missing marker | The deployed page has no current-release statement where one is expected. | Restore the statement in the owning repository, or update the marker definition in `scripts/Test-CompatibilityMatrix.ps1` if the page was deliberately reworded. |
+| HTTP failure or API unavailable | A page or the GitHub API could not be read after bounded retries. | Re-run the workflow, and check the site or GitHub status if the failure persists. |
+
+Each documentation site states its own current release once on its homepage. The audit reads that statement from the deployed page and from its `docs/index.md` source on `main`:
+
+| Project | Published page | Marker |
+| --- | --- | --- |
+| AsiBackbone Learning | <https://asibackbone.github.io/Learning/> | `Published Learning archive: <version>` |
+| AsiBackbone | <https://asibackbone.github.io/AsiBackbone/> | `The current release is <version>` |
+| .NET Core Application Template | <https://asibackbone.github.io/NetCoreApplicationTemplate/> | `Current release <version>` |
+| AsiBackbone Reference Application | <https://asibackbone.github.io/ReferenceApplication/> | `Release line Stable <version>` |
+
+The required `Validate organization profile` check also fails when the current-release statements in `profile/README.md` disagree with `supportLines`.
+
 ## Updating the matrix
 
 1. Edit [`ecosystem-compatibility.json`](ecosystem-compatibility.json). Record a new Reference Application release in exactly one integration entry, mark the entry it supersedes `historical`, and link the release evidence by tag.
-2. Run `./scripts/Test-CompatibilityMatrix.ps1 -Update` to regenerate this page, then `./scripts/Test-CompatibilityMatrix.ps1 -VerifyReferences` to confirm that every referenced tag and evidence file exists and that every Reference Application release is recorded.
-3. Open a pull request. The `Validate organization profile` check fails when the manifest is malformed or this page does not match it, and the `Compatibility matrix validation` workflow repeats the reference check on the pull request and every week.
+2. Run `./scripts/Test-CompatibilityMatrix.ps1 -Update` to regenerate this page, then `./scripts/Test-CompatibilityMatrix.ps1 -VerifyReferences -AuditReleases` to confirm that every referenced tag and evidence file exists, that every Reference Application release is recorded, and that no published stable release or site marker has drifted.
+3. Open a pull request. The `Validate organization profile` check fails when the manifest is malformed or this page does not match it, and the `Compatibility matrix validation` workflow repeats the reference check and the release drift audit on the pull request and every week.
