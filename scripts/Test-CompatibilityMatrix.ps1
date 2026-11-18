@@ -9,6 +9,11 @@ param(
     # is recorded. Requires network access; set GITHUB_TOKEN to raise the API rate limit.
     [switch]$VerifyReferences,
 
+    # Also compares each support line's current release with the owning repository's latest published stable release,
+    # and reads the four published documentation sites for their current-release markers. Requires network access;
+    # reports only and never edits the manifest.
+    [switch]$AuditReleases,
+
     [ValidateRange(1, 5)]
     [int]$MaximumAttempts = 3,
 
@@ -17,8 +22,9 @@ param(
 
 # Validates the ecosystem compatibility manifest (compatibility/ecosystem-compatibility.json), renders the
 # human-readable matrix (compatibility/README.md) from it, and fails when the committed matrix differs from the
-# rendering (AsiBackbone/.github#25). The default mode is offline and deterministic. -VerifyReferences reads public
-# GitHub tags and files only and never writes to any repository.
+# rendering (AsiBackbone/.github#25). The default mode is offline and deterministic; it also checks that the profile's
+# current-release statements agree with the manifest (AsiBackbone/.github#58). -VerifyReferences and -AuditReleases
+# read public GitHub tags, releases, files, and published pages only, and never write to any repository.
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -46,6 +52,29 @@ $semVerPattern = '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-[0-9A-Za-z-]+(\.[0-
 $idPattern = '^[a-z0-9][a-z0-9.-]*$'
 $targetFrameworkPattern = '^net\d+\.\d+$'
 $knownRepositories = @($products.Values | ForEach-Object Repository)
+$profileRelativePath = 'profile/README.md'
+$stableTagPattern = '^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$'
+$versionCapture = '(?<version>\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)'
+
+# Each published site states its own project's current release once on its homepage. -AuditReleases matches the
+# marker in the text of the deployed page and of its source on main, so deployment lag can be told apart from source
+# drift. A marker only locates the statement; the expected version always comes from the owning repository's releases.
+$siteMarkers = [ordered]@{
+    learning = [pscustomobject]@{ Url = 'https://asibackbone.github.io/Learning/'; Source = 'docs/index.md'; Label = 'Published Learning archive: <version>'; Pattern = "Published Learning archive:\s*$versionCapture" }
+    asiBackbone = [pscustomobject]@{ Url = 'https://asibackbone.github.io/AsiBackbone/'; Source = 'docs/index.md'; Label = 'The current release is <version>'; Pattern = "The current release is\s+$versionCapture" }
+    netCoreApplicationTemplate = [pscustomobject]@{ Url = 'https://asibackbone.github.io/NetCoreApplicationTemplate/'; Source = 'docs/index.md'; Label = 'Current release <version>'; Pattern = "Current release\s+$versionCapture" }
+    referenceApplication = [pscustomobject]@{ Url = 'https://asibackbone.github.io/ReferenceApplication/'; Source = 'docs/index.md'; Label = 'Release line Stable <version>'; Pattern = "Release line\s+Stable\s+$versionCapture" }
+}
+
+# The profile's current-release statements, checked offline against supportLines in the required check.
+$profileClaims = @(
+    [pscustomobject]@{ Product = 'learning'; Field = 'current'; Pattern = "Current archival release:\s*$versionCapture\." }
+    [pscustomobject]@{ Product = 'asiBackbone'; Field = 'line'; Pattern = 'The stable package family is (?<version>\d+\.x),' }
+    [pscustomobject]@{ Product = 'asiBackbone'; Field = 'current'; Pattern = "with $versionCapture as the current release\." }
+    [pscustomobject]@{ Product = 'netCoreApplicationTemplate'; Field = 'line'; Pattern = 'The current (?<version>\d+\.x) line\b' }
+    [pscustomobject]@{ Product = 'netCoreApplicationTemplate'; Field = 'current'; Pattern = "Current release:\s*$versionCapture\." }
+    [pscustomobject]@{ Product = 'referenceApplication'; Field = 'current'; Pattern = "Stable release:\s*$versionCapture\." }
+)
 
 function Get-Value {
     param($Object, [string]$Name)
@@ -496,11 +525,36 @@ function ConvertTo-MatrixMarkdown {
     }
     $lines.Add('')
 
+    $lines.Add('## Release drift audit')
+    $lines.Add('')
+    $lines.Add('`./scripts/Test-CompatibilityMatrix.ps1 -AuditReleases` compares this matrix and the published documentation sites with what each owning repository has actually released. The `Compatibility matrix validation` workflow runs it with the reference check on matrix pull requests, every week, and on demand. It only reports: it never edits the manifest, and it never upgrades or reclassifies Learning review baselines or historical combinations, which record what was reviewed rather than what is newest. A finding is not a compatibility statement about a new release.')
+    $lines.Add('')
+    $lines.Add('**Stable-release selection:** for each project, the latest stable release is the highest `vMAJOR.MINOR.PATCH` tag among its GitHub Releases that are neither drafts nor marked as pre-releases. Tags with a pre-release suffix are ignored, publication order does not matter, and a tag without a GitHub Release is not a release.')
+    $lines.Add('')
+    $lines.Add('| Finding | Meaning | Resolution |')
+    $lines.Add('| --- | --- | --- |')
+    $lines.Add('| Superseded | A support line names an existing release, but the project has published a newer stable release. | Record the new release in `supportLines`. For a Reference Application release, add its integration entry and mark the previous one `historical`. Regenerate this page and update the profile. |')
+    $lines.Add('| Not stable or unpublished | A support line names a pre-release, or a version newer than the latest stable release. | Correct the manifest, or publish the release first. |')
+    $lines.Add('| Deployment lag (warning) | The site source on `main` already states the expected release, but the deployed page does not yet. | Re-run after the owning repository finishes deploying its documentation; investigate if the lag persists. |')
+    $lines.Add('| Version mismatch | The deployed page and its source both state another release. | Update the marker in the owning repository. |')
+    $lines.Add('| Missing marker | The deployed page has no current-release statement where one is expected. | Restore the statement in the owning repository, or update the marker definition in `scripts/Test-CompatibilityMatrix.ps1` if the page was deliberately reworded. |')
+    $lines.Add('| HTTP failure or API unavailable | A page or the GitHub API could not be read after bounded retries. | Re-run the workflow, and check the site or GitHub status if the failure persists. |')
+    $lines.Add('')
+    $lines.Add('Each documentation site states its own current release once on its homepage. The audit reads that statement from the deployed page and from its `docs/index.md` source on `main`:')
+    $lines.Add('')
+    $lines.Add('| Project | Published page | Marker |')
+    $lines.Add('| --- | --- | --- |')
+    foreach ($entry in $siteMarkers.GetEnumerator()) {
+        $lines.Add("| $($products[$entry.Key].Name) | <$($entry.Value.Url)> | ``$($entry.Value.Label)`` |")
+    }
+    $lines.Add('')
+    $lines.Add('The required `Validate organization profile` check also fails when the current-release statements in `profile/README.md` disagree with `supportLines`.')
+    $lines.Add('')
     $lines.Add('## Updating the matrix')
     $lines.Add('')
     $lines.Add('1. Edit [`ecosystem-compatibility.json`](ecosystem-compatibility.json). Record a new Reference Application release in exactly one integration entry, mark the entry it supersedes `historical`, and link the release evidence by tag.')
-    $lines.Add('2. Run `./scripts/Test-CompatibilityMatrix.ps1 -Update` to regenerate this page, then `./scripts/Test-CompatibilityMatrix.ps1 -VerifyReferences` to confirm that every referenced tag and evidence file exists and that every Reference Application release is recorded.')
-    $lines.Add('3. Open a pull request. The `Validate organization profile` check fails when the manifest is malformed or this page does not match it, and the `Compatibility matrix validation` workflow repeats the reference check on the pull request and every week.')
+    $lines.Add('2. Run `./scripts/Test-CompatibilityMatrix.ps1 -Update` to regenerate this page, then `./scripts/Test-CompatibilityMatrix.ps1 -VerifyReferences -AuditReleases` to confirm that every referenced tag and evidence file exists, that every Reference Application release is recorded, and that no published stable release or site marker has drifted.')
+    $lines.Add('3. Open a pull request. The `Validate organization profile` check fails when the manifest is malformed or this page does not match it, and the `Compatibility matrix validation` workflow repeats the reference check and the release drift audit on the pull request and every week.')
 
     return (($lines -join "`n") + "`n")
 }
@@ -657,6 +711,286 @@ function Test-References {
     }
 
     return $tags.Count + $files.Count
+}
+
+# Reduces a published HTML page or its Markdown source to whitespace-normalized text, so one marker pattern matches
+# both: "**Label:** [1.2.3](url)", "Label: <a href=...>1.2.3</a>", and table cells all become "Label: 1.2.3".
+function ConvertTo-PlainText {
+    param([string]$Text, [switch]$Markdown)
+
+    if ($Markdown) {
+        $plain = [regex]::Replace($Text, '!?\[(?<text>[^\]]*)\]\([^)\s]*\)', '${text}')
+        $plain = $plain.Replace('`', '').Replace('**', '').Replace('|', ' ')
+    }
+    else {
+        $plain = [regex]::Replace($Text, '(?is)<(script|style)\b[^>]*>.*?</\1\s*>', ' ')
+        $plain = [regex]::Replace($plain, '<[^>]*>', ' ')
+        $plain = [System.Net.WebUtility]::HtmlDecode($plain)
+    }
+
+    return [regex]::Replace($plain, '\s+', ' ').Trim()
+}
+
+# Emits each distinct version captured by the pattern; callers collect with @().
+function Find-MarkerVersions {
+    param([string]$Text, [string]$Pattern)
+
+    $versions = [System.Collections.Generic.List[string]]::new()
+    foreach ($match in [regex]::Matches($Text, $Pattern)) {
+        $value = $match.Groups['version'].Value
+        if (-not $versions.Contains($value)) {
+            $versions.Add($value)
+        }
+    }
+
+    return $versions.ToArray()
+}
+
+function Test-ProfileClaims {
+    param($Manifest, [string]$ProfileText, [System.Collections.Generic.List[string]]$Errors)
+
+    $plain = ConvertTo-PlainText $ProfileText -Markdown
+    foreach ($claim in $profileClaims) {
+        $line = @(Get-StringList (Get-Value $Manifest 'supportLines') | Where-Object { (Get-Value $_ 'product') -eq $claim.Product })
+        if ($line.Count -ne 1) {
+            # Test-Manifest reports a missing or duplicated support line.
+            continue
+        }
+
+        $name = $products[$claim.Product].Name
+        $kind = if ($claim.Field -eq 'line') { 'support line' } else { 'current release' }
+        $expected = [string](Get-Value $line[0] $claim.Field)
+        $found = @(Find-MarkerVersions $plain $claim.Pattern)
+        if ($found.Count -ne 1) {
+            $Errors.Add("$profileRelativePath must state the $name $kind exactly once (pattern '$($claim.Pattern)'); found $($found.Count) distinct value(s).")
+        }
+        elseif ($found[0] -cne $expected) {
+            $Errors.Add("$profileRelativePath states the $name $kind as $($found[0]), but $manifestRelativePath records $expected. Update the profile to match the manifest.")
+        }
+    }
+}
+
+# Set by the self-test to answer published-page requests offline; $null in normal runs.
+$script:SiteResponder = $null
+
+function Invoke-SiteRequest {
+    param([string]$Uri)
+
+    if ($script:SiteResponder) {
+        return & $script:SiteResponder $Uri
+    }
+
+    # The query string bypasses cached copies, so a stale cache is not mistaken for the deployed page.
+    $separator = if ($Uri.Contains('?')) { '&' } else { '?' }
+    $requestUri = "$Uri${separator}release-drift-audit=$([DateTimeOffset]::UtcNow.ToUnixTimeSeconds())"
+    $headers = @{ 'Cache-Control' = 'no-cache'; 'User-Agent' = 'AsiBackbone-release-drift-audit' }
+    $lastError = $null
+
+    for ($attempt = 1; $attempt -le $MaximumAttempts; $attempt++) {
+        try {
+            $response = Invoke-WebRequest -Uri $requestUri -Headers $headers -Method Get -TimeoutSec 30 -SkipHttpErrorCheck
+            $code = [int]$response.StatusCode
+            if ($code -ge 200 -and $code -lt 300) {
+                return [string]$response.Content
+            }
+
+            $lastError = "HTTP $code"
+        }
+        catch {
+            $lastError = $_.Exception.Message
+        }
+
+        if ($attempt -lt $MaximumAttempts) {
+            Start-Sleep -Seconds (5 * $attempt)
+        }
+    }
+
+    throw "GET $Uri failed after $MaximumAttempts attempt(s): $lastError"
+}
+
+# Emits every GitHub Release of the repository, including drafts and pre-releases, for the caller to filter.
+function Get-GitHubReleases {
+    param([string]$Repository)
+
+    for ($page = 1; $page -le 10; $page++) {
+        $response = Invoke-GitHubRequest -Uri "https://api.github.com/repos/$Repository/releases?per_page=100&page=$page"
+        if ($null -eq $response) {
+            throw "Releases for $Repository could not be listed (HTTP 404)."
+        }
+
+        $batch = @($response.Content | ConvertFrom-Json)
+        foreach ($release in $batch) {
+            [pscustomobject]@{
+                Tag = [string]$release.tag_name
+                Draft = [bool]$release.draft
+                Prerelease = [bool]$release.prerelease
+                Url = [string]$release.html_url
+            }
+        }
+
+        if ($batch.Count -lt 100) {
+            break
+        }
+    }
+}
+
+# Stable-release selection policy: the highest vMAJOR.MINOR.PATCH tag among GitHub Releases that are neither drafts
+# nor marked as pre-releases. Tags with a pre-release suffix are ignored, publication order does not matter, and a tag
+# without a GitHub Release is not a release.
+function Select-LatestStableRelease {
+    param([object[]]$Releases)
+
+    $stable = @($Releases | Where-Object { -not $_.Draft -and -not $_.Prerelease -and $_.Tag -match $stableTagPattern })
+    if ($stable.Count -eq 0) {
+        return $null
+    }
+
+    return ($stable | Sort-Object -Property @{ Expression = { [version]$_.Tag.Substring(1) } } -Descending | Select-Object -First 1)
+}
+
+function Get-GitHubSourceFile {
+    param([string]$Repository, [string]$Path)
+
+    $escapedPath = (($Path -split '/') | ForEach-Object { [uri]::EscapeDataString($_) }) -join '/'
+    $response = Invoke-GitHubRequest -Uri "https://api.github.com/repos/$Repository/contents/${escapedPath}?ref=main"
+    if ($null -eq $response) {
+        return $null
+    }
+
+    $content = [string]($response.Content | ConvertFrom-Json).content
+    return [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String(($content -replace '\s', '')))
+}
+
+function New-DriftFinding {
+    param([string]$Category, [string]$Severity, [string]$Source, [string]$Observed, [string]$Expected, [string]$Url, [string]$Message)
+
+    return [pscustomobject]@{
+        Category = $Category
+        Severity = $Severity
+        Source = $Source
+        Observed = $Observed
+        Expected = $Expected
+        Url = $Url
+        Message = $Message
+    }
+}
+
+# Compares each support line's current release with the owning repository's latest stable release, and each
+# published site's current-release marker with that release. It reports findings only; it never edits the manifest,
+# and it reads no combination, so Learning review baselines and historical integrations are never upgraded or
+# reclassified.
+function Test-ReleaseDrift {
+    param(
+        $Manifest,
+        [System.Collections.Generic.List[object]]$Findings,
+        [scriptblock]$ListReleases = { param($Repository) Get-GitHubReleases -Repository $Repository },
+        [scriptblock]$GetPage = { param($Url) Invoke-SiteRequest -Uri $Url },
+        [scriptblock]$GetSource = { param($Repository, $Path) Get-GitHubSourceFile -Repository $Repository -Path $Path }
+    )
+
+    foreach ($product in $products.Keys) {
+        $definition = $products[$product]
+        $supportLine = @(Get-StringList $Manifest['supportLines'] | Where-Object { $_['product'] -eq $product })[0]
+        $current = [string]$supportLine['current']
+        $claimSource = "$manifestRelativePath supportLines[$product].current"
+        $releasesUrl = "https://github.com/$($definition.Repository)/releases"
+        $expected = $current
+        $expectedLabel = "$current (manifest; releases unavailable)"
+
+        $releases = $null
+        try {
+            # ForEach-Object flattens a list that arrives as one array object.
+            $releases = @(& $ListReleases $definition.Repository | ForEach-Object { $_ })
+        }
+        catch {
+            $Findings.Add((New-DriftFinding -Category 'api-unavailable' -Severity 'error' -Source "$($definition.Repository) GitHub Releases" -Observed '—' -Expected '—' -Url $releasesUrl -Message "$($definition.Name) releases could not be read ($($_.Exception.Message)). The published site was compared with the manifest instead."))
+        }
+
+        if ($null -ne $releases) {
+            $latest = Select-LatestStableRelease $releases
+            if ($null -eq $latest) {
+                $Findings.Add((New-DriftFinding -Category 'no-stable-release' -Severity 'error' -Source "$($definition.Repository) GitHub Releases" -Observed 'no stable release' -Expected $current -Url $releasesUrl -Message "$($definition.Name) has no published stable release, but $claimSource names $current."))
+            }
+            else {
+                $latestVersion = $latest.Tag.Substring(1)
+                $expected = $latestVersion
+                $expectedLabel = $latest.Tag
+                if ($current -cne $latestVersion) {
+                    $currentRelease = @($releases | Where-Object { $_.Tag -ceq "v$current" })
+                    if ($current -notmatch '^\d+\.\d+\.\d+$' -or ($currentRelease.Count -gt 0 -and ($currentRelease[0].Prerelease -or $currentRelease[0].Draft))) {
+                        $Findings.Add((New-DriftFinding -Category 'not-stable' -Severity 'error' -Source $claimSource -Observed $current -Expected $latest.Tag -Url $latest.Url -Message "$claimSource names $current, which is not a published stable release. The latest stable $($definition.Name) release is $($latest.Tag)."))
+                    }
+                    elseif (([version]$current).CompareTo([version]$latestVersion) -lt 0) {
+                        $Findings.Add((New-DriftFinding -Category 'superseded' -Severity 'error' -Source $claimSource -Observed $current -Expected $latest.Tag -Url $latest.Url -Message "$claimSource names $current, but $($definition.Name) has published the newer stable release $($latest.Tag). Record it in the matrix, regenerate, and update the profile; see Release drift audit in compatibility/README.md."))
+                    }
+                    else {
+                        $Findings.Add((New-DriftFinding -Category 'unpublished' -Severity 'error' -Source $claimSource -Observed $current -Expected $latest.Tag -Url $latest.Url -Message "$claimSource names $current, which is newer than the latest published stable $($definition.Name) release $($latest.Tag). Publish the release or correct the manifest."))
+                    }
+                }
+            }
+        }
+
+        $marker = $siteMarkers[$product]
+        $live = $null
+        try {
+            $live = [string](& $GetPage $marker.Url)
+        }
+        catch {
+            $Findings.Add((New-DriftFinding -Category 'http-failure' -Severity 'error' -Source $marker.Url -Observed '—' -Expected $expectedLabel -Url $marker.Url -Message "$($marker.Url) could not be read: $($_.Exception.Message)"))
+            continue
+        }
+
+        $liveVersions = @(Find-MarkerVersions (ConvertTo-PlainText $live) $marker.Pattern)
+        if ($liveVersions.Count -eq 1 -and $liveVersions[0] -ceq $expected) {
+            continue
+        }
+        if ($liveVersions.Count -gt 1) {
+            $Findings.Add((New-DriftFinding -Category 'ambiguous-marker' -Severity 'error' -Source $marker.Url -Observed ($liveVersions -join ', ') -Expected $expectedLabel -Url $marker.Url -Message "$($marker.Url) states '$($marker.Label)' with more than one version: $($liveVersions -join ', ')."))
+            continue
+        }
+
+        $sourceUrl = "https://github.com/$($definition.Repository)/blob/main/$($marker.Source)"
+        $sourceText = $null
+        $sourceError = $null
+        try {
+            $sourceText = & $GetSource $definition.Repository $marker.Source
+        }
+        catch {
+            $sourceError = $_.Exception.Message
+        }
+
+        # Assign in branches: an if-expression that yields @() would leave $null instead of an empty array.
+        $sourceVersions = @()
+        if ($null -ne $sourceText) {
+            $sourceVersions = @(Find-MarkerVersions (ConvertTo-PlainText ([string]$sourceText) -Markdown) $marker.Pattern)
+        }
+        $observed = if ($liveVersions.Count -eq 0) { 'marker not found' } else { $liveVersions[0] }
+
+        if ($sourceVersions.Count -eq 1 -and $sourceVersions[0] -ceq $expected) {
+            $Findings.Add((New-DriftFinding -Category 'deployment-lag' -Severity 'warning' -Source $marker.Url -Observed $observed -Expected $expectedLabel -Url $marker.Url -Message "$($marker.Url) shows $observed, but $sourceUrl already states $expected. The site has not been redeployed yet; re-run after its documentation workflow finishes."))
+            continue
+        }
+
+        $sourceNote = if ($null -ne $sourceError) {
+            "Its source could not be read ($sourceError), so deployment lag cannot be ruled out."
+        }
+        elseif ($null -eq $sourceText) {
+            "Its source $sourceUrl was not found, so deployment lag cannot be ruled out."
+        }
+        elseif ($sourceVersions.Count -eq 0) {
+            "Its source $sourceUrl has no marker either."
+        }
+        else {
+            "Its source $sourceUrl states $($sourceVersions -join ', '), so the owning repository must update it."
+        }
+
+        if ($liveVersions.Count -eq 0) {
+            $Findings.Add((New-DriftFinding -Category 'missing-marker' -Severity 'error' -Source $marker.Url -Observed $observed -Expected $expectedLabel -Url $marker.Url -Message "$($marker.Url) has no '$($marker.Label)' statement. $sourceNote"))
+        }
+        else {
+            $Findings.Add((New-DriftFinding -Category 'version-mismatch' -Severity 'error' -Source $marker.Url -Observed $observed -Expected $expectedLabel -Url $marker.Url -Message "$($marker.Url) states $observed as the current $($definition.Name) release, but the expected release is $expected. $sourceNote"))
+        }
+    }
 }
 
 function Read-Manifest {
@@ -827,6 +1161,163 @@ function Invoke-SelfTest {
         }
     }
 
+    # Profile current-release statements must agree with supportLines (offline, required check).
+    $profileText = @(
+        'Current archival release: **1.0.0**.'
+        'The stable package family is **1.x**, with **1.0.0** as the current release.'
+        'The current **1.x** line is feature-complete.'
+        'Current release: **1.0.0**.'
+        'Stable release: **1.0.0**.'
+    ) -join "`n`n"
+    $profileCases = @(
+        @{ Name = 'profile agrees with the manifest'; Text = $profileText; Pass = $true }
+        @{ Name = 'profile names a superseded release'; Text = $profileText.Replace('with **1.0.0** as', 'with **0.9.0** as'); Pass = $false }
+        @{ Name = 'profile names a different support line'; Text = $profileText.Replace('The current **1.x** line', 'The current **2.x** line'); Pass = $false }
+        @{ Name = 'profile omits a current release'; Text = $profileText.Replace('Stable release: **1.0.0**.', 'Stable.'); Pass = $false }
+    )
+    foreach ($case in $profileCases) {
+        $caseErrors = [System.Collections.Generic.List[string]]::new()
+        Test-ProfileClaims -Manifest (& $clone) -ProfileText $case.Text -Errors $caseErrors
+        if (($caseErrors.Count -eq 0) -ne $case.Pass) {
+            $expected = if ($case.Pass) { 'success' } else { 'failure' }
+            $failures.Add("Self-test '$($case.Name)' expected $expected but got $($caseErrors.Count) error(s): $($caseErrors -join ' ')")
+        }
+    }
+
+    # Release drift audit. The fixture's support lines all name 1.0.0, while its combinations pin AsiBackbone 7.5.0 and
+    # 7.0.0 as reviewed and historical baselines; the audit must never report or change those pins.
+    $auditHtml = @{
+        learning = { param($v) "<p><strong>Published Learning archive:</strong> <a href=`"https://example.test/v$v`">$v</a> (<a href=`"notes.html`">release notes</a>).</p>" }
+        asiBackbone = { param($v) "<p>Stable <code>1.x</code> package family. The current release is <code>$v</code>.</p>" }
+        netCoreApplicationTemplate = { param($v) "<table><tr><td>Current release</td>`n<td><a href=`"https://example.test/v$v`">$v</a> (<a href=`"notes.html`">release notes</a>)</td></tr></table>" }
+        referenceApplication = { param($v) "<table><tr><td>Release line</td>`n<td>Stable <code>$v</code> (<code>1.x</code> compatibility contract)</td></tr></table>" }
+    }
+    $auditMarkdown = @{
+        learning = { param($v) "**Published Learning archive:** [$v](https://example.test/v$v) ([release notes](notes.md))." }
+        asiBackbone = { param($v) "Stable ``1.x`` package family. The current release is ``$v``." }
+        netCoreApplicationTemplate = { param($v) "| Current release | [$v](https://example.test/v$v) ([release notes](notes.md)) |" }
+        referenceApplication = { param($v) "| Release line | Stable ``$v`` (``1.x`` compatibility contract) |" }
+    }
+    $newRelease = { param($Tag, [bool]$Prerelease = $false, [bool]$Draft = $false) [pscustomobject]@{ Tag = $Tag; Draft = $Draft; Prerelease = $Prerelease; Url = "https://example.test/releases/$Tag" } }
+
+    # Each case describes, per product key, its releases, the deployed marker version ($null for no marker), the
+    # source marker version, and products whose releases API or site is unavailable. The scriptblocks below read
+    # $auditCase through dynamic scope when Test-ReleaseDrift invokes them.
+    $newAuditCase = {
+        param([hashtable]$Overrides)
+        $case = @{ Releases = @{}; Live = @{}; Source = @{}; ApiDown = @(); SiteDown = @() }
+        foreach ($product in $products.Keys) {
+            $case.Releases[$product] = @(& $newRelease 'v1.0.0')
+            $case.Live[$product] = '1.0.0'
+            $case.Source[$product] = '1.0.0'
+        }
+        foreach ($key in $Overrides.Keys) {
+            if ($Overrides[$key] -is [System.Collections.IDictionary]) {
+                foreach ($product in $Overrides[$key].Keys) {
+                    $case[$key][$product] = $Overrides[$key][$product]
+                }
+            }
+            else {
+                # ApiDown and SiteDown are product lists rather than per-product maps.
+                $case[$key] = @($Overrides[$key])
+            }
+        }
+        return $case
+    }
+    $productFor = { param($Repository) @($products.GetEnumerator() | Where-Object { $_.Value.Repository -eq $Repository })[0].Key }
+    $auditListReleases = { param($Repository) $key = & $productFor $Repository; if ($auditCase.ApiDown -contains $key) { throw 'HTTP 503' }; , @($auditCase.Releases[$key]) }
+    $auditGetPage = {
+        param($Url)
+        $key = @($siteMarkers.GetEnumerator() | Where-Object { $_.Value.Url -eq $Url })[0].Key
+        if ($auditCase.SiteDown -contains $key) { throw 'HTTP 404' }
+        $version = $auditCase.Live[$key]
+        if ($null -eq $version) { return '<p>No release statement.</p>' }
+        return & $auditHtml[$key] $version
+    }
+    $auditGetSource = { param($Repository, $Path) $key = & $productFor $Repository; $version = $auditCase.Source[$key]; if ($null -eq $version) { return 'No release statement.' }; & $auditMarkdown[$key] $version }
+
+    $auditCases = @(
+        @{ Name = 'releases and markers agree'; Case = @{}; Categories = @() }
+        @{ Name = 'newer stable release supersedes an existing current tag'; Case = @{ Releases = @{ asiBackbone = @((& $newRelease 'v1.0.0'), (& $newRelease 'v1.1.0')) }; Source = @{ asiBackbone = '1.0.0' } }; Categories = @('superseded', 'version-mismatch') }
+        @{ Name = 'pre-release-only and draft changes are ignored'; Case = @{ Releases = @{ asiBackbone = @((& $newRelease 'v1.0.0'), (& $newRelease 'v1.1.0' $true), (& $newRelease 'v1.2.0-rc.1'), (& $newRelease 'v1.3.0' $false $true)) } }; Categories = @() }
+        @{ Name = 'releases API unavailable'; Case = @{ ApiDown = @('netCoreApplicationTemplate') }; Categories = @('api-unavailable') }
+        @{ Name = 'published site unavailable'; Case = @{ SiteDown = @('referenceApplication') }; Categories = @('http-failure') }
+        @{ Name = 'deployed page lacks its marker'; Case = @{ Live = @{ learning = $null }; Source = @{ learning = $null } }; Categories = @('missing-marker') }
+        @{ Name = 'source updated but site not yet redeployed'; Case = @{ Releases = @{ learning = @((& $newRelease 'v1.0.0'), (& $newRelease 'v1.1.0')) }; Source = @{ learning = '1.1.0' } }; Categories = @('superseded', 'deployment-lag') }
+        @{ Name = 'source and site both state an older release'; Case = @{ Releases = @{ referenceApplication = @((& $newRelease 'v1.0.0'), (& $newRelease 'v1.0.1')) } }; Categories = @('superseded', 'version-mismatch') }
+        @{ Name = 'manifest names a pre-release'; Case = @{ Releases = @{ asiBackbone = @((& $newRelease 'v1.0.0' $true), (& $newRelease 'v0.9.0')) } }; Categories = @('not-stable', 'version-mismatch') }
+    )
+    foreach ($entry in $auditCases) {
+        $auditCase = & $newAuditCase $entry.Case
+
+        $manifest = & $clone
+        $before = $manifest | ConvertTo-Json -Depth 20
+        $findings = [System.Collections.Generic.List[object]]::new()
+        Test-ReleaseDrift -Manifest $manifest -Findings $findings -ListReleases $auditListReleases -GetPage $auditGetPage -GetSource $auditGetSource
+        $actual = @($findings | ForEach-Object Category | Sort-Object -Unique)
+        $wanted = @($entry.Categories | Sort-Object -Unique)
+        if (($actual -join ',') -cne ($wanted -join ',')) {
+            $failures.Add("Self-test '$($entry.Name)' expected findings [$($wanted -join ', ')] but got [$($actual -join ', ')]: $(@($findings | ForEach-Object Message) -join ' ')")
+        }
+        if (($manifest | ConvertTo-Json -Depth 20) -cne $before) {
+            $failures.Add("Self-test '$($entry.Name)': the release drift audit modified the manifest.")
+        }
+        if (@($findings | Where-Object { $_.Message -match 'combinations\[' -or $_.Source -match 'combinations' }).Count -gt 0) {
+            $failures.Add("Self-test '$($entry.Name)': the release drift audit reported a reviewed or historical combination.")
+        }
+        foreach ($finding in $findings) {
+            foreach ($field in @('Source', 'Observed', 'Expected', 'Url', 'Message')) {
+                if ([string]::IsNullOrWhiteSpace([string]$finding.$field)) {
+                    $failures.Add("Self-test '$($entry.Name)': a $($finding.Category) finding has no $field.")
+                }
+            }
+        }
+    }
+
+    $lagFindings = [System.Collections.Generic.List[object]]::new()
+    $auditCase = & $newAuditCase @{ Releases = @{ learning = @((& $newRelease 'v1.0.0'), (& $newRelease 'v1.1.0')) }; Source = @{ learning = '1.1.0' } }
+    Test-ReleaseDrift -Manifest (& $clone) -Findings $lagFindings -ListReleases $auditListReleases -GetPage $auditGetPage -GetSource $auditGetSource
+    if (@($lagFindings | Where-Object { $_.Category -eq 'deployment-lag' -and $_.Severity -ne 'warning' }).Count -gt 0) {
+        $failures.Add('Deployment lag must be reported as a warning, not an error.')
+    }
+    $supersededText = @($lagFindings | Where-Object Category -eq 'superseded' | ForEach-Object Message) -join ' '
+    if ($supersededText -notmatch 'supportLines\[learning\]\.current names 1\.0\.0' -or $supersededText -notmatch 'v1\.1\.0') {
+        $failures.Add("A superseded finding must name the manifest source, the observed release, and the expected release: $supersededText")
+    }
+
+    # Drive the real release-listing and page-request functions through offline responders that answer the way the
+    # GitHub REST API and a published site do.
+    $script:GitHubResponder = {
+        param($Uri)
+        if ($Uri -match '/repos/(?<repo>[^/]+/[^/]+)/releases\?') {
+            $releases = @(
+                @{ tag_name = 'v1.0.0'; draft = $false; prerelease = $false; html_url = "https://github.com/$($Matches.repo)/releases/tag/v1.0.0" }
+                @{ tag_name = 'v2.0.0-beta.1'; draft = $false; prerelease = $true; html_url = "https://github.com/$($Matches.repo)/releases/tag/v2.0.0-beta.1" }
+            )
+            return [pscustomobject]@{ StatusCode = 200; Content = (ConvertTo-Json -InputObject $releases -Depth 3) }
+        }
+        throw "Unexpected request: $Uri"
+    }
+    $script:SiteResponder = {
+        param($Uri)
+        $key = @($siteMarkers.GetEnumerator() | Where-Object { $_.Value.Url -eq $Uri })[0].Key
+        return & $auditHtml[$key] '1.0.0'
+    }
+    $httpFindings = [System.Collections.Generic.List[object]]::new()
+    try {
+        Test-ReleaseDrift -Manifest (& $clone) -Findings $httpFindings
+    }
+    catch {
+        $httpFindings.Add((New-DriftFinding -Category 'exception' -Severity 'error' -Source 'self-test' -Observed '—' -Expected '—' -Url '—' -Message $_.Exception.Message))
+    }
+    finally {
+        $script:GitHubResponder = $null
+        $script:SiteResponder = $null
+    }
+    if ($httpFindings.Count -gt 0) {
+        $failures.Add("Self-test 'GitHub API and published pages agree' expected no findings but got: $(@($httpFindings | ForEach-Object Message) -join ' ')")
+    }
+
     if ($failures.Count -gt 0) {
         $failures | ForEach-Object { Write-Error $_ -ErrorAction Continue }
         exit 1
@@ -847,6 +1338,7 @@ if ($SelfTest) {
 $manifestPath = Join-Path $RepositoryRoot $manifestRelativePath
 $matrixPath = Join-Path $RepositoryRoot $matrixRelativePath
 $errors = [System.Collections.Generic.List[string]]::new()
+$onlineFailed = $false
 
 try {
     $manifest = Read-Manifest -Path $manifestPath
@@ -857,6 +1349,18 @@ catch {
 }
 
 Test-Manifest -Manifest $manifest -Errors $errors
+if ($errors.Count -gt 0) {
+    $errors | ForEach-Object { Write-Error $_ -ErrorAction Continue }
+    exit 1
+}
+
+$profilePath = Join-Path $RepositoryRoot $profileRelativePath
+if (Test-Path -LiteralPath $profilePath -PathType Leaf) {
+    Test-ProfileClaims -Manifest $manifest -ProfileText (Get-Content -LiteralPath $profilePath -Raw) -Errors $errors
+}
+else {
+    $errors.Add("$profileRelativePath is required.")
+}
 if ($errors.Count -gt 0) {
     $errors | ForEach-Object { Write-Error $_ -ErrorAction Continue }
     exit 1
@@ -897,10 +1401,49 @@ if ($VerifyReferences) {
 
     if ($errors.Count -gt 0) {
         $errors | ForEach-Object { Write-Error $_ -ErrorAction Continue }
-        exit 1
+        $onlineFailed = $true
+    }
+    else {
+        Write-Host "Verified $checked referenced tags and evidence files; every Reference Application release is recorded."
+    }
+}
+
+if ($AuditReleases) {
+    $findings = [System.Collections.Generic.List[object]]::new()
+    Test-ReleaseDrift -Manifest $manifest -Findings $findings
+    $auditErrors = @($findings | Where-Object Severity -eq 'error')
+    $auditWarnings = @($findings | Where-Object Severity -eq 'warning')
+
+    if ($env:GITHUB_STEP_SUMMARY) {
+        $summary = @('## Release drift audit', '')
+        if ($findings.Count -eq 0) {
+            $summary += 'Every support line names its project''s latest stable release, and every published site states it.'
+        }
+        else {
+            $escape = { param($Value) ([string]$Value).Replace('|', '\|').Replace("`r", '').Replace("`n", ' ') }
+            $summary += @('| Severity | Finding | Source | Observed | Expected | URL | Details |', '| --- | --- | --- | --- | --- | --- | --- |')
+            $summary += @($findings | ForEach-Object { "| $($_.Severity) | $($_.Category) | $(& $escape $_.Source) | $(& $escape $_.Observed) | $(& $escape $_.Expected) | <$($_.Url)> | $(& $escape $_.Message) |" })
+        }
+        $summary | Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY -Encoding utf8
     }
 
-    Write-Host "Verified $checked referenced tags and evidence files; every Reference Application release is recorded."
+    foreach ($finding in $auditWarnings) {
+        Write-Host "::warning::[$($finding.Category)] $($finding.Message)"
+    }
+    foreach ($finding in $auditErrors) {
+        Write-Error "[$($finding.Category)] $($finding.Message)" -ErrorAction Continue
+    }
+
+    if ($auditErrors.Count -gt 0) {
+        $onlineFailed = $true
+    }
+    else {
+        Write-Host "Release drift audit: every support line names its latest stable release; $($auditWarnings.Count) deployment-lag warning(s)."
+    }
+}
+
+if ($onlineFailed) {
+    exit 1
 }
 
 Write-Host 'Compatibility manifest is valid and the rendered matrix is current.'

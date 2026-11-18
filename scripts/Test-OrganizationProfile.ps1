@@ -426,7 +426,7 @@ $communityContracts = [ordered]@{
         'contents: read'
         'persist-credentials: false'
         'GITHUB_TOKEN: ${{ github.token }}'
-        './scripts/Test-CompatibilityMatrix.ps1 -VerifyReferences'
+        './scripts/Test-CompatibilityMatrix.ps1 -VerifyReferences -AuditReleases'
     )
     'scripts/Test-CompatibilityMatrix.ps1' = @(
         "Repository = 'AsiBackbone/Learning'"
@@ -436,6 +436,9 @@ $communityContracts = [ordered]@{
         'not known to be broken'
         'not a certification'
         'not a package dependency'
+        '## Release drift audit'
+        'function Select-LatestStableRelease'
+        'function Test-ProfileClaims'
     )
     '.github/workflows/docfx-strict-builds-validation.yml' = @(
         'name: Strict DocFX builds validation'

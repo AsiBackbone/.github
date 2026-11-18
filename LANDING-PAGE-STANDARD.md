@@ -26,7 +26,10 @@ Implementations should record which version they were last reviewed against, for
 | 1.1.0 | [AsiBackbone/.github#21](https://github.com/AsiBackbone/.github/issues/21) | Adds document-language, page-metadata, published-output, full-width DocFX homepage, and template-rendered skip-link requirements, and the scheduled published-site check. |
 | 1.2.0 | [AsiBackbone/.github#20](https://github.com/AsiBackbone/.github/issues/20) | Requires every DocFX build in pull-request, release, and publication workflows to fail on warnings, and adds per-repository and scheduled strict-build checks. |
 | 2.0.0 | [AsiBackbone/ReferenceApplication#7](https://github.com/AsiBackbone/ReferenceApplication/issues/7) | Adds the Reference Application as a sixth surface, a `Reference` ecosystem navigation destination, and a fourth Related Projects entry; requires the canonical project order Learn → Framework → Template → Reference on every surface and defines how a current-site card is marked; extends the profile, published-site, and strict-build checks to Reference. |
+| 2.1.0 | [AsiBackbone/.github#37](https://github.com/AsiBackbone/.github/pull/37) | Adds the organization funding destination as an optional organization-surface destination, linked to Patreon, with the sponsorship boundary language. |
+| 3.0.0 | [AsiBackbone/.github#38](https://github.com/AsiBackbone/.github/pull/38) | Promotes Funding to the eighth required ecosystem destination and routes every site to the organization `Support AsiBackbone` section. |
 | 3.1.0 | [AsiBackbone/.github#48](https://github.com/AsiBackbone/.github/issues/48) | Adds the canonical one-phrase description of the Reference Application, "stable integration example, not a product", for every surface and project README, and retires "integration specimen". |
+
 ## Public surfaces
 
 | Surface | URL | Platform | Repository |
