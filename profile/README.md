@@ -30,7 +30,7 @@ The organization also maintains the **[organization documentation site](https://
 
 Learning is the **canonical educational layer** for the organization.
 
-Current archival release: **1.6.0**.
+Current archival release: **1.7.0**.
 
 It teaches decision-before-execution, explicit policy outcomes, acknowledgment and scoped authority, durable audit evidence, secure ASP.NET Core design, AI tool and agent governance, background-work boundaries, distributed authorization concerns, and cross-project architectural tradeoffs.
 
@@ -40,7 +40,7 @@ The material is designed to remain useful **without requiring the AsiBackbone pa
 
 ### [AsiBackbone](https://github.com/AsiBackbone/AsiBackbone) — add governed decisions
 
-The stable package family is **7.x**, with **7.5.4** as the current release.
+The stable package family is **7.x**, with **7.5.5** as the current release.
 
 AsiBackbone is a governance framework for **Accountable Systems Infrastructure**. It evaluates policy before host-owned execution, returns structured governance decisions, records decision evidence, supports acknowledgment workflows and scoped capability grants, and provides integration surfaces for persistence, signing, verification, telemetry, and ASP.NET Core.
 
@@ -54,7 +54,7 @@ A reusable, production-oriented ASP.NET Core baseline with secure defaults for .
 
 The current **2.x** line is feature-complete and actively maintained for security fixes, dependency servicing, and documentation corrections. The generated scaffold includes closed-by-default routed endpoints, explicit anonymous access, structured logging, security headers, rate limiting, centralized Problem Details handling, EF Core patterns, health checks, telemetry, reverse-proxy validation, and release/CI controls.
 
-Current release: **2.11.10**.
+Current release: **2.11.11**.
 
 It is not a finished, penetration-tested, or certified application; each generated application still requires application-specific configuration, threat analysis, deployment controls, testing, and security review.
 
@@ -66,7 +66,7 @@ The Reference Application is the organization's **stable integration example**, 
 
 It begins from an NCAT-generated ASP.NET Core host and integrates AsiBackbone step by step. The completed walkthrough covers package integration, service registration, governance rules, governed endpoints, persisted and verified evidence, operational observation, Development-only governance tooling, and governance-overhead benchmarks.
 
-Stable release: **1.0.2**.
+Stable release: **1.0.3**.
 
 The project makes the organization-wide boundary concrete: **AsiBackbone decides before execution; the host owns the operation and its side effects.**
 
