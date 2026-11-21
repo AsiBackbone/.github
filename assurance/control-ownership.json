@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "reviewed": "2026-11-15",
+  "reviewed": "2026-11-21",
   "baselines": {
-    "netCoreApplicationTemplate": "2.11.10",
-    "asiBackbone": "7.5.4",
-    "referenceApplication": "1.0.2"
+    "netCoreApplicationTemplate": "2.11.11",
+    "asiBackbone": "7.5.5",
+    "referenceApplication": "1.0.3"
   },
   "controls": [
     {
