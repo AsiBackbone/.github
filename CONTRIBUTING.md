@@ -13,6 +13,18 @@ The four primary projects have tailored guidance:
 - [.NET Core Application Template](https://github.com/AsiBackbone/NetCoreApplicationTemplate/blob/main/CONTRIBUTING.md) for the template source, generated scaffold, packaging, and documentation; and
 - [AsiBackbone Reference Application](https://github.com/AsiBackbone/ReferenceApplication/blob/main/CONTRIBUTING.md) for the integration host, its configuration and container files, and the integration walkthrough.
 
+## Contribution and Pull Request Policy
+
+AsiBackbone projects use a controlled-contribution model to preserve architectural consistency, security boundaries, and sustainable maintainer review capacity. Public source code remains available under each repository's applicable license; pull request permissions govern contributions to the official repository, not independent forks or use of the licensed work.
+
+- **Start with a proposal.** Open an issue for a reproducible defect or a focused improvement. For larger features or architectural changes, use [organization Discussions](https://github.com/orgs/AsiBackbone/discussions) before undertaking substantial implementation. Follow the repository's security policy for vulnerabilities; do not disclose sensitive details publicly.
+- **Explain the change.** Include the problem, intended outcome, affected components, relevant compatibility and security considerations, and a proposed validation approach. A concise proposal is sufficient for minor documentation defects.
+- **Maintainer review comes first.** Maintainers evaluate scope, project direction, technical risk, compatibility, testing requirements, and available review capacity. Acknowledgment of an issue or proposal does not constitute approval to implement or a commitment to review within a specific timeframe.
+- **Contribution is by agreement.** When a proposal is accepted, maintainers may invite implementation through an appropriate mechanism, such as a patch, a focused pull request where permitted, or time-limited collaborator access. Acceptance of a proposal does not automatically confer repository write access.
+- **Integration remains controlled.** Contributions are subject to the affected repository's existing testing, review, licensing, and governance requirements. Maintainers retain final integration and release authority.
+
+Some repositories restrict pull request creation to authorized collaborators. These restrictions do not prevent independent forks or modifications permitted by the applicable license. Unsolicited changes developed without prior agreement may not be reviewed or accepted. Public issues and discussions remain the preferred starting point for outside participation.
+
 ## Choose the Right Starting Point
 
 - Use the affected repository's issue tracker for a reproducible defect or clearly scoped change.
