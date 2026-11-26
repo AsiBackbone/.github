@@ -1,6 +1,6 @@
 # AsiBackbone Landing-Page Standard
 
-**Version:** 3.1.0
+**Version:** 3.2.0
 **Status:** Active
 **Contract issue:** [AsiBackbone/.github#15](https://github.com/AsiBackbone/.github/issues/15)
 
@@ -170,6 +170,8 @@ Every surface includes this shared statement verbatim:
 
 It is followed by:
 
+- the shared community-governance maxim, **“Anything can propose; the host retains authority to act. Proposal is open. Authority is bounded.”**;
+- a statement that humans and AI agents may introduce proposals through Organization Discussions while human maintainers alone decide whether a proposal becomes organizational work and authorize downstream action, linking to the public proposal intake guidance;
 - a statement that the organization also documents when these patterns are unnecessary, linking to at least one simpler-alternative page; and
 - a non-claim that the projects focus on practical .NET engineering and do not claim regulatory certification or automatic compliance.
 
@@ -361,6 +363,7 @@ Use this checklist for each surface. Mark not applicable items explicitly.
 - [ ] **Document language and metadata:** the page declares `lang="en"`; the title, description, canonical URL, social preview, and structured data meet [Page metadata](#page-metadata).
 - [ ] **Without JavaScript:** with scripts disabled, the skip link is present, moves focus to main content, and the homepage content is readable at full width.
 - [ ] **Project order:** project cards follow the canonical order Learn → Framework → Template → Reference, and a current-site card is marked as the [Related Projects contract](#5-related-projects-contract) requires.
+- [ ] **Proposal boundary:** the open-proposal maxim, Organization Discussions route, and human-maintainer decision and work-authorization boundary are present.
 - [ ] **Internal links:** every relative link in the homepage source resolves in the build output.
 - [ ] **External links:** all eight ecosystem destinations and the four projects' documentation, repository, and published archive links resolve.
 - [ ] **DocFX build output (DocFX sites):** `docfx build` with `--warningsAsErrors` completes with no warnings, and `_site/index.html` contains the hero, Start Here, Product fit, Related Projects, and Design Philosophy sections.

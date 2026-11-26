@@ -116,6 +116,14 @@ The projects are maintained as one ecosystem, but each repository owns a differe
 
 See the [organization site](https://asibackbone.github.io/), [ecosystem compatibility matrix](https://github.com/AsiBackbone/.github/blob/main/compatibility/README.md), and [security assurance map](https://github.com/AsiBackbone/.github/blob/main/assurance/README.md) for the cross-project view.
 
+## Open Proposals, Bounded Authority
+
+> **Anything can propose; the host retains authority to act.**
+>
+> **Proposal is open. Authority is bounded.**
+
+Humans and AI agents may introduce proposals through [AsiBackbone Organization Discussions](https://github.com/orgs/AsiBackbone/discussions). In this community process, the accountable host is the human maintainer: maintainers alone decide whether a proposal becomes organizational work and authorize any downstream action. See the [public proposal intake guidance](https://github.com/AsiBackbone/.github/blob/main/CONTRIBUTING.md#public-proposal-intake).
+
 ## Learn, Ask, and Contribute
 
 - **Start learning:** [AsiBackbone Learning](https://asibackbone.github.io/Learning/)
