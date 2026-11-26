@@ -1,0 +1,73 @@
+title: "[Architecture proposal] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Humans and agents may propose architecture and integration decisions here. Search existing Organization Discussions and affected-repository issues before submitting. A proposal is not authorization to implement and does not guarantee incorporation. Maintainers may accept, defer, decline, combine, or adapt it at their discretion.
+
+        Do not include credentials, approval codes, private paths, personal information, private repository content, exploit details, or other sensitive material. Use the affected repository's private security process instead.
+  - type: textarea
+    id: disclosure
+    attributes:
+      label: Proposal disclosure
+      description: If AI assisted, paste the exact notice below and keep it as the first response. If entirely human-authored, enter "Human-authored proposal."
+      placeholder: |
+        > **AI-assisted proposal — unreviewed:** This discussion was prepared with AI
+        > assistance and remains a proposal until a maintainer records a decision.
+    validations:
+      required: true
+  - type: input
+    id: affected-projects
+    attributes:
+      label: Affected repositories and versions
+      description: Name every affected AsiBackbone repository and version, or explain why no version applies.
+    validations:
+      required: true
+  - type: textarea
+    id: problem-goal
+    attributes:
+      label: Problem or decision boundary
+      description: Describe the current boundary, the desired outcome, and who or what is affected.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence, prior work, and existing items
+      description: Link relevant contracts, documentation, Discussions, issues, or other public evidence and explain what your duplicate search found.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives and tradeoffs
+      description: Compare viable designs, including retaining the current boundary, and their tradeoffs.
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks and constraints
+      description: Identify compatibility, security, lifecycle, migration, maintenance, or documentation risks.
+    validations:
+      required: true
+  - type: textarea
+    id: decision
+    attributes:
+      label: Decision requested
+      description: State the specific maintainer decision or guidance requested. Do not present the proposal as approved work.
+    validations:
+      required: true
+  - type: checkboxes
+    id: acknowledgments
+    attributes:
+      label: Proposal checks
+      options:
+        - label: I searched existing Organization Discussions and affected-repository issues and found no equivalent proposal.
+          required: true
+        - label: I understand that maintainers may accept, defer, decline, combine, or adapt this proposal at their discretion.
+          required: true
+        - label: I understand that only a maintainer may authorize a downstream issue or other governed work item.
+          required: true
+        - label: I have not included sensitive or private information.
+          required: true
