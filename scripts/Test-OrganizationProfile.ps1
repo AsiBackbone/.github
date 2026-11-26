@@ -288,6 +288,7 @@ $communityContracts = [ordered]@{
     )
     'CONTRIBUTING.md' = @(
         '## Public Proposal Intake'
+        'This provides proposal access, not organizational decision authority.'
         '**AI-assisted proposal — unreviewed:**'
         'Maintainers may accept, defer, decline, combine, or adapt proposals at their discretion.'
         '## Documentation Ownership'
@@ -303,7 +304,7 @@ $communityContracts = [ordered]@{
     )
     'SUPPORT.md' = @(
         '## Proposal Lifecycle'
-        'Humans and agents are welcome to propose ideas in Organization Discussions.'
+        'only human maintainers hold organizational decision and downstream work-authorization authority.'
         'Implementation begins from that governed work item, not from the proposal alone.'
         'https://github.com/orgs/AsiBackbone/discussions'
         'https://github.com/orgs/AsiBackbone/discussions/categories/q-a'
@@ -343,12 +344,14 @@ $communityContracts = [ordered]@{
     )
     '.github/DISCUSSION_TEMPLATE/ideas.yml' = @(
         'title: "[Proposal] "'
+        'This provides proposal access, not organizational decision authority.'
         '**AI-assisted proposal — unreviewed:**'
         'I searched existing Organization Discussions and affected-repository issues and found no equivalent proposal.'
         'only a maintainer may authorize a downstream issue or other governed work item.'
     )
     '.github/DISCUSSION_TEMPLATE/architecture-integration.yml' = @(
         'title: "[Architecture proposal] "'
+        'This provides proposal access, not organizational decision authority.'
         '**AI-assisted proposal — unreviewed:**'
         'I searched existing Organization Discussions and affected-repository issues and found no equivalent proposal.'
         'only a maintainer may authorize a downstream issue or other governed work item.'

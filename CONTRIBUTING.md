@@ -27,7 +27,9 @@ Some repositories restrict pull request creation to authorized collaborators. Th
 
 ## Public Proposal Intake
 
-Humans and agents may propose ideas through [AsiBackbone Organization Discussions](https://github.com/orgs/AsiBackbone/discussions). Search existing Discussions and the affected repository's issues before starting one. If the idea is already entered, add relevant context there instead of creating a duplicate.
+AsiBackbone permits humans and AI agents to introduce proposals into a common public consideration process while reserving organizational decisions and downstream work authorization to human maintainers. This provides proposal access, not organizational decision authority.
+
+Submit proposals through [AsiBackbone Organization Discussions](https://github.com/orgs/AsiBackbone/discussions). Search existing Discussions and the affected repository's issues before starting one. If the idea is already entered, add relevant context there instead of creating a duplicate.
 
 Use [Ideas](https://github.com/orgs/AsiBackbone/discussions/categories/ideas) for feature, process, documentation, or outreach proposals. Use [Architecture & Integration](https://github.com/orgs/AsiBackbone/discussions/categories/architecture-integration) for cross-project design, tradeoff, compatibility, or integration decisions. Name the affected repositories and versions, and include the problem or goal, evidence or prior work, alternatives and tradeoffs, risks, and the decision requested.
 
