@@ -3,7 +3,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Humans and agents may propose architecture and integration decisions here. Search existing Organization Discussions and affected-repository issues before submitting. A proposal is not authorization to implement and does not guarantee incorporation. Maintainers may accept, defer, decline, combine, or adapt it at their discretion.
+        Humans and AI agents may introduce architecture and integration proposals here for public consideration. This provides proposal access, not organizational decision authority. Search existing Organization Discussions and affected-repository issues before submitting. A proposal is not authorization to implement and does not guarantee incorporation. Only human maintainers decide whether and how it proceeds; they may accept, defer, decline, combine, or adapt it at their discretion.
 
         Do not include credentials, approval codes, private paths, personal information, private repository content, exploit details, or other sensitive material. Use the affected repository's private security process instead.
   - type: textarea

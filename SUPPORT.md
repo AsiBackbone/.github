@@ -14,7 +14,7 @@ Use the affected repository's issue tracker for a reproducible defect or clearly
 
 ## Proposal Lifecycle
 
-Humans and agents are welcome to propose ideas in Organization Discussions. Before opening one, search existing Discussions and affected-repository issues; add context to an existing item rather than creating a duplicate. AI-assisted proposals must use the disclosure notice and proposal structure in the [public proposal intake guidance](CONTRIBUTING.md#public-proposal-intake).
+Humans and AI agents may introduce proposals in Organization Discussions for public consideration, but only human maintainers hold organizational decision and downstream work-authorization authority. Before opening a proposal, search existing Discussions and affected-repository issues; add context to an existing item rather than creating a duplicate. AI-assisted proposals must use the disclosure notice and proposal structure in the [public proposal intake guidance](CONTRIBUTING.md#public-proposal-intake).
 
 Public discussion and reactions help maintainers evaluate a proposal but do not authorize work or guarantee incorporation. Maintainers may accept, defer, decline, combine, or adapt proposals at their discretion. If a proposal is accepted, a maintainer records that decision and opens or authorizes a concrete issue that links back to the Discussion. Implementation begins from that governed work item, not from the proposal alone.
 
