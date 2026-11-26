@@ -12,6 +12,12 @@ Use [AsiBackbone organization Discussions](https://github.com/orgs/AsiBackbone/d
 
 Use the affected repository's issue tracker for a reproducible defect or clearly scoped work item. Read its support and contribution guidance first because repository-specific policies are authoritative.
 
+## Proposal Lifecycle
+
+Humans and agents are welcome to propose ideas in Organization Discussions. Before opening one, search existing Discussions and affected-repository issues; add context to an existing item rather than creating a duplicate. AI-assisted proposals must use the disclosure notice and proposal structure in the [public proposal intake guidance](CONTRIBUTING.md#public-proposal-intake).
+
+Public discussion and reactions help maintainers evaluate a proposal but do not authorize work or guarantee incorporation. Maintainers may accept, defer, decline, combine, or adapt proposals at their discretion. If a proposal is accepted, a maintainer records that decision and opens or authorizes a concrete issue that links back to the Discussion. Implementation begins from that governed work item, not from the proposal alone.
+
 ## Security and Sensitive Information
 
 Do not disclose passwords, tokens, personal data, exploit details, or other sensitive material in public issues or Discussions. Follow the affected repository's private process described in the [security reporting guidance](SECURITY.md).

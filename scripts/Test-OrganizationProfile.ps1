@@ -248,6 +248,8 @@ $requiredFiles = @(
     'SECURITY.md'
     '.github/PULL_REQUEST_TEMPLATE.md'
     '.github/ISSUE_TEMPLATE/config.yml'
+    '.github/DISCUSSION_TEMPLATE/ideas.yml'
+    '.github/DISCUSSION_TEMPLATE/architecture-integration.yml'
     '.github/dependabot.yml'
     '.github/workflows/dependency-review.yml'
     '.github/workflows/codeql.yml'
@@ -285,6 +287,9 @@ $communityContracts = [ordered]@{
         'Contributor Covenant, version 2.1'
     )
     'CONTRIBUTING.md' = @(
+        '## Public Proposal Intake'
+        '**AI-assisted proposal — unreviewed:**'
+        'Maintainers may accept, defer, decline, combine, or adapt proposals at their discretion.'
         '## Documentation Ownership'
         'https://github.com/AsiBackbone/.github/blob/main/documentation/README.md#review-rule-for-new-documentation'
         'Repository-specific contribution, support, security, governance, and validation files are authoritative'
@@ -297,6 +302,9 @@ $communityContracts = [ordered]@{
         'https://github.com/AsiBackbone/ReferenceApplication/blob/main/CONTRIBUTING.md'
     )
     'SUPPORT.md' = @(
+        '## Proposal Lifecycle'
+        'Humans and agents are welcome to propose ideas in Organization Discussions.'
+        'Implementation begins from that governed work item, not from the proposal alone.'
         'https://github.com/orgs/AsiBackbone/discussions'
         'https://github.com/orgs/AsiBackbone/discussions/categories/q-a'
         'https://github.com/orgs/AsiBackbone/discussions/categories/ideas'
@@ -332,6 +340,18 @@ $communityContracts = [ordered]@{
         'https://github.com/orgs/AsiBackbone/discussions/categories/architecture-integration'
         'https://github.com/AsiBackbone/.github/security/advisories/new'
         'Do not disclose secrets or exploit details publicly.'
+    )
+    '.github/DISCUSSION_TEMPLATE/ideas.yml' = @(
+        'title: "[Proposal] "'
+        '**AI-assisted proposal — unreviewed:**'
+        'I searched existing Organization Discussions and affected-repository issues and found no equivalent proposal.'
+        'only a maintainer may authorize a downstream issue or other governed work item.'
+    )
+    '.github/DISCUSSION_TEMPLATE/architecture-integration.yml' = @(
+        'title: "[Architecture proposal] "'
+        '**AI-assisted proposal — unreviewed:**'
+        'I searched existing Organization Discussions and affected-repository issues and found no equivalent proposal.'
+        'only a maintainer may authorize a downstream issue or other governed work item.'
     )
     '.github/FUNDING.yml' = @(
         'patreon: AsiBackbone'

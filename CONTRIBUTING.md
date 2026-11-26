@@ -25,6 +25,19 @@ AsiBackbone projects use a controlled-contribution model to preserve architectur
 
 Some repositories restrict pull request creation to authorized collaborators. These restrictions do not prevent independent forks or modifications permitted by the applicable license. Unsolicited changes developed without prior agreement may not be reviewed or accepted. Public issues and discussions remain the preferred starting point for outside participation.
 
+## Public Proposal Intake
+
+Humans and agents may propose ideas through [AsiBackbone Organization Discussions](https://github.com/orgs/AsiBackbone/discussions). Search existing Discussions and the affected repository's issues before starting one. If the idea is already entered, add relevant context there instead of creating a duplicate.
+
+Use [Ideas](https://github.com/orgs/AsiBackbone/discussions/categories/ideas) for feature, process, documentation, or outreach proposals. Use [Architecture & Integration](https://github.com/orgs/AsiBackbone/discussions/categories/architecture-integration) for cross-project design, tradeoff, compatibility, or integration decisions. Name the affected repositories and versions, and include the problem or goal, evidence or prior work, alternatives and tradeoffs, risks, and the decision requested.
+
+Every AI-assisted proposal must begin with this notice:
+
+> **AI-assisted proposal — unreviewed:** This discussion was prepared with AI
+> assistance and remains a proposal until a maintainer records a decision.
+
+A Discussion invites public review; it is not approval, authorization to implement, or a commitment that the proposal will be incorporated. Maintainers may accept, defer, decline, combine, or adapt proposals at their discretion. Only a maintainer records an organization decision and opens or authorizes a concrete issue or other governed work item. Any downstream issue must link back to the accepted Discussion, and implementation remains subject to the affected repository's contribution and validation rules.
+
 ## Choose the Right Starting Point
 
 - Use the affected repository's issue tracker for a reproducible defect or clearly scoped change.
