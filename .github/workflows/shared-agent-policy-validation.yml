@@ -1,0 +1,54 @@
+name: Shared agent policy validation
+
+# Checks that the "Organization discussion proposals" section of every organization
+# repository's root AGENTS.md matches the canonical section in this repository's
+# AGENTS.md. Each repository publishes its own AGENTS.md, so the live comparison is a
+# scheduled drift check rather than a required pull-request check; pull requests that
+# change the validator run its self-test only. Fix findings in the repository named in
+# the job summary.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Mondays at 13:47 UTC, after the published-sites check.
+    - cron: '47 13 * * 1'
+  push:
+    branches:
+      - main
+    paths:
+      - 'AGENTS.md'
+      - 'scripts/Test-SharedAgentPolicy.ps1'
+      - '.github/workflows/shared-agent-policy-validation.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'scripts/Test-SharedAgentPolicy.ps1'
+      - '.github/workflows/shared-agent-policy-validation.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: shared-agent-policy-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate shared agent policy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Test shared agent policy validator
+        shell: pwsh
+        run: ./scripts/Test-SharedAgentPolicy.ps1 -SelfTest
+
+      - name: Compare repository AGENTS.md sections with the canonical section
+        if: github.event_name != 'pull_request'
+        shell: pwsh
+        run: ./scripts/Test-SharedAgentPolicy.ps1
