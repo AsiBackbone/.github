@@ -10,7 +10,7 @@ body:
     id: disclosure
     attributes:
       label: Proposal disclosure
-      description: If AI assisted, paste the exact notice below and keep it as the first response. If entirely human-authored, enter "Human-authored proposal."
+      description: If AI assisted, paste the exact notice below and keep it as the first field. If entirely human-authored, enter "Human-authored proposal."
       placeholder: |
         > **AI-assisted proposal — unreviewed:** This discussion was prepared with AI
         > assistance and remains a proposal until a maintainer records a decision.

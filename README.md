@@ -4,11 +4,9 @@ This repository publishes the public organization profile from `profile/README.m
 
 ## Open proposals, bounded authority
 
-> **Anything can propose; the host retains authority to act.**
->
 > **Proposal is open. Authority is bounded.**
 
-Humans and AI agents may introduce proposals through [AsiBackbone Organization Discussions](https://github.com/orgs/AsiBackbone/discussions). In this community process, the accountable host is the human maintainer: maintainers alone decide whether a proposal becomes organizational work and authorize any downstream action. See the [public proposal intake guidance](CONTRIBUTING.md#public-proposal-intake).
+Humans and AI agents may introduce proposals through [AsiBackbone Organization Discussions](https://github.com/orgs/AsiBackbone/discussions). In this community process, human maintainers alone decide whether a proposal becomes organizational work and authorize any downstream action. See the [public proposal intake guidance](CONTRIBUTING.md#public-proposal-intake).
 
 It also provides organization-default [conduct](CODE_OF_CONDUCT.md), [contribution](CONTRIBUTING.md), [support](SUPPORT.md), [security](SECURITY.md), issue-routing, and pull-request guidance for AsiBackbone repositories that do not define their own files. Repository-specific community files remain authoritative and override these defaults.
 
