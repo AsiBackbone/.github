@@ -27,7 +27,7 @@ Some repositories restrict pull request creation to authorized collaborators. Th
 
 ## Public Proposal Intake
 
-AsiBackbone permits humans and AI agents to introduce proposals into a common public consideration process while reserving organizational decisions and downstream work authorization to human maintainers. This provides proposal access, not organizational decision authority.
+AsiBackbone accepts proposals from anyone into a common public consideration process, including proposals drafted with AI assistance, while reserving organizational decisions and downstream work authorization to human maintainers. The person who posts a proposal is responsible for its content. This provides proposal access, not organizational decision authority.
 
 Submit proposals through [AsiBackbone Organization Discussions](https://github.com/orgs/AsiBackbone/discussions). Search existing Discussions and the affected repository's issues before starting one. If the idea is already entered, add relevant context there instead of creating a duplicate.
 
@@ -35,8 +35,9 @@ Use [Ideas](https://github.com/orgs/AsiBackbone/discussions/categories/ideas) fo
 
 Every AI-assisted proposal must begin with this notice:
 
-> **AI-assisted proposal — unreviewed:** This discussion was prepared with AI
-> assistance and remains a proposal until a maintainer records a decision.
+> **AI-assisted proposal — awaiting maintainer decision:** This discussion was
+> prepared with AI assistance. The person who posted it is responsible for its
+> content, and it remains a proposal until a maintainer records a decision.
 
 A Discussion invites public review; it is not approval, authorization to implement, or a commitment that the proposal will be incorporated. Maintainers may accept, defer, decline, combine, or adapt proposals at their discretion. Only a maintainer records an organization decision and opens or authorizes a concrete issue or other governed work item. Any downstream issue must link back to the accepted Discussion, and implementation remains subject to the affected repository's contribution and validation rules.
 
