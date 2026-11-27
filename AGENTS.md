@@ -10,7 +10,9 @@ boundaries, and leave consequential decisions to human maintainers.
 
 The discussion policy below is the canonical organization wording. Keep the
 corresponding section in each organization repository's root `AGENTS.md`
-aligned with it.
+identical to it. `scripts/Test-SharedAgentPolicy.ps1` compares every copy with
+this section on a weekly schedule and after this file changes on `main`; run it
+with `-LocalRoot ..` to check sibling checkouts before opening pull requests.
 
 ## Organization discussion proposals
 
@@ -69,6 +71,8 @@ repository scripts, including:
 
 ```powershell
 ./scripts/Test-OrganizationProfile.ps1
+./scripts/Test-SharedAgentPolicy.ps1 -SelfTest
+./scripts/Test-SharedAgentPolicy.ps1 -LocalRoot ..
 ```
 
 Report only checks actually run and their results. Do not weaken validation to
