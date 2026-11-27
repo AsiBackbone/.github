@@ -24,9 +24,8 @@ $requiredContent = [ordered]@{
     'https://github.com/AsiBackbone/ReferenceApplication' = 'ReferenceApplication repository link'
     'https://asibackbone.github.io/ReferenceApplication/' = 'ReferenceApplication documentation link'
     'The Reference Application is the organization''s **stable integration example**, not a product.' = 'Reference Application canonical description'
-    '## Open Proposals, Bounded Authority' = 'open-proposal authority section'
     '**Proposal is open. Authority is bounded.**' = 'bounded-authority maxim'
-    'In this community process, human maintainers alone decide whether a proposal becomes organizational work and authorize any downstream action.' = 'human-maintainer authority boundary'
+    'https://github.com/AsiBackbone/.github/blob/main/CONTRIBUTING.md#public-proposal-intake' = 'public proposal intake link'
     '## Learn, Ask, and Contribute' = 'community-routing section'
     'https://github.com/orgs/AsiBackbone/discussions/categories/q-a' = 'organization Q&A route'
     'https://github.com/orgs/AsiBackbone/discussions/categories/ideas' = 'organization Ideas route'
@@ -90,17 +89,6 @@ $failures = [System.Collections.Generic.List[string]]::new()
 foreach ($entry in $requiredContent.GetEnumerator()) {
     if (-not $profile.Contains($entry.Key, [StringComparison]::Ordinal)) {
         $failures.Add("profile/README.md is missing its $($entry.Value).")
-    }
-}
-
-# Retired authority wording must not return to the profile.
-foreach ($retiredText in @(
-    'Anything can propose; the host retains authority to act.'
-    'the accountable host is the human maintainer'
-    'Humans and AI agents may introduce proposals'
-)) {
-    if ($profile.Contains($retiredText, [StringComparison]::Ordinal)) {
-        $failures.Add("profile/README.md must not contain retired authority wording: $retiredText")
     }
 }
 
@@ -168,7 +156,6 @@ if (Test-Path -LiteralPath $standardPath -PathType Leaf) {
         '## Rollout'
         'We favor architectures where consequential operations are explicit, constrained, reviewable, and auditable.'
         'Proposal is open. Authority is bounded.'
-        'human maintainers alone decide whether a proposal becomes organizational work and authorize downstream action'
         'https://github.com/AsiBackbone/.github/issues/16'
         'https://github.com/AsiBackbone/.github/issues/17'
         'https://github.com/AsiBackbone/.github/issues/18'

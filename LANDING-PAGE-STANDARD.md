@@ -1,6 +1,6 @@
 # AsiBackbone Landing-Page Standard
 
-**Version:** 3.2.0
+**Version:** 3.2.1
 **Status:** Active
 **Contract issue:** [AsiBackbone/.github#15](https://github.com/AsiBackbone/.github/issues/15)
 
@@ -29,6 +29,8 @@ Implementations should record which version they were last reviewed against, for
 | 2.1.0 | [AsiBackbone/.github#37](https://github.com/AsiBackbone/.github/pull/37) | Adds the organization funding destination as an optional organization-surface destination, linked to Patreon, with the sponsorship boundary language. |
 | 3.0.0 | [AsiBackbone/.github#38](https://github.com/AsiBackbone/.github/pull/38) | Promotes Funding to the eighth required ecosystem destination and routes every site to the organization `Support AsiBackbone` section. |
 | 3.1.0 | [AsiBackbone/.github#48](https://github.com/AsiBackbone/.github/issues/48) | Adds the canonical one-phrase description of the Reference Application, "stable integration example, not a product", for every surface and project README, and retires "integration specimen". |
+| 3.2.0 | [AsiBackbone/.github#67](https://github.com/AsiBackbone/.github/pull/67) | Adds the open-proposal maxim and the human-maintainer proposal boundary to the Design Philosophy contract. |
+| 3.2.1 | [AsiBackbone/.github#70](https://github.com/AsiBackbone/.github/pull/70) | Narrows the proposal-boundary requirement to the maxim and the public proposal intake link; the full proposal wording lives in `CONTRIBUTING.md`, and the retired-wording rule is removed. |
 
 ## Public surfaces
 
@@ -170,8 +172,7 @@ Every surface includes this shared statement verbatim:
 
 It is followed by:
 
-- the shared community-governance maxim, **“Proposal is open. Authority is bounded.”**;
-- a statement that anyone may submit proposals through Organization Discussions, including AI-assisted proposals for which the person posting remains responsible, while human maintainers alone decide whether a proposal becomes organizational work and authorize downstream action, linking to the public proposal intake guidance; surfaces use the sentence “In this community process, human maintainers alone decide whether a proposal becomes organizational work and authorize any downstream action.” and must not use the retired wording “Anything can propose; the host retains authority to act.” or “the accountable host is the human maintainer”, or the retired proposal-access wording “Humans and AI agents may introduce proposals”, which landing-page validators reject;
+- the shared community-governance maxim, **“Proposal is open. Authority is bounded.”**, with a short statement that anyone may submit proposals through Organization Discussions while human maintainers alone decide whether a proposal becomes organizational work, linking to the [public proposal intake guidance](CONTRIBUTING.md#public-proposal-intake). That guidance holds the full proposal wording; landing-page validators check only the maxim and the link;
 - a statement that the organization also documents when these patterns are unnecessary, linking to at least one simpler-alternative page; and
 - a non-claim that the projects focus on practical .NET engineering and do not claim regulatory certification or automatic compliance.
 
@@ -363,7 +364,7 @@ Use this checklist for each surface. Mark not applicable items explicitly.
 - [ ] **Document language and metadata:** the page declares `lang="en"`; the title, description, canonical URL, social preview, and structured data meet [Page metadata](#page-metadata).
 - [ ] **Without JavaScript:** with scripts disabled, the skip link is present, moves focus to main content, and the homepage content is readable at full width.
 - [ ] **Project order:** project cards follow the canonical order Learn → Framework → Template → Reference, and a current-site card is marked as the [Related Projects contract](#5-related-projects-contract) requires.
-- [ ] **Proposal boundary:** the open-proposal maxim, Organization Discussions route, and human-maintainer decision and work-authorization boundary are present.
+- [ ] **Proposal boundary:** the open-proposal maxim and the link to the public proposal intake guidance are present.
 - [ ] **Internal links:** every relative link in the homepage source resolves in the build output.
 - [ ] **External links:** all eight ecosystem destinations and the four projects' documentation, repository, and published archive links resolve.
 - [ ] **DocFX build output (DocFX sites):** `docfx build` with `--warningsAsErrors` completes with no warnings, and `_site/index.html` contains the hero, Start Here, Product fit, Related Projects, and Design Philosophy sections.
