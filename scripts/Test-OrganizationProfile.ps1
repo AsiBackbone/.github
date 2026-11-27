@@ -26,7 +26,7 @@ $requiredContent = [ordered]@{
     'The Reference Application is the organization''s **stable integration example**, not a product.' = 'Reference Application canonical description'
     '## Open Proposals, Bounded Authority' = 'open-proposal authority section'
     '**Proposal is open. Authority is bounded.**' = 'bounded-authority maxim'
-    'maintainers alone decide whether a proposal becomes organizational work and authorize any downstream action.' = 'human-maintainer authority boundary'
+    'In this community process, human maintainers alone decide whether a proposal becomes organizational work and authorize any downstream action.' = 'human-maintainer authority boundary'
     '## Learn, Ask, and Contribute' = 'community-routing section'
     'https://github.com/orgs/AsiBackbone/discussions/categories/q-a' = 'organization Q&A route'
     'https://github.com/orgs/AsiBackbone/discussions/categories/ideas' = 'organization Ideas route'
@@ -90,6 +90,17 @@ $failures = [System.Collections.Generic.List[string]]::new()
 foreach ($entry in $requiredContent.GetEnumerator()) {
     if (-not $profile.Contains($entry.Key, [StringComparison]::Ordinal)) {
         $failures.Add("profile/README.md is missing its $($entry.Value).")
+    }
+}
+
+# Retired authority wording must not return to the profile.
+foreach ($retiredText in @(
+    'Anything can propose; the host retains authority to act.'
+    'the accountable host is the human maintainer'
+    'Humans and AI agents may introduce proposals'
+)) {
+    if ($profile.Contains($retiredText, [StringComparison]::Ordinal)) {
+        $failures.Add("profile/README.md must not contain retired authority wording: $retiredText")
     }
 }
 
@@ -294,7 +305,7 @@ $communityContracts = [ordered]@{
     'CONTRIBUTING.md' = @(
         '## Public Proposal Intake'
         'This provides proposal access, not organizational decision authority.'
-        '**AI-assisted proposal — unreviewed:**'
+        '**AI-assisted proposal — awaiting maintainer decision:**'
         'Maintainers may accept, defer, decline, combine, or adapt proposals at their discretion.'
         '## Documentation Ownership'
         'https://github.com/AsiBackbone/.github/blob/main/documentation/README.md#review-rule-for-new-documentation'
@@ -350,14 +361,14 @@ $communityContracts = [ordered]@{
     '.github/DISCUSSION_TEMPLATE/ideas.yml' = @(
         'title: "[Proposal] "'
         'This provides proposal access, not organizational decision authority.'
-        '**AI-assisted proposal — unreviewed:**'
+        '**AI-assisted proposal — awaiting maintainer decision:**'
         'I searched existing Organization Discussions and affected-repository issues and found no equivalent proposal.'
         'only a maintainer may authorize a downstream issue or other governed work item.'
     )
     '.github/DISCUSSION_TEMPLATE/architecture-integration.yml' = @(
         'title: "[Architecture proposal] "'
         'This provides proposal access, not organizational decision authority.'
-        '**AI-assisted proposal — unreviewed:**'
+        '**AI-assisted proposal — awaiting maintainer decision:**'
         'I searched existing Organization Discussions and affected-repository issues and found no equivalent proposal.'
         'only a maintainer may authorize a downstream issue or other governed work item.'
     )

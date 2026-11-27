@@ -3,7 +3,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Humans and AI agents may introduce ideas here for public consideration. This provides proposal access, not organizational decision authority. Search existing Organization Discussions and affected-repository issues before submitting. A proposal is not authorization to implement and does not guarantee incorporation. Only human maintainers decide whether and how it proceeds; they may accept, defer, decline, combine, or adapt it at their discretion.
+        Anyone may propose ideas here for public consideration, including ideas drafted with AI assistance; the person who posts a proposal is responsible for it. This provides proposal access, not organizational decision authority. Search existing Organization Discussions and affected-repository issues before submitting. A proposal is not authorization to implement and does not guarantee incorporation. Only human maintainers decide whether and how it proceeds; they may accept, defer, decline, combine, or adapt it at their discretion.
 
         Do not include credentials, approval codes, private paths, personal information, private repository content, exploit details, or other sensitive material. Use the affected repository's private security process instead.
   - type: textarea
@@ -12,8 +12,9 @@ body:
       label: Proposal disclosure
       description: If AI assisted, paste the exact notice below and keep it as the first field. If entirely human-authored, enter "Human-authored proposal."
       placeholder: |
-        > **AI-assisted proposal — unreviewed:** This discussion was prepared with AI
-        > assistance and remains a proposal until a maintainer records a decision.
+        > **AI-assisted proposal — awaiting maintainer decision:** This discussion was
+        > prepared with AI assistance. The person who posted it is responsible for its
+        > content, and it remains a proposal until a maintainer records a decision.
     validations:
       required: true
   - type: input

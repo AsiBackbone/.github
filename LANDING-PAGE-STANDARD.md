@@ -171,7 +171,7 @@ Every surface includes this shared statement verbatim:
 It is followed by:
 
 - the shared community-governance maxim, **“Proposal is open. Authority is bounded.”**;
-- a statement that humans and AI agents may introduce proposals through Organization Discussions while human maintainers alone decide whether a proposal becomes organizational work and authorize downstream action, linking to the public proposal intake guidance;
+- a statement that anyone may submit proposals through Organization Discussions, including AI-assisted proposals for which the person posting remains responsible, while human maintainers alone decide whether a proposal becomes organizational work and authorize downstream action, linking to the public proposal intake guidance; surfaces use the sentence “In this community process, human maintainers alone decide whether a proposal becomes organizational work and authorize any downstream action.” and must not use the retired wording “Anything can propose; the host retains authority to act.” or “the accountable host is the human maintainer”, or the retired proposal-access wording “Humans and AI agents may introduce proposals”, which landing-page validators reject;
 - a statement that the organization also documents when these patterns are unnecessary, linking to at least one simpler-alternative page; and
 - a non-claim that the projects focus on practical .NET engineering and do not claim regulatory certification or automatic compliance.
 
