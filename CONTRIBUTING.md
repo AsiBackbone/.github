@@ -39,7 +39,7 @@ Every AI-assisted proposal must begin with this notice:
 > prepared with AI assistance. The person who posted it is responsible for its
 > content, and it remains a proposal until a maintainer records a decision.
 
-A Discussion invites public review; it is not approval, authorization to implement, or a commitment that the proposal will be incorporated. Maintainers may accept, defer, decline, combine, or adapt proposals at their discretion. Only a maintainer records an organization decision and opens or authorizes a concrete issue or other governed work item. Any downstream issue must link back to the accepted Discussion, and implementation remains subject to the affected repository's contribution and validation rules.
+A Discussion invites public review; it is not approval, authorization to implement, or a commitment that the proposal will be incorporated. Maintainers may accept, defer, decline, combine, or adapt proposals at their discretion. Maintainers may also close, lock, or hide any proposal without responding, including duplicates, off-topic posts, and bulk-generated or low-effort submissions. Only a maintainer records an organization decision and opens or authorizes a concrete issue or other governed work item. Any downstream issue must link back to the accepted Discussion, and implementation remains subject to the affected repository's contribution and validation rules.
 
 ## Choose the Right Starting Point
 

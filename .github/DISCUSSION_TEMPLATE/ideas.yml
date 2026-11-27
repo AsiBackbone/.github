@@ -3,7 +3,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Anyone may propose ideas here for public consideration, including ideas drafted with AI assistance; the person who posts a proposal is responsible for it. This provides proposal access, not organizational decision authority. Search existing Organization Discussions and affected-repository issues before submitting. A proposal is not authorization to implement and does not guarantee incorporation. Only human maintainers decide whether and how it proceeds; they may accept, defer, decline, combine, or adapt it at their discretion.
+        Anyone may propose ideas here for public consideration, including ideas drafted with AI assistance; the person who posts a proposal is responsible for it. This provides proposal access, not organizational decision authority. Search existing Organization Discussions and affected-repository issues before submitting. A proposal is not authorization to implement and does not guarantee incorporation. Only human maintainers decide whether and how it proceeds; they may accept, defer, decline, combine, or adapt it at their discretion. They may also close, lock, or hide a proposal without responding, including duplicates, off-topic posts, and bulk-generated or low-effort submissions.
 
         Do not include credentials, approval codes, private paths, personal information, private repository content, exploit details, or other sensitive material. Use the affected repository's private security process instead.
   - type: textarea
